@@ -6,24 +6,37 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 
 - Repositorio: `proyecto5-grupo2`.
 - README inicial: existe, pero aun no documenta instalacion ni decisiones tecnicas.
-- Dataset: TODO.
-- Target: TODO.
+- Dataset: Hotel Reservations Classification Dataset.
+- Archivo esperado: `Hotel Reservations.csv`.
+- Fuente de referencia: Kaggle, kernel `marawaneslam/hotel-reservations-classification`.
+- Ruta original en Kaggle: `/kaggle/input/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
+- Cliente del proyecto: plataforma de reservas hoteleras tipo Booking, Trivago o Agoda.
+- Problema de negocio: predecir si una reserva sera cancelada.
+- Target: `booking_status`.
 - Metrica principal: TODO.
 - Tecnologia de app: TODO: elegir entre Streamlit, Gradio, Dash o API + frontend simple.
 - Sistema de gestion: TODO: agregar enlace a Trello u otra herramienta.
 
 ## Tipo de problema
 
-- Tipo: clasificacion supervisada.
+- Tipo: clasificacion supervisada binaria.
 - Entrada: variables tabulares del dataset elegido.
-- Salida: clase predicha.
+- Salida: estado de la reserva predicho.
 - Salida opcional: probabilidad o confianza de la prediccion si el modelo lo permite.
 
 ## Dataset
 
-Dataset definitivo: TODO.
+Dataset definitivo: Hotel Reservations Classification Dataset.
 
-Si el equipo no elige otro dataset, puede evaluar el dataset sugerido en la consigna: Airlines Dataset.
+Archivo de trabajo esperado: `Hotel Reservations.csv`.
+
+Fuente de referencia:
+
+- Kaggle kernel: `marawaneslam/hotel-reservations-classification`.
+- Comando de referencia del kernel: `kaggle kernels pull marawaneslam/hotel-reservations-classification`.
+- Ruta usada en Kaggle: `/kaggle/input/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
+
+TODO: descargar o incorporar el CSV real en `data/raw/` y confirmar nombre exacto, columnas, filas, tipos de datos y clases del target.
 
 ### Criterios para elegir dataset
 
@@ -41,20 +54,44 @@ El dataset debe cumplir:
 
 ### Variable objetivo
 
-Target definitivo: TODO.
+Target definitivo: `booking_status`.
 
 Debe documentarse:
 
-- Nombre de columna.
-- Clases posibles.
-- Distribucion de clases.
-- Si hay desbalance.
-- Si se requiere binarizacion o agrupacion.
-- Justificacion de por que es una variable de clasificacion valida.
+- Nombre de columna: `booking_status`.
+- Clases esperadas: `Canceled` y `Not_Canceled`.
+- Distribucion de clases: TODO: calcular al cargar el CSV.
+- Si hay desbalance: TODO: revisar con `value_counts(normalize=True)`.
+- Si se requiere binarizacion o agrupacion: inicialmente no, pendiente de confirmar con el CSV.
+- Justificacion: es una variable categorica que indica el resultado historico de la reserva, por lo que permite entrenar un modelo de clasificacion supervisada.
 
 ### Features esperadas
 
-Features definitivas: TODO.
+Features candidatas iniciales:
+
+- `no_of_adults`.
+- `no_of_children`.
+- `no_of_weekend_nights`.
+- `no_of_week_nights`.
+- `type_of_meal_plan`.
+- `required_car_parking_space`.
+- `room_type_reserved`.
+- `lead_time`.
+- `arrival_year`.
+- `arrival_month`.
+- `arrival_date`.
+- `market_segment_type`.
+- `repeated_guest`.
+- `no_of_previous_cancellations`.
+- `no_of_previous_bookings_not_canceled`.
+- `avg_price_per_room`.
+- `no_of_special_requests`.
+
+Columna candidata a excluir:
+
+- `Booking_ID`: identificador de reserva sin valor predictivo generalizable.
+
+TODO: confirmar columnas exactas, tipos y posibles exclusiones despues de cargar el CSV.
 
 La seleccion de features debe clasificar columnas en:
 

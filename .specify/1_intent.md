@@ -8,7 +8,7 @@ El proyecto debe proteger primero el Nivel Esencial exigido por la consigna y, d
 
 ## Problema que se quiere resolver
 
-TODO: definir el problema de negocio o investigacion cuando el equipo elija el dataset definitivo.
+El cliente del proyecto es una plataforma de reservas hoteleras similar a Booking, Trivago o Agoda. El problema de negocio consiste en anticipar si una reserva sera cancelada o no, para ayudar a gestionar disponibilidad, ocupacion, ingresos y planificacion operativa.
 
 El problema debe poder formularse asi:
 
@@ -16,11 +16,7 @@ El problema debe poder formularse asi:
 - La prediccion debe ser util para una decision concreta.
 - La calidad del modelo debe poder medirse con datos de validacion y metricas de clasificacion.
 
-Ejemplos validos:
-
-- Predecir satisfaccion de clientes.
-- Predecir riesgo, abandono, fraude, diagnostico, aprobacion o categoria.
-- Clasificar observaciones segun atributos tabulares.
+En este proyecto, el sistema buscara predecir el estado de una reserva a partir de informacion disponible antes de la fecha de llegada.
 
 ## Por que usamos metodologia SPEC
 
