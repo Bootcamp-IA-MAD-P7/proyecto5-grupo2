@@ -152,6 +152,29 @@ Implicaciones para preprocessing:
 - Escalar numericas si el baseline usa Logistic Regression u otro modelo sensible a escala.
 - Comparar el baseline contra un `DummyClassifier` de clase mayoritaria.
 
+## Estado del preprocessing inicial
+
+Pipeline inicial implementado en `src/features/preprocessing.py`.
+
+Contrato implementado:
+
+- Carga del CSV crudo desde `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
+- Validacion de columnas requeridas antes de preparar datos.
+- Separacion de `X` e `y`.
+- Exclusion de `Booking_ID` antes de entrenar.
+- Codificacion del target: `Not_Canceled` = 0 y `Canceled` = 1.
+- Split estratificado train/validacion/test con proporcion 70% / 15% / 15%.
+- `ColumnTransformer` con:
+  - `StandardScaler` para variables numericas.
+  - `OneHotEncoder(handle_unknown="ignore")` para categoricas.
+  - `passthrough` para binarias.
+
+Verificacion actual:
+
+- Pruebas unitarias en `tests/unit/test_preprocessing.py`.
+- Comando: `python -m unittest tests.unit.test_preprocessing`.
+- Estado: el preprocessing transforma train y validacion sin errores y mantiene la distribucion del target en los splits.
+
 ## Metricas obligatorias
 
 El informe tecnico debe incluir:

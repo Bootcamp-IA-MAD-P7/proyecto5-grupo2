@@ -137,16 +137,17 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 
 ## Fase 2 - Nivel Esencial MVP
 
-### [ ] T-2.1 Crear pipeline de preprocesamiento
+### [x] T-2.1 Crear pipeline de preprocesamiento
 
-- Archivos afectados: `src/features/`, `src/models/`.
+- Archivos afectados: `src/features/`, `src/models/`, `tests/unit/`, `requirements.txt`.
 - Accion: construir transformaciones para numericas, categoricas y columnas excluidas.
 - Responsable sugerido: I1.
 - Dificultad: alta.
 - Apto junior: no.
 - Dependencias: T-1.2, T-1.3, T-1.4.
 - Criterio de verificacion: el pipeline transforma train y validacion sin errores ni leakage.
-- Comando de verificacion: TODO: `python -m pytest` cuando existan tests.
+- Evidencia: `src/features/preprocessing.py` define columnas, target, exclusion de `Booking_ID`, split estratificado y `ColumnTransformer`.
+- Comando de verificacion: `python -m unittest tests.unit.test_preprocessing`.
 
 ### [ ] T-2.2 Entrenar baseline
 
