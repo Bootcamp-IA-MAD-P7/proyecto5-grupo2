@@ -13,7 +13,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Cliente del proyecto: plataforma de reservas hoteleras tipo Booking, Trivago o Agoda.
 - Problema de negocio: predecir si una reserva sera cancelada.
 - Target: `booking_status`.
-- Metrica principal: TODO.
+- Metrica principal inicial: F1-score de la clase `Canceled`, complementada con precision, recall, ROC-AUC y matriz de confusion.
 - Tecnologia de app: TODO: elegir entre Streamlit, Gradio, Dash o API + frontend simple.
 - Sistema de gestion: TODO: agregar enlace a Trello u otra herramienta.
 
@@ -36,7 +36,17 @@ Fuente de referencia:
 - Comando de referencia del kernel: `kaggle kernels pull marawaneslam/hotel-reservations-classification`.
 - Ruta usada en Kaggle: `/kaggle/input/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
 
-TODO: descargar o incorporar el CSV real en `data/raw/` y confirmar nombre exacto, columnas, filas, tipos de datos y clases del target.
+CSV incorporado en `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
+
+Validacion inicial:
+
+- Filas: 36.275.
+- Columnas: 19.
+- Valores nulos: 0.
+- Duplicados exactos: 0.
+- Notebook de inspeccion: `notebooks/01_dataset_inspection.ipynb`.
+- Notebook de EDA: `notebooks/02_eda_exploratory.ipynb`.
+- Diccionario de datos: `reports/data_dictionary.md`.
 
 ### Criterios para elegir dataset
 
@@ -60,9 +70,9 @@ Debe documentarse:
 
 - Nombre de columna: `booking_status`.
 - Clases esperadas: `Canceled` y `Not_Canceled`.
-- Distribucion de clases: TODO: calcular al cargar el CSV.
-- Si hay desbalance: TODO: revisar con `value_counts(normalize=True)`.
-- Si se requiere binarizacion o agrupacion: inicialmente no, pendiente de confirmar con el CSV.
+- Distribucion de clases: `Not_Canceled` 24.390 registros (67,24%) y `Canceled` 11.885 registros (32,76%).
+- Si hay desbalance: hay desbalance moderado, por lo que `accuracy` no debe usarse como unica metrica.
+- Si se requiere binarizacion o agrupacion: no requiere agrupacion; para modelos se codificara como variable binaria.
 - Justificacion: es una variable categorica que indica el resultado historico de la reserva, por lo que permite entrenar un modelo de clasificacion supervisada.
 
 ### Features esperadas
@@ -91,7 +101,15 @@ Columna candidata a excluir:
 
 - `Booking_ID`: identificador de reserva sin valor predictivo generalizable.
 
-TODO: confirmar columnas exactas, tipos y posibles exclusiones despues de cargar el CSV.
+Columnas confirmadas despues de cargar el CSV:
+
+- Numericas: `no_of_adults`, `no_of_children`, `no_of_weekend_nights`, `no_of_week_nights`, `lead_time`, `arrival_year`, `arrival_month`, `arrival_date`, `no_of_previous_cancellations`, `no_of_previous_bookings_not_canceled`, `avg_price_per_room`, `no_of_special_requests`.
+- Categoricas nominales: `type_of_meal_plan`, `room_type_reserved`, `market_segment_type`.
+- Binarias: `required_car_parking_space`, `repeated_guest`.
+- Target: `booking_status`.
+- Excluida: `Booking_ID`.
+
+No se detectaron columnas posteriores al evento que generen leakage evidente en esta revision inicial.
 
 La seleccion de features debe clasificar columnas en:
 
@@ -109,6 +127,30 @@ Columnas a excluir siempre:
 - Duplicados exactos.
 - Variables con informacion directa del target.
 - Datos sensibles no necesarios para la prediccion.
+
+## Estado del EDA exploratorio
+
+EDA inicial documentado en `notebooks/02_eda_exploratory.ipynb`.
+
+Hallazgos principales:
+
+- Dataset completo a nivel de nulos y sin duplicados exactos.
+- Target binario con desbalance moderado.
+- `lead_time` muestra una relacion fuerte con cancelacion: las reservas canceladas tienen mayor anticipacion media y mediana que las no canceladas.
+- `avg_price_per_room` tambien tiende a ser mayor en reservas canceladas, aunque con una diferencia menos marcada.
+- `no_of_special_requests` muestra relacion inversa con cancelacion: las reservas con mas solicitudes especiales tienden a cancelarse menos.
+- `market_segment_type` y `repeated_guest` muestran diferencias relevantes en tasa de cancelacion.
+- Hay variables con asimetria y rangos amplios, especialmente `lead_time`, `avg_price_per_room` y variables historicas con muchos ceros.
+
+Implicaciones para preprocessing:
+
+- Excluir `Booking_ID` antes del entrenamiento.
+- Separar train, validacion y test de forma estratificada.
+- Ajustar transformaciones solo con train para evitar leakage.
+- Usar One-Hot Encoding para categoricas con `handle_unknown='ignore'`.
+- Mantener variables binarias como 0/1.
+- Escalar numericas si el baseline usa Logistic Regression u otro modelo sensible a escala.
+- Comparar el baseline contra un `DummyClassifier` de clase mayoritaria.
 
 ## Metricas obligatorias
 
@@ -132,7 +174,7 @@ El overfitting debe ser inferior al 5%.
 
 Regla operativa:
 
-- Elegir una metrica principal: TODO.
+- Metrica principal operativa: F1-score de la clase `Canceled`.
 - Calcular la metrica en train.
 - Calcular la misma metrica en validacion o cross-validation.
 - La diferencia absoluta entre train y validacion debe ser menor a 0.05.

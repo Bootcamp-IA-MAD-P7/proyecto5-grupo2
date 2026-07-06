@@ -74,7 +74,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 
 ## Fase 1 - Dataset y EDA
 
-### [ ] T-1.1 Elegir dataset definitivo
+### [x] T-1.1 Elegir dataset definitivo
 
 - Archivos afectados: `.specify/2_spec.md`, `README.md`, `data/raw/` si aplica.
 - Accion: seleccionar dataset, documentar fuente y forma de descarga.
@@ -83,9 +83,10 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: no como responsable unico.
 - Dependencias: T-0.3.
 - Criterio de verificacion: dataset accesible y target posible.
-- Comando de verificacion: TODO: definir cuando exista estructura del proyecto.
+- Evidencia: dataset incorporado en `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv` con 36.275 filas y 19 columnas.
+- Comando de verificacion: `Test-Path "data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv"`.
 
-### [ ] T-1.2 Definir target y clases
+### [x] T-1.2 Definir target y clases
 
 - Archivos afectados: `.specify/2_spec.md`, `reports/model_report.md`.
 - Accion: documentar columna target, clases, distribucion y posible desbalance.
@@ -94,9 +95,10 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: con apoyo en documentacion.
 - Dependencias: T-1.1.
 - Criterio de verificacion: target aceptado por el equipo.
-- Comando de verificacion: TODO.
+- Evidencia: target `booking_status`, clases `Not_Canceled` (67,24%) y `Canceled` (32,76%), documentado en `.specify/2_spec.md`, `reports/data_dictionary.md` y notebooks de EDA.
+- Comando de verificacion: revisar `notebooks/01_dataset_inspection.ipynb` y `notebooks/02_eda_exploratory.ipynb`.
 
-### [ ] T-1.3 Crear diccionario de datos
+### [x] T-1.3 Crear diccionario de datos
 
 - Archivos afectados: `reports/`, `README.md`.
 - Accion: listar columnas, tipo de dato, descripcion, rol y si entra al modelo.
@@ -105,9 +107,10 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: si.
 - Dependencias: T-1.1.
 - Criterio de verificacion: todas las columnas relevantes estan clasificadas.
+- Evidencia: diccionario inicial creado en `reports/data_dictionary.md`.
 - Comando de verificacion: no aplica.
 
-### [ ] T-1.4 Realizar EDA inicial
+### [x] T-1.4 Realizar EDA inicial
 
 - Archivos afectados: `notebooks/`, `reports/figures/`, `reports/model_report.md`.
 - Accion: analizar nulos, duplicados, distribuciones, target, correlaciones y relaciones con target.
@@ -116,9 +119,10 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: no como responsable unico.
 - Dependencias: T-1.1, T-1.2.
 - Criterio de verificacion: existen graficos relevantes para clasificacion.
-- Comando de verificacion: TODO.
+- Evidencia: `notebooks/02_eda_exploratory.ipynb` incluye revision de nulos, duplicados, target, distribuciones numericas, variables categoricas, relacion con target, correlaciones, interpretaciones y conclusiones finales.
+- Comando de verificacion: `rg -n "TODO|a completar" notebooks/02_eda_exploratory.ipynb`.
 
-### [ ] T-1.5 Interpretar graficos para negocio
+### [~] T-1.5 Interpretar graficos para negocio
 
 - Archivos afectados: `reports/model_report.md`, `docs/business_presentation/`.
 - Accion: escribir interpretaciones simples de los graficos principales.
@@ -127,6 +131,8 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: si.
 - Dependencias: T-1.4.
 - Criterio de verificacion: cada grafico usado en presentacion tiene una lectura clara.
+- Avance: interpretaciones tecnicas agregadas en `notebooks/02_eda_exploratory.ipynb`.
+- Pendiente: trasladar las lecturas principales a informe o presentacion de negocio cuando se definan esos entregables.
 - Comando de verificacion: no aplica.
 
 ## Fase 2 - Nivel Esencial MVP
@@ -138,7 +144,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Responsable sugerido: I1.
 - Dificultad: alta.
 - Apto junior: no.
-- Dependencias: T-1.2, T-1.3.
+- Dependencias: T-1.2, T-1.3, T-1.4.
 - Criterio de verificacion: el pipeline transforma train y validacion sin errores ni leakage.
 - Comando de verificacion: TODO: `python -m pytest` cuando existan tests.
 
