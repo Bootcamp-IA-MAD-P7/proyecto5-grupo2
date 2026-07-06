@@ -5,7 +5,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 ## Estado actual
 
 - Repositorio: `proyecto5-grupo2`.
-- README inicial: existe, pero aun no documenta instalacion ni decisiones tecnicas.
+- README inicial: actualizado con descripcion del proyecto, estructura, ejecucion del frontend, metodologia SPEC, flujo Git, roles y roadmap.
 - Dataset: Hotel Reservations Classification Dataset.
 - Archivo esperado: `Hotel Reservations.csv`.
 - Fuente de referencia: Kaggle, kernel `marawaneslam/hotel-reservations-classification`.
@@ -14,8 +14,12 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Problema de negocio: predecir si una reserva sera cancelada.
 - Target: `booking_status`.
 - Metrica principal: TODO.
-- Tecnologia de app: TODO: elegir entre Streamlit, Gradio, Dash o API + frontend simple.
-- Sistema de gestion: TODO: agregar enlace a Trello u otra herramienta.
+- Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
+- Sistema de gestion: Jira.
+- Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
+- Frontend actual: existe en `app/frontend` con prediccion mock para validar UX/UI.
+- Backend actual: TODO, previsto en `app/backend` con endpoint `POST /predict`.
+- Documentacion de organizacion: existe en `docs/project_management/`.
 
 ## Tipo de problema
 
