@@ -28,18 +28,19 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 
 ## Fase 0 - Preparacion
 
-### [ ] T-0.1 Crear tablero de gestion
+### [x] T-0.1 Crear tablero de gestion
 
-- Archivos afectados: ninguno o `README.md` si se agrega enlace.
-- Accion: crear Trello o herramienta equivalente con columnas Backlog, In Progress, Review, Done y Blocked.
+- Archivos afectados: `.specify/2_spec.md`.
+- Accion: crear Jira o herramienta equivalente con columnas Backlog, In Progress, Review, Done y Blocked.
 - Responsable sugerido: I4.
 - Dificultad: baja.
 - Apto junior: si.
 - Dependencias: ninguna.
-- Criterio de verificacion: tablero creado con tickets iniciales.
+- Criterio de verificacion: tablero creado con tickets iniciales y enlace documentado.
 - Comando de verificacion: no aplica.
+- Evidencia: Jira oficial documentado en `.specify/2_spec.md`.
 
-### [ ] T-0.2 Revisar y aceptar SPEC inicial
+### [x] T-0.2 Revisar y aceptar SPEC inicial
 
 - Archivos afectados: `.specify/`.
 - Accion: leer los cuatro documentos SPEC y anotar dudas o cambios.
@@ -49,8 +50,9 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: `.specify/` creado.
 - Criterio de verificacion: acuerdos registrados y TODO principales identificados.
 - Comando de verificacion: no aplica.
+- Evidencia: SPEC actualizada con stack React + Vite, FastAPI previsto y Jira oficial.
 
-### [ ] T-0.3 Definir candidatos de dataset
+### [-] T-0.3 Definir candidatos de dataset
 
 - Archivos afectados: `.specify/2_spec.md`, `README.md`.
 - Accion: listar 2 o 3 datasets candidatos con target posible, fuente, ventajas y riesgos.
@@ -60,21 +62,23 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: T-0.2.
 - Criterio de verificacion: el equipo puede elegir dataset con criterios claros.
 - Comando de verificacion: no aplica.
+- Nota de estado: no aplica ya como tarea activa; el dataset definitivo de reservas hoteleras ya fue seleccionado.
 
-### [ ] T-0.4 Disenar mock funcional de app
+### [x] T-0.4 Disenar mock funcional de app
 
-- Archivos afectados: `docs/` o tablero.
+- Archivos afectados: `app/frontend/`, `.specify/2_spec.md`.
 - Accion: definir pantallas minimas de app: formulario, resultado, feedback y version de modelo.
 - Responsable sugerido: I2.
 - Dificultad: baja.
 - Apto junior: con apoyo visual.
-- Dependencias: T-0.3 parcial.
+- Dependencias: dataset definitivo seleccionado.
 - Criterio de verificacion: flujo de app entendido por todo el equipo.
-- Comando de verificacion: no aplica.
+- Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
+- Evidencia: frontend React + Vite integrado en `app/frontend` y mergeado en `develop`.
 
 ## Fase 1 - Dataset y EDA
 
-### [ ] T-1.1 Elegir dataset definitivo
+### [x] T-1.1 Elegir dataset definitivo
 
 - Archivos afectados: `.specify/2_spec.md`, `README.md`, `data/raw/` si aplica.
 - Accion: seleccionar dataset, documentar fuente y forma de descarga.
@@ -83,9 +87,10 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: no como responsable unico.
 - Dependencias: T-0.3.
 - Criterio de verificacion: dataset accesible y target posible.
-- Comando de verificacion: TODO: definir cuando exista estructura del proyecto.
+- Comando de verificacion: `ls data/raw`.
+- Evidencia: dataset de reservas hoteleras disponible en `data/raw/`.
 
-### [ ] T-1.2 Definir target y clases
+### [~] T-1.2 Definir target y clases
 
 - Archivos afectados: `.specify/2_spec.md`, `reports/model_report.md`.
 - Accion: documentar columna target, clases, distribucion y posible desbalance.
@@ -93,10 +98,11 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dificultad: media.
 - Apto junior: con apoyo en documentacion.
 - Dependencias: T-1.1.
-- Criterio de verificacion: target aceptado por el equipo.
+- Criterio de verificacion: target aceptado por el equipo y distribucion documentada.
 - Comando de verificacion: TODO.
+- Nota de estado: target definido como `booking_status`; queda cerrar distribucion y desbalance en informe tecnico.
 
-### [ ] T-1.3 Crear diccionario de datos
+### [x] T-1.3 Crear diccionario de datos
 
 - Archivos afectados: `reports/`, `README.md`.
 - Accion: listar columnas, tipo de dato, descripcion, rol y si entra al modelo.
@@ -106,8 +112,9 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: T-1.1.
 - Criterio de verificacion: todas las columnas relevantes estan clasificadas.
 - Comando de verificacion: no aplica.
+- Evidencia: existe `reports/data_dictionary.md`.
 
-### [ ] T-1.4 Realizar EDA inicial
+### [~] T-1.4 Realizar EDA inicial
 
 - Archivos afectados: `notebooks/`, `reports/figures/`, `reports/model_report.md`.
 - Accion: analizar nulos, duplicados, distribuciones, target, correlaciones y relaciones con target.
@@ -117,6 +124,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: T-1.1, T-1.2.
 - Criterio de verificacion: existen graficos relevantes para clasificacion.
 - Comando de verificacion: TODO.
+- Nota de estado: existen notebooks iniciales de inspeccion y EDA; queda convertir resultados clave en informe y figuras finales.
 
 ### [ ] T-1.5 Interpretar graficos para negocio
 
@@ -175,7 +183,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Criterio de verificacion: diferencia < 0.05 o bloqueo documentado.
 - Comando de verificacion: TODO.
 
-### [ ] T-2.5 Crear app minima de prediccion
+### [~] T-2.5 Crear app minima de prediccion
 
 - Archivos afectados: `app/`, `README.md`.
 - Accion: crear formulario, cargar modelo y devolver prediccion.
@@ -184,7 +192,8 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: no.
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
-- Comando de verificacion: TODO: comando de ejecucion de app.
+- Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
+- Nota de estado: existe app frontend con prediccion mock; falta conectar modelo real y backend FastAPI.
 
 ### [ ] T-2.6 Validacion manual de app
 
@@ -311,9 +320,9 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Criterio de verificacion: datos persisten tras reiniciar app.
 - Comando de verificacion: TODO.
 
-### [ ] T-4.5 Documentar instalacion y ejecucion
+### [~] T-4.5 Documentar instalacion y ejecucion
 
-- Archivos afectados: `README.md`.
+- Archivos afectados: `README.md`, `docs/project_management/`.
 - Accion: escribir pasos para entorno local, app, tests y Docker.
 - Responsable sugerido: I4 con revision de I2 e I3.
 - Dificultad: baja.
@@ -321,6 +330,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
 - Comando de verificacion: ejecutar comandos documentados.
+- Nota de estado: documentada ejecucion parcial de frontend y entorno local; queda backend, tests y Docker.
 
 ## Fase 5 - Nivel Experto
 
