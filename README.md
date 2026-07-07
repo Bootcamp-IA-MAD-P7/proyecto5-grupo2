@@ -80,12 +80,14 @@ Estado actual:
 - Frontend React integrado en `app/frontend`.
 - Metodología SPEC creada en `.specify/`.
 - Documentos de organización del proyecto creados en `docs/project_management/`.
+- Pipeline de prepocesamiento implementado y probado.
+- Baseline inicial entrenado con DummyClassifier y LogisticRegression.
+- Métricas registradas en reports/model_report.md.
+- Modelo baseline guardado en models/basaline/logistic_regression_baseline.pkl.
+- Figuras generadas en reports/figures/:matriz de confusion y curva ROC.
 
 Pendiente principal:
 
-- Definir métrica principal.
-- Consolidar pipeline de preprocesamiento.
-- Entrenar baseline reproducible.
 - Seleccionar Champion Model.
 - Crear backend de inferencia.
 - Conectar frontend con predicción real.
