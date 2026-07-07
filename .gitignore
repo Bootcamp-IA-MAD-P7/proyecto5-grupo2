@@ -22,3 +22,10 @@ Thumbs.db
 
 # KaggleHub local download metadata
 data/raw/**/.complete/
+
+# Frontend
+node_modules/
+dist/
+app/frontend/node_modules/
+app/frontend/dist/
+.env.local
