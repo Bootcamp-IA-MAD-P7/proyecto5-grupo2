@@ -149,7 +149,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Evidencia: `src/features/preprocessing.py` define columnas, target, exclusion de `Booking_ID`, split estratificado y `ColumnTransformer`.
 - Comando de verificacion: `python -m unittest tests.unit.test_preprocessing`.
 
-### [ ] T-2.2 Entrenar baseline
+### [x] T-2.2 Entrenar baseline
 
 - Archivos afectados: `src/models/`, `models/`, `reports/model_report.md`.
 - Accion: entrenar modelo simple y guardar metricas train-validacion.
@@ -158,9 +158,10 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: no como responsable unico.
 - Dependencias: T-2.1.
 - Criterio de verificacion: baseline registrado en tabla de experimentos.
-- Comando de verificacion: TODO.
+- Evidencia: `src/models/train_baseline.py` entrena `dummy_most_frequent` y `logistic_regression_balanced`; el modelo real queda guardado en `models/baseline/logistic_regression_baseline.pkl`.
+- Comando de verificacion: `python -m src.models.train_baseline` y `python -m unittest discover`.
 
-### [ ] T-2.3 Calcular metricas obligatorias
+### [x] T-2.3 Calcular metricas obligatorias
 
 - Archivos afectados: `src/evaluation/`, `reports/model_report.md`, `reports/figures/`.
 - Accion: calcular accuracy, precision, recall, F1, ROC-AUC, matriz de confusion y curva ROC si aplica.
@@ -169,9 +170,10 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: con apoyo para documentar resultados.
 - Dependencias: T-2.2.
 - Criterio de verificacion: metricas visibles en informe.
-- Comando de verificacion: TODO.
+- Evidencia: `reports/model_report.md` incluye accuracy, precision, recall, F1, ROC-AUC y conteos de matriz de confusion para train y validacion; `reports/figures/` incluye matriz de confusion y curva ROC.
+- Comando de verificacion: `python -m src.models.train_baseline` y `python -m unittest discover`.
 
-### [ ] T-2.4 Revisar overfitting inferior al 5%
+### [x] T-2.4 Revisar overfitting inferior al 5%
 
 - Archivos afectados: `reports/model_report.md`, tabla de experimentos.
 - Accion: comparar metrica principal en train y validacion.
@@ -180,7 +182,8 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: si para checklist, no para decision tecnica final.
 - Dependencias: T-2.3.
 - Criterio de verificacion: diferencia < 0.05 o bloqueo documentado.
-- Comando de verificacion: TODO.
+- Evidencia: `reports/model_report.md` documenta F1 train 0,6949, F1 validacion 0,6870 y gap 0,0079 para Logistic Regression.
+- Comando de verificacion: revisar seccion "Revision inicial de overfitting" en `reports/model_report.md` y ejecutar `python -m unittest discover`.
 
 ### [ ] T-2.5 Crear app minima de prediccion
 

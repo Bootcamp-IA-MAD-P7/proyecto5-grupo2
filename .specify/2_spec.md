@@ -179,6 +179,37 @@ Verificacion actual:
 - Comando: `python -m unittest tests.unit.test_preprocessing`.
 - Estado: el preprocessing transforma train y validacion sin errores y mantiene la distribucion del target en los splits.
 
+## Estado del baseline inicial
+
+Baseline reproducible implementado en `src/models/train_baseline.py`.
+
+Modelos evaluados:
+
+- `dummy_most_frequent`: referencia minima que siempre predice la clase mayoritaria.
+- `logistic_regression_balanced`: primer modelo real con el pipeline de preprocessing y pesos balanceados para el target.
+
+Resultados de validacion:
+
+- DummyClassifier: F1-score clase `Canceled` = 0,0000; ROC-AUC = 0,5000.
+- Logistic Regression: F1-score clase `Canceled` = 0,6870; ROC-AUC = 0,8604.
+- Gap train-validacion en F1 de Logistic Regression: 0,0079.
+- Resultado de overfitting: cumple la regla de diferencia inferior a 0,05.
+
+Evidencia:
+
+- Reporte tecnico: `reports/model_report.md`.
+- Modelo guardado: `models/baseline/logistic_regression_baseline.pkl`.
+- Matriz de confusion: `reports/figures/baseline_logistic_confusion_matrix.png`.
+- Curva ROC: `reports/figures/baseline_logistic_roc_curve.png`.
+- Comando: `python -m src.models.train_baseline`.
+- Pruebas automaticas: `tests/unit/test_baseline_training.py`.
+- Comando de pruebas: `python -m unittest discover`.
+
+Decision actual:
+
+- Logistic Regression queda como baseline inicial, no como Champion definitivo.
+- El test final queda reservado para evaluar candidatos posteriores de forma mas imparcial.
+
 ## Metricas obligatorias
 
 El informe tecnico debe incluir:
