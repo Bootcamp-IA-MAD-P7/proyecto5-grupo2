@@ -8,31 +8,58 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ### Added
 
-- Pull Request template for consistent reviews.
-- Initial changelog structure.
+- No unreleased changes yet.
 
 ### Changed
 
--
+- No unreleased changes yet.
 
 ### Fixed
 
--
+- No unreleased changes yet.
+
+## [v0.2.0-frontend-mock] - 2026-07-07
+
+### Added
+
+- React + Vite frontend in `app/frontend`.
+- Hotel Insights visual prototype with boutique hospitality look and feel.
+- Reservation form for cancellation-risk prediction inputs.
+- Mock prediction service to validate UX/UI before backend integration.
+- Result panel with probability, risk level, factors and recommendation.
+- Frontend execution documented in `README.md`.
+
+### Verified
+
+- Frontend build verified with:
+
+```bash
+cd app/frontend
+pnpm install
+pnpm build
+```
+
+## [v0.1.0-docs-foundation] - 2026-07-07
+
+### Added
+
+- Project vision documentation.
+- Git workflow documentation.
+- SDD and AI agents workflow documentation.
+- Delivery roadmap by project phase.
+- Professional project README.
+- SPEC 2 updated with React + Vite frontend, planned FastAPI backend and Jira board.
+- Pull Request template for consistent reviews.
+- Initial changelog structure.
+
+### Verified
+
+- Documentation merged through Pull Requests into `develop`.
+- Local `develop` checked clean after merges.
 
 ## Planned Milestones
 
-### v0.1.0-docs-foundation
-
-Documentation foundation:
-
-- Project vision.
-- Git workflow.
-- SDD and AI agents workflow.
-- Delivery roadmap.
-- Professional README.
-- SPEC alignment with React + FastAPI and Jira.
-
-### v0.2.0-eda
+### v0.3.0-data-eda
 
 Dataset and exploratory analysis:
 
@@ -41,15 +68,6 @@ Dataset and exploratory analysis:
 - EDA visualizations.
 - Target distribution.
 - Initial feature analysis.
-
-### v0.3.0-frontend-mock
-
-Frontend prototype:
-
-- React + Vite frontend.
-- Reservation form.
-- Mock prediction result.
-- UX/UI validation.
 
 ### v0.4.0-baseline
 
