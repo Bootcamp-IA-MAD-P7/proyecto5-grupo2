@@ -9,11 +9,17 @@ This project follows an incremental delivery approach. Versions and tags will be
 ### Added
 
 - Dataset status details in `.specify/2_spec.md`, including confirmed CSV path, row count, column count and target distribution.
+- Initial API contract in `docs/api_contract.md`.
+- Initial FastAPI backend structure in `app/backend`.
+- `GET /health` endpoint for backend availability checks.
+- Provisional `POST /predict` endpoint with mock response compatible with the current frontend.
+- Backend dependencies in `requirements.txt`: `fastapi`, `pydantic` and `uvicorn`.
 
 ### Changed
 
 - Replaced remaining Trello references with Jira in SPEC and agent prompt documentation.
 - Updated dataset-related SPEC notes now that the CSV is already available in `data/raw/`.
+- Updated SPEC status to reflect the merged backend API base.
 
 ### Fixed
 
