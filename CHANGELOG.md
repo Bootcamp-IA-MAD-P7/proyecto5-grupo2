@@ -15,6 +15,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Provisional `POST /predict` endpoint with mock response compatible with the current frontend.
 - Backend dependencies in `requirements.txt`: `fastapi`, `pydantic` and `uvicorn`.
 - Backend API smoke tests for `GET /health`, `POST /predict` and invalid payload validation.
+- GitHub Actions workflow for backend API tests.
 
 ### Changed
 
