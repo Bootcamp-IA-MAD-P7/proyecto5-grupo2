@@ -7,7 +7,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Repositorio: `proyecto5-grupo2`.
 - README inicial: actualizado con descripcion del proyecto, estructura, ejecucion del frontend, metodologia SPEC, flujo Git, roles y roadmap.
 - Dataset: Hotel Reservations Classification Dataset.
-- Archivo esperado: `Hotel Reservations.csv`.
+- Archivo incorporado: `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
 - Fuente de referencia: Kaggle, kernel `marawaneslam/hotel-reservations-classification`.
 - Ruta original en Kaggle: `/kaggle/input/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
 - Cliente del proyecto: plataforma de reservas hoteleras tipo Booking, Trivago o Agoda.
@@ -32,15 +32,23 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 
 Dataset definitivo: Hotel Reservations Classification Dataset.
 
-Archivo de trabajo esperado: `Hotel Reservations.csv`.
+Archivo de trabajo:
+
+```text
+data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv
+```
+
+Estado del archivo:
+
+- CSV incorporado en el repositorio.
+- Filas: 36.275.
+- Columnas: 19.
 
 Fuente de referencia:
 
 - Kaggle kernel: `marawaneslam/hotel-reservations-classification`.
 - Comando de referencia del kernel: `kaggle kernels pull marawaneslam/hotel-reservations-classification`.
 - Ruta usada en Kaggle: `/kaggle/input/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
-
-TODO: descargar o incorporar el CSV real en `data/raw/` y confirmar nombre exacto, columnas, filas, tipos de datos y clases del target.
 
 ### Criterios para elegir dataset
 
@@ -64,9 +72,11 @@ Debe documentarse:
 
 - Nombre de columna: `booking_status`.
 - Clases esperadas: `Canceled` y `Not_Canceled`.
-- Distribucion de clases: TODO: calcular al cargar el CSV.
-- Si hay desbalance: TODO: revisar con `value_counts(normalize=True)`.
-- Si se requiere binarizacion o agrupacion: inicialmente no, pendiente de confirmar con el CSV.
+- Distribucion de clases:
+  - `Not_Canceled`: 24.390 registros, 67,24%.
+  - `Canceled`: 11.885 registros, 32,76%.
+- Desbalance: moderado. La clase mayoritaria es `Not_Canceled`, por lo que se recomienda vigilar precision, recall y F1, no solo accuracy.
+- Si se requiere binarizacion o agrupacion: no se requiere; el target ya es binario.
 - Justificacion: es una variable categorica que indica el resultado historico de la reserva, por lo que permite entrenar un modelo de clasificacion supervisada.
 
 ### Features esperadas
@@ -95,7 +105,31 @@ Columna candidata a excluir:
 
 - `Booking_ID`: identificador de reserva sin valor predictivo generalizable.
 
-TODO: confirmar columnas exactas, tipos y posibles exclusiones despues de cargar el CSV.
+Columnas confirmadas en el CSV:
+
+- `Booking_ID`.
+- `no_of_adults`.
+- `no_of_children`.
+- `no_of_weekend_nights`.
+- `no_of_week_nights`.
+- `type_of_meal_plan`.
+- `required_car_parking_space`.
+- `room_type_reserved`.
+- `lead_time`.
+- `arrival_year`.
+- `arrival_month`.
+- `arrival_date`.
+- `market_segment_type`.
+- `repeated_guest`.
+- `no_of_previous_cancellations`.
+- `no_of_previous_bookings_not_canceled`.
+- `avg_price_per_room`.
+- `no_of_special_requests`.
+- `booking_status`.
+
+Exclusion inicial confirmada:
+
+- `Booking_ID`: identificador de reserva sin valor predictivo generalizable.
 
 La seleccion de features debe clasificar columnas en:
 

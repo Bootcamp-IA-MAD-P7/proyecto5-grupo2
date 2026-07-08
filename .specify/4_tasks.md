@@ -1,6 +1,6 @@
 # SPEC 4 - Tasks
 
-Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket debe moverse de estado solo cuando su criterio de verificacion este cumplido.
+Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de estado solo cuando su criterio de verificacion este cumplido.
 
 ## Protocolo de ejecucion
 
@@ -438,7 +438,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 ### [ ] T-6.5 Checklist final de consigna
 
 - Archivos afectados: `README.md`, `reports/`, `.specify/4_tasks.md`.
-- Accion: revisar app, GitHub, informe, presentaciones, Trello, Docker, tests y niveles alcanzados.
+- Accion: revisar app, GitHub, informe, presentaciones, Jira, Docker, tests y niveles alcanzados.
 - Responsable sugerido: I4 con revision de todo el equipo.
 - Dificultad: baja.
 - Apto junior: si.

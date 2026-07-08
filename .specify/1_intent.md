@@ -72,7 +72,7 @@ La capa experta debe ser incremental. Si no mejora el sistema esencial, se docum
 - Documentar decisiones tecnicas relevantes.
 - Verificar cada entrega con comandos, capturas o evidencia reproducible.
 - No mezclar cambios de produccion con cambios de planificacion.
-- Mantener el README y Trello alineados con el estado real.
+- Mantener el README y Jira alineados con el estado real.
 
 ## Manejo de distintos niveles tecnicos
 
@@ -83,7 +83,7 @@ Distribucion sugerida:
 - Integrante 1 - ML Core: dataset, EDA, preprocessing, baseline, ensemble y Champion Model.
 - Integrante 2 - App / Producto: app, formulario, prediccion, feedback, almacenamiento y dashboard simple.
 - Integrante 3 - MLOps / Experto: Docker, tests tecnicos, red neuronal, A/B Testing, drift y auto-reemplazo.
-- Integrante 4 - QA / Docs / Presentacion: Trello, README, checklist, tabla de experimentos, capturas, validacion manual, presentacion de negocio y apoyo en interpretacion de metricas.
+- Integrante 4 - QA / Docs / Presentacion: Jira, README, checklist, tabla de experimentos, capturas, validacion manual, presentacion de negocio y apoyo en interpretacion de metricas.
 
 El integrante junior puede ejecutar tareas guiadas con criterios de verificacion claros. No debe ser responsable unico de:
 

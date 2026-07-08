@@ -8,15 +8,16 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ### Added
 
-- No unreleased changes yet.
+- Dataset status details in `.specify/2_spec.md`, including confirmed CSV path, row count, column count and target distribution.
 
 ### Changed
 
-- No unreleased changes yet.
+- Replaced remaining Trello references with Jira in SPEC and agent prompt documentation.
+- Updated dataset-related SPEC notes now that the CSV is already available in `data/raw/`.
 
 ### Fixed
 
-- No unreleased changes yet.
+- Removed obsolete dataset TODOs from `.specify/2_spec.md`.
 
 ## [v0.2.0-frontend-mock] - 2026-07-07
 

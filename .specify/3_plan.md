@@ -7,7 +7,7 @@ Este plan organiza el trabajo por fases verificables y frentes permanentes. Cada
 - ML Core: dataset, EDA, preprocessing, baseline, ensemble y Champion Model.
 - App / Producto: app, formulario, inferencia, feedback, almacenamiento y demo.
 - MLOps / Experto: Docker, tests, red neuronal, A/B Testing, drift y auto-reemplazo.
-- QA / Documentacion / Presentacion: SPEC, Trello, README, checklist, informe, capturas, validacion manual y presentaciones.
+- QA / Documentacion / Presentacion: SPEC, Jira, README, checklist, informe, capturas, validacion manual y presentaciones.
 
 ## Regla de prioridad
 
@@ -24,19 +24,19 @@ Dejar listo el contrato de trabajo, tablero y acuerdos minimos antes de programa
 - ML Core: define criterios de dataset y target candidato.
 - App / Producto: define tecnologia candidata de app y mock inicial.
 - MLOps / Experto: define arquitectura Champion/Challenger.
-- QA / Docs: crea Trello, checklist y mantiene `.specify/`.
+- QA / Docs: mantiene Jira, checklist y `.specify/`.
 
 ### Tareas paralelas
 
 - ML Core: revisar datasets candidatos y documentar pros/contras.
 - App / Producto: dibujar flujo de app sin implementar.
 - MLOps / Experto: proponer ciclo de modelos y versiones.
-- QA / Docs: pasar tickets iniciales a Trello y preparar README base.
+- QA / Docs: pasar tickets iniciales a Jira y preparar README base.
 
 ### Entregables
 
 - `.specify/` creado.
-- Trello o herramienta equivalente.
+- Jira como herramienta oficial de gestion.
 - README con descripcion inicial.
 - Decision pendiente o tomada sobre dataset.
 
@@ -279,7 +279,7 @@ Congelar version final, verificar entregables y preparar presentaciones.
 - Informe tecnico.
 - Presentacion de negocio.
 - Presentacion tecnica.
-- Enlace a Trello.
+- Enlace a Jira.
 - Demo final.
 
 ### Verificacion
