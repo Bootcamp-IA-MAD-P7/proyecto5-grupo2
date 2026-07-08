@@ -18,7 +18,8 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con prediccion mock para validar UX/UI.
-- Backend actual: TODO, previsto en `app/backend` con endpoint `POST /predict`.
+- Backend actual: existe API FastAPI inicial en `app/backend` con `GET /health` y `POST /predict` mock compatible con el frontend.
+- Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
 ## Tipo de problema
@@ -352,7 +353,9 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   |   |-- package.json
 |   |   `-- vite.config.js
 |   `-- backend/
-|       `-- TODO: FastAPI app con endpoint POST /predict
+|       |-- __init__.py
+|       |-- main.py
+|       `-- schemas.py
 |-- data/
 |   |-- raw/
 |   |-- interim/
@@ -465,9 +468,15 @@ Docker debe permitir:
 - Exponer el puerto de la app.
 - Documentar el comando de ejecucion.
 
-Tecnologia de app definida: frontend React + Vite y backend de inferencia previsto con FastAPI.
+Tecnologia de app definida: frontend React + Vite y backend de inferencia con FastAPI.
 
-TODO: definir puertos finales, Dockerfile y `docker-compose.yml` cuando exista backend funcional y modelo Champion.
+Backend inicial disponible:
+
+- `GET /health`.
+- `POST /predict` con respuesta mock.
+- Contrato documentado en `docs/api_contract.md`.
+
+TODO: definir puertos finales, Dockerfile y `docker-compose.yml` cuando exista integracion con modelo Champion o se decida dockerizar la version mock.
 
 ## Documentacion e informes
 
