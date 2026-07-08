@@ -141,7 +141,15 @@ Cada PR debe incluir:
 - Cómo se ha verificado.
 - Qué queda pendiente.
 
-Plantilla mínima:
+El repositorio incluye una plantilla automatica en:
+
+```text
+.github/pull_request_template.md
+```
+
+GitHub la muestra al crear un Pull Request cuando la rama base existe en la rama por defecto del repositorio. Durante el desarrollo, la rama por defecto recomendada es `develop`.
+
+Plantilla minima esperada:
 
 ```markdown
 ## Summary
@@ -185,32 +193,54 @@ Si hay conflictos, se resuelven localmente y se hace commit del merge.
 
 Para el equipo, `merge` es más fácil de entender que `rebase`.
 
-## 9. Tags
+## 9. Changelog
+
+El repositorio incluye:
+
+```text
+CHANGELOG.md
+```
+
+El changelog sirve para explicar los hitos del proyecto en lenguaje claro. No es automatico: se actualiza cuando el equipo cierra una fase relevante o crea una version.
+
+Uso recomendado:
+
+- Antes de crear un tag, actualizar `CHANGELOG.md`.
+- Agrupar cambios por version o hito.
+- Mantener una seccion `Unreleased` para lo que esta integrado en `develop` pero aun no tiene version.
+- No duplicar todos los commits; el changelog resume valor entregado.
+
+## 10. Tags
 
 Los tags se usarán solo para hitos importantes.
 
-Ejemplos:
+Tags ya creados:
 
 ```text
-v0.1.0-spec
-v0.2.0-eda
-v0.3.0-frontend
-v0.4.0-baseline
-v0.5.0-api
-v0.6.0-champion
+v0.1.0-docs-foundation
+v0.2.0-frontend-mock
+```
+
+Tags previstos:
+
+```text
+v0.3.0-data-eda
+v0.4.0-baseline-model
+v0.5.0-api-integration
+v0.6.0-champion-model
 v1.0.0-final
 ```
 
 Crear tag:
 
 ```bash
-git tag -a v0.3.0-frontend -m "Frontend React integrated"
-git push origin v0.3.0-frontend
+git tag -a v0.3.0-data-eda -m "Dataset and EDA milestone"
+git push origin v0.3.0-data-eda
 ```
 
 No se deben crear tags sin acuerdo del equipo.
 
-## 10. Flujo recomendado para este proyecto
+## 11. Flujo recomendado para este proyecto
 
 El flujo ideal será:
 
@@ -221,5 +251,7 @@ feature/... -> Pull Request -> develop -> release/tag -> main
 `main` queda protegida para entregas estables.
 
 `develop` concentra el trabajo integrado.
+
+Durante el desarrollo del proyecto, `develop` puede configurarse como rama por defecto en GitHub para que los Pull Requests se creen contra la rama correcta por defecto. Esto no sustituye a `main`: solo cambia la rama que GitHub muestra primero. Al final del proyecto, cuando `develop` este validada, se hara un merge controlado hacia `main`.
 
 Las ramas feature permiten revisar cambios sin interferir con el resto del equipo.

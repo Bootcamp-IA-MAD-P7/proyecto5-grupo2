@@ -313,8 +313,12 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   |-- 3_plan.md
 |   `-- 4_tasks.md
 |-- app/
-|   |-- main.py
-|   `-- components/
+|   |-- frontend/
+|   |   |-- src/
+|   |   |-- package.json
+|   |   `-- vite.config.js
+|   `-- backend/
+|       `-- TODO: FastAPI app con endpoint POST /predict
 |-- data/
 |   |-- raw/
 |   |-- interim/
@@ -322,6 +326,7 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   `-- feedback/
 |-- docs/
 |   |-- business_presentation/
+|   |-- project_management/
 |   `-- technical_presentation/
 |-- models/
 |   |-- champion/
@@ -337,6 +342,9 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   |-- evaluation/
 |   `-- mlops/
 |-- tests/
+|-- .github/
+|   `-- pull_request_template.md
+|-- CHANGELOG.md
 |-- Dockerfile
 |-- docker-compose.yml
 |-- requirements.txt
@@ -423,7 +431,9 @@ Docker debe permitir:
 - Exponer el puerto de la app.
 - Documentar el comando de ejecucion.
 
-TODO: definir puerto y tecnologia de app.
+Tecnologia de app definida: frontend React + Vite y backend de inferencia previsto con FastAPI.
+
+TODO: definir puertos finales, Dockerfile y `docker-compose.yml` cuando exista backend funcional y modelo Champion.
 
 ## Documentacion e informes
 
@@ -435,7 +445,7 @@ El proyecto debe incluir:
 - Capturas de app.
 - Presentacion de negocio.
 - Presentacion tecnica del codigo.
-- Enlace a Trello o herramienta equivalente.
+- Enlace al tablero Jira oficial.
 
 ## Criterios de cierre por nivel
 
