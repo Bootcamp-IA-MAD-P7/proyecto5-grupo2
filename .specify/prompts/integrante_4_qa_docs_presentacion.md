@@ -6,7 +6,7 @@ Mi rol en el proyecto es Integrante 4 - QA / Docs / Presentacion.
 Tengo un perfil tecnico bajo, asi que debes ayudarme con tareas utiles, claras y verificables, sin hacerme responsable unico de componentes criticos.
 
 Debes ayudarme con:
-- Trello o tablero de tareas.
+- Jira o tablero oficial de tareas.
 - Checklist de entregables.
 - README.
 - Diccionario de datos.
