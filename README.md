@@ -100,10 +100,9 @@ Estado actual:
 
 Pendiente principal:
 
-- Completar explicación de performance con feature importance y análisis de errores.
 - Validar manualmente la app con entradas reales y capturas.
 - Seleccionar Champion Model si se decide promocionar el challenger.
-- Completar informe técnico.
+- Revisar el informe técnico final antes de la entrega.
 - Validar Docker con el baseline real integrado.
 
 ---
@@ -544,7 +543,7 @@ Leyenda:
 | [~] | EDA con visualizaciones relevantes para clasificación | Notebooks iniciales de inspección y EDA en `notebooks/`; diccionario en `reports/data_dictionary.md`. | Cerrar conclusiones de negocio, visualizaciones finales y análisis de desbalance. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest gap F1 `0.0186`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
 | [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y baseline real integrado. | Validación manual y despliegue posterior. |
-| [~] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC y overfitting documentados en `reports/model_report.md`. | Añadir feature importance y análisis de errores. |
+| [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
 ### Nivel Medio
 
@@ -602,9 +601,8 @@ Prioridades inmediatas:
 2. Consolidar EDA y visualizaciones finales.
 3. Aplicar F1-score de la clase `Canceled` como métrica principal.
 4. Consolidar pipeline de preprocesamiento.
-5. Completar feature importance y análisis de errores.
-6. Validar manualmente frontend + backend + modelo real.
-7. Ampliar tests de preprocessing, modelo y métricas.
+5. Validar manualmente frontend + backend + modelo real.
+6. Ampliar tests de preprocessing, modelo y métricas.
 10. Preparar informe técnico.
 11. Preparar presentación de negocio y presentación técnica.
 12. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.

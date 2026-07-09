@@ -24,6 +24,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Additional API contract tests for model info and model version consistency.
 - Real baseline inference in `POST /predict` using `models/baseline/logistic_regression_baseline.pkl`.
 - Arrival date fields in the API and frontend prediction payload to match the trained model feature contract.
+- Model diagnostics script for baseline coefficient importance and validation error analysis.
 
 ### Changed
 
@@ -34,6 +35,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Defined F1-score of the `Canceled` class as the primary model metric in SPEC, roadmap and README.
 - Updated API contract and README with model info endpoint.
 - Updated API contract, SPEC tasks and README to reflect real baseline inference instead of mock backend prediction.
+- Updated `reports/model_report.md` with feature importance, error analysis, limitations and next-step interpretation.
 
 ### Fixed
 

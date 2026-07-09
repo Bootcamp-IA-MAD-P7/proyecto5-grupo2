@@ -174,8 +174,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: con apoyo para documentar resultados.
 - Dependencias: T-2.2.
 - Criterio de verificacion: metricas visibles en informe.
-- Evidencia: `reports/model_report.md` incluye accuracy, precision, recall, F1, ROC-AUC y conteos de matriz de confusion para train y validacion; `reports/figures/` incluye matriz de confusion y curva ROC.
-- Comando de verificacion: `python -m src.models.train_baseline` y `python -m unittest discover`.
+- Evidencia: `reports/model_report.md` incluye accuracy, precision, recall, F1, ROC-AUC, conteos de matriz de confusion, feature importance equivalente y analisis de errores; `reports/figures/` incluye matriz de confusion y curva ROC.
+- Comando de verificacion: `python -m src.models.train_baseline`, `python -m src.evaluation.model_diagnostics` y `python -m pytest`.
 
 ### [x] T-2.4 Revisar overfitting inferior al 5%
 
