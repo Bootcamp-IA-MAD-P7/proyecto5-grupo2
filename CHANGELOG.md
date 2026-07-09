@@ -26,6 +26,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Updated dataset-related SPEC notes now that the CSV is already available in `data/raw/`.
 - Updated SPEC status to reflect the merged backend API base.
 - Updated `README.md` with delivery-level progress against the project briefing.
+- Defined F1-score of the `Canceled` class as the primary model metric in SPEC, roadmap and README.
 
 ### Fixed
 

@@ -92,6 +92,7 @@ Incluye:
 
 - Pipeline de preprocesamiento.
 - Baseline ML.
+- Métrica principal: F1-score de la clase `Canceled`.
 - Métricas obligatorias.
 - Control de overfitting.
 - App funcional.
@@ -111,14 +112,18 @@ Criterio de cierre:
 
 - La app funciona.
 - El modelo predice.
-- El overfitting está por debajo del 5% o queda documentado como bloqueo.
+- El overfitting medido con F1-score de la clase `Canceled` está por debajo del 5% o queda documentado como bloqueo.
 - Otra persona puede ejecutar el proyecto siguiendo el README.
 
 Estado actual:
 
 - Frontend React + Vite integrado en `app/frontend`.
 - App mock valida flujo visual y experiencia de producto.
-- Pendiente: modelo real, backend FastAPI, endpoint `POST /predict` e integracion frontend-backend.
+- Backend FastAPI inicial integrado en `app/backend`.
+- Contrato API inicial documentado en `docs/api_contract.md`.
+- Endpoint `GET /health` y `POST /predict` mock disponibles.
+- Docker local inicial preparado para frontend y backend.
+- Pendiente: modelo real e integracion frontend-backend contra inferencia real.
 
 ## 6. Fase 3 - Nivel medio
 
@@ -146,7 +151,7 @@ Entregables:
 
 Criterio de cierre:
 
-- Champion supera o justifica su elección frente al baseline.
+- Champion supera o justifica su elección frente al baseline usando F1-score de la clase `Canceled` como métrica principal.
 - Champion cumple overfitting inferior al 5%.
 - La app muestra versión del modelo y permite registrar feedback.
 

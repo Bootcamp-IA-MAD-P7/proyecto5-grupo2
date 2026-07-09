@@ -76,6 +76,7 @@ Estado actual:
 
 - Dataset incorporado en `data/raw/`.
 - Target definido como `booking_status`.
+- Métrica principal definida: F1-score de la clase `Canceled`.
 - Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
 - Notebooks iniciales de inspección y EDA disponibles en `notebooks/`.
 - Frontend React + Vite integrado en `app/frontend`.
@@ -98,10 +99,10 @@ Pendiente principal:
 
 - Cerrar distribución del target y posible desbalance.
 - Consolidar visualizaciones finales de EDA.
-- Definir métrica principal.
 - Consolidar pipeline de preprocesamiento.
 - Entrenar baseline reproducible.
-- Registrar métricas y overfitting.
+- Registrar métricas usando F1-score de la clase `Canceled` como métrica principal.
+- Verificar overfitting con F1-score de la clase `Canceled`.
 - Seleccionar Champion Model.
 - Conectar frontend con predicción real.
 - Completar informe técnico.
@@ -540,11 +541,11 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [ ] | Modelo funcional de clasificación | Dataset y target definidos. | Entrenar baseline reproducible y seleccionar modelo inicial. |
+| [ ] | Modelo funcional de clasificación | Dataset, target y métrica principal definidos. | Entrenar baseline reproducible y seleccionar modelo inicial. |
 | [~] | EDA con visualizaciones relevantes para clasificación | Notebooks iniciales de inspección y EDA en `notebooks/`; diccionario en `reports/data_dictionary.md`. | Cerrar conclusiones de negocio, visualizaciones finales y análisis de desbalance. |
-| [ ] | Overfitting inferior al 5% | Criterio documentado como requisito del proyecto. | Medir diferencia entre entrenamiento y validación cuando exista modelo. |
+| [ ] | Overfitting inferior al 5% | Regla documentada usando F1-score de `Canceled` como métrica principal. | Medir diferencia entre entrenamiento y validación cuando exista modelo. |
 | [~] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, Docker local y respuesta mock. | Sustituir mock por inferencia real del modelo. |
-| [ ] | Informe técnico de rendimiento | Estructura documental y roadmap creados. | Añadir métricas de clasificación, matriz de confusión, ROC, feature importance y análisis de errores. |
+| [ ] | Informe técnico de rendimiento | Estructura documental, roadmap y métrica principal definidos. | Añadir métricas de clasificación, matriz de confusión, ROC, feature importance y análisis de errores. |
 
 ### Nivel Medio
 
@@ -600,7 +601,7 @@ Prioridades inmediatas:
 
 1. Cerrar distribución del target y desbalance.
 2. Consolidar EDA y visualizaciones finales.
-3. Definir métrica principal.
+3. Aplicar F1-score de la clase `Canceled` como métrica principal.
 4. Consolidar pipeline de preprocesamiento.
 5. Entrenar baseline reproducible.
 6. Registrar métricas y overfitting.

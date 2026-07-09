@@ -153,7 +153,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 ### [ ] T-2.2 Entrenar baseline
 
 - Archivos afectados: `src/models/`, `models/`, `reports/model_report.md`.
-- Accion: entrenar modelo simple y guardar metricas train-validacion.
+- Accion: entrenar modelo simple y guardar metricas train-validacion, usando F1-score de la clase `Canceled` como metrica principal.
 - Responsable sugerido: I1.
 - Dificultad: media.
 - Apto junior: no como responsable unico.
@@ -164,7 +164,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 ### [ ] T-2.3 Calcular metricas obligatorias
 
 - Archivos afectados: `src/evaluation/`, `reports/model_report.md`, `reports/figures/`.
-- Accion: calcular accuracy, precision, recall, F1, ROC-AUC, matriz de confusion y curva ROC si aplica.
+- Accion: calcular F1-score de la clase `Canceled` como metrica principal, junto con accuracy, precision, recall, ROC-AUC, matriz de confusion y curva ROC si aplica.
 - Responsable sugerido: I1.
 - Dificultad: media.
 - Apto junior: con apoyo para documentar resultados.
@@ -175,7 +175,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 ### [ ] T-2.4 Revisar overfitting inferior al 5%
 
 - Archivos afectados: `reports/model_report.md`, tabla de experimentos.
-- Accion: comparar metrica principal en train y validacion.
+- Accion: comparar F1-score de la clase `Canceled` en train y validacion.
 - Responsable sugerido: I1 con QA de I4.
 - Dificultad: media.
 - Apto junior: si para checklist, no para decision tecnica final.
