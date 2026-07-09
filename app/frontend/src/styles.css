@@ -1,26 +1,84 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap");
+/* =============================================================================
+   HOTEL INSIGHTS — ESTILOS GLOBALES
+   =============================================================================
+   Este archivo es como un "cajón de pinturas" donde guardamos todos los colores
+   y estilos de la página. Si quieres cambiar un color, solo lo cambias aquí
+   y se actualiza en TODA la página automáticamente.
+   
+   RAMA: feature/frontend-nueva-paleta-colores
+   FECHA: 2026-07-09
+   ============================================================================= */
 
+/* =============================================================================
+   FUENTES DE GOOGLE
+   =============================================================================
+   Importamos dos fuentes:
+   - Poppins: para títulos grandes (la fuente moderna del diseño)
+   - Inter: para textos normales (la fuente del cuerpo)
+   ============================================================================= */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap");
+
+/* =============================================================================
+   VARIABLES GLOBALES (:root)
+   =============================================================================
+   Aquí definimos los "nombres" de los colores. Es como poner etiquetas a los
+   botes de pintura. Luego usamos esas etiquetas en cualquier parte del código.
+   
+   PALETA NUEVA (del diseño de la imagen):
+   - Principal oscuro:   #0D3B3B  (fondos oscuros, navbar, hero)
+   - Secundario:         #157A6E  (barras, iconos, títulos de grupo)
+   - Acento:             #3FB4A7  (enlaces, highlights, subtítulos)
+   - Fondos suaves:      #A7D9CF  (secciones, tarjetas, recomendaciones)
+   - Éxito/Positivo:     #C6E7C0  (riesgo bajo, "no cancelada")
+   - Alerta/Cancelación: #FF6F7D  (riesgo alto, "cancelada", botón)
+   - Texto principal:    #111111  (texto normal, alta legibilidad)
+   
+   CAMBIO 1: El fondo general ahora es blanco neutro en vez de crema amarillento.
+   Esto hace que la página se vea más limpia y profesional, acorde al diseño.
+   ============================================================================= */
 :root {
   color-scheme: light;
-  --ink: #17201b;
-  --muted: #6d756f;
-  --paper: #fbf7ef;
-  --cream: #f4ead8;
-  --moss: #415844;
-  --jade: #0d6b5f;
-  --olive: #6f8d62;
-  --clay: #b65f3f;
-  --rose: #7d3941;
-  --gold: #c9a35d;
-  --sand: #d9b56f;
-  --sky: #9bb7b1;
-  --line: rgba(23, 32, 27, 0.14);
-  --shadow: 0 24px 70px rgba(25, 21, 14, 0.18);
+
+  /* --- COLORES NUEVOS DE LA PALETA --- */
+  --principal: #0D3B3B;
+  --secundario: #157A6E;
+  --acento: #3FB4A7;
+  --fondo-suave: #A7D9CF;
+  --exito: #C6E7C0;
+  --alerta: #FF6F7D;
+  --texto-principal: #111111;
+
+  /* --- COLORES ANTIGUOS (mantenemos nombres para no romper el código) --- */
+  --ink: #111111;              /* Texto principal (antes #17201b) */
+  --muted: #6d756f;            /* Texto gris/secundario */
+  /* CAMBIO 1: --paper ahora es blanco neutro en vez de crema amarillento */
+  --paper: #f8f9fa;            /* Antes #fbf7ef, ahora blanco neutro */
+  --cream: #f4ead8;            /* Se mantiene para elementos que lo necesiten */
+  --moss: #157A6E;             /* Antes #415844, ahora Secundario */
+  --jade: #0D3B3B;             /* Antes #0d6b5f, ahora Principal oscuro */
+  --olive: #6f8d62;            /* Se mantiene similar */
+  --clay: #FF6F7D;             /* Antes #b65f3f, ahora Alerta/Coral */
+  --rose: #FF6F7D;             /* Antes #7d3941, ahora Alerta/Coral */
+  --gold: #157A6E;             /* Antes #c9a35d (dorado), ahora Secundario */
+  --sand: #3FB4A7;             /* Antes #d9b56f (arena), ahora Acento */
+  --sky: #A7D9CF;              /* Antes #9bb7b1, ahora Fondo suave */
+
+  /* --- UTILIDADES --- */
+  --line: rgba(17, 17, 17, 0.14);   /* Líneas divisorias */
+  --shadow: 0 24px 70px rgba(25, 21, 14, 0.18);  /* Sombra de tarjetas */
+
+  /* --- FUENTE BASE --- */
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--paper);
   color: var(--ink);
 }
 
+/* =============================================================================
+   RESETEO BÁSICO
+   =============================================================================
+   Estas reglas "resetean" estilos por defecto del navegador para que todo
+   se vea igual en Chrome, Firefox, Safari, etc.
+   ============================================================================= */
 * {
   box-sizing: border-box;
 }
@@ -29,12 +87,20 @@ html {
   scroll-behavior: smooth;
 }
 
+/* =============================================================================
+   BODY (el cuerpo de la página)
+   =============================================================================
+   El fondo tiene un degradado suave. El color del centro es el Acento
+   (#3FB4A7) en vez del dorado antiguo.
+   
+   CAMBIO 1: El fondo base ahora es blanco neutro, no crema amarillento.
+   ============================================================================= */
 body {
   margin: 0;
   min-width: 320px;
   background:
-    linear-gradient(180deg, rgba(251, 247, 239, 0) 0%, var(--paper) 42%),
-    radial-gradient(circle at 18% 22%, rgba(201, 163, 93, 0.16), transparent 32%),
+    linear-gradient(180deg, rgba(248, 249, 250, 0) 0%, var(--paper) 42%),
+    radial-gradient(circle at 18% 22%, rgba(63, 180, 167, 0.16), transparent 32%),
     var(--paper);
 }
 
@@ -49,10 +115,19 @@ a {
   text-decoration: none;
 }
 
+/* =============================================================================
+   SHELL PRINCIPAL
+   ============================================================================= */
 .app-shell {
   overflow: hidden;
 }
 
+/* =============================================================================
+   BARRA DE NAVEGACIÓN (TOPBAR)
+   =============================================================================
+   Barra fija arriba con efecto "vidrio esmerilado" (backdrop-filter).
+   El fondo ahora es el Principal oscuro (#0D3B3B) en vez del negro.
+   ============================================================================= */
 .topbar {
   position: fixed;
   top: 22px;
@@ -68,11 +143,14 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.42);
   border-radius: 999px;
   padding: 12px 14px 12px 18px;
-  background: rgba(15, 25, 23, 0.64);
+  background: rgba(13, 59, 59, 0.85);
   color: #fffaf2;
   backdrop-filter: blur(18px);
 }
 
+/* =============================================================================
+   HELPERS DE FLEX
+   ============================================================================= */
 .brand,
 .nav-links,
 .hero-kicker,
@@ -85,6 +163,9 @@ legend,
   align-items: center;
 }
 
+/* =============================================================================
+   MARCA / LOGO
+   ============================================================================= */
 .brand {
   gap: 14px;
   font-weight: 700;
@@ -106,6 +187,9 @@ legend,
   font-weight: 700;
 }
 
+/* =============================================================================
+   BOTONES Y MARCAS
+   ============================================================================= */
 .brand-mark,
 .icon-button,
 .primary-action,
@@ -116,21 +200,30 @@ legend,
   justify-content: center;
 }
 
+/* =============================================================================
+   LOGO CIRCULAR (BRAND MARK)
+   =============================================================================
+   El círculo del logo con las letras "HI". Ahora usa el Acento (#3FB4A7) y el
+   Secundario (#157A6E) en su degradado, y la fuente Poppins.
+   ============================================================================= */
 .brand-mark {
   width: 54px;
   height: 54px;
   border: 1px solid rgba(255, 250, 242, 0.72);
   border-radius: 50%;
   background:
-    linear-gradient(135deg, rgba(255, 247, 233, 0.94), rgba(217, 181, 111, 0.86)),
+    linear-gradient(135deg, rgba(63, 180, 167, 0.94), rgba(21, 122, 110, 0.86)),
     var(--cream);
-  color: #17201b;
-  font-family: "Playfair Display", Georgia, serif;
+  color: #111111;
+  font-family: "Poppins", sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0;
 }
 
+/* =============================================================================
+   ENLACES DE NAVEGACIÓN
+   ============================================================================= */
 .nav-links {
   gap: 10px;
   color: rgba(255, 250, 242, 0.82);
@@ -152,6 +245,9 @@ legend,
   color: #fffaf2;
 }
 
+/* =============================================================================
+   BOTÓN DE MENÚ MÓVIL
+   ============================================================================= */
 .icon-button {
   width: 56px;
   height: 56px;
@@ -162,6 +258,12 @@ legend,
   margin-left: 18px;
 }
 
+/* =============================================================================
+   SECCIÓN HERO (la parte de arriba con el video)
+   =============================================================================
+   El fondo oscuro del hero ahora usa el Principal oscuro (#0D3B3B) en vez
+   del negro puro.
+   ============================================================================= */
 .hero {
   position: relative;
   display: grid;
@@ -186,8 +288,8 @@ legend,
 
 .hero-overlay {
   background:
-    linear-gradient(90deg, rgba(12, 18, 14, 0.82), rgba(12, 18, 14, 0.34) 58%, rgba(12, 18, 14, 0.76)),
-    linear-gradient(0deg, rgba(12, 18, 14, 0.72), transparent 48%);
+    linear-gradient(90deg, rgba(13, 59, 59, 0.88), rgba(13, 59, 59, 0.40) 58%, rgba(13, 59, 59, 0.82)),
+    linear-gradient(0deg, rgba(13, 59, 59, 0.78), transparent 48%);
 }
 
 .hero-inner {
@@ -205,11 +307,19 @@ legend,
   width: min(800px, 100%);
 }
 
+/* =============================================================================
+   ETIQUETAS Y SUBTÍTULOS (KICKER, EYEBROW)
+   =============================================================================
+   CAMBIO 2: El color del kicker/eyebrow ahora es el Acento (#3FB4A7) en vez
+   del Secundario (#157A6E). Esto hace que "BOUTIQUE REVENUE DESK" se lea mucho
+   mejor sobre el fondo oscuro del hero.
+   ============================================================================= */
 .hero-kicker,
 .eyebrow,
 .section-heading span,
 .panel-label {
-  color: var(--gold);
+  /* CAMBIO 2: --gold era #157A6E (verde oscuro), ahora es --acento #3FB4A7 */
+  color: var(--acento);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -221,10 +331,16 @@ legend,
   margin-bottom: 20px;
 }
 
+/* =============================================================================
+   TÍTULOS (H1, H2)
+   =============================================================================
+   CAMBIO IMPORTANTE: La fuente de títulos cambia de "Playfair Display"
+   (que parece de periódico antiguo) a "Poppins" (moderna y limpia).
+   ============================================================================= */
 h1,
 h2 {
   margin: 0;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Poppins", sans-serif;
   letter-spacing: 0;
 }
 
@@ -253,6 +369,12 @@ h2 {
   line-height: 1.7;
 }
 
+/* =============================================================================
+   BOTONES DE ACCIÓN EN HERO
+   =============================================================================
+   CAMBIO 3: El botón secundario ahora tiene borde del color Acento (#3FB4A7)
+   en vez de borde blanco semitransparente. Esto le da más identidad visual.
+   ============================================================================= */
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -276,17 +398,23 @@ h2 {
 }
 
 .secondary-action {
-  border: 1px solid rgba(255, 250, 242, 0.34);
+  /* CAMBIO 3: Borde ahora es Acento (#3FB4A7) en vez de blanco semitransparente */
+  border: 1px solid var(--acento);
   color: #fffaf2;
 }
 
+/* =============================================================================
+   PANEL LATERAL DEL HERO
+   =============================================================================
+   El fondo ahora es el Principal oscuro (#0D3B3B) en vez del negro.
+   ============================================================================= */
 .hero-panel {
   position: relative;
   width: 100%;
   border: 1px solid rgba(255, 250, 242, 0.3);
   border-radius: 8px;
   padding: 22px;
-  background: rgba(18, 27, 24, 0.58);
+  background: rgba(13, 59, 59, 0.72);
   backdrop-filter: blur(18px);
 }
 
@@ -299,7 +427,7 @@ h2 {
 
 .hero-panel-head strong {
   display: block;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Poppins", sans-serif;
   font-size: clamp(3rem, 5vw, 5rem);
   line-height: 0.84;
 }
@@ -324,6 +452,9 @@ h2 {
   color: #fffaf2;
 }
 
+/* =============================================================================
+   SECCIONES GENERALES
+   ============================================================================= */
 .experience-band,
 .predictor-layout,
 .signals-section {
@@ -342,6 +473,9 @@ h2 {
   max-width: 760px;
 }
 
+/* =============================================================================
+   GRID DE EXPERIENCIAS (ESCENARIOS)
+   ============================================================================= */
 .experience-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
@@ -354,6 +488,9 @@ h2 {
   gap: 14px;
 }
 
+/* =============================================================================
+   TARJETA DE ESCENARIO
+   ============================================================================= */
 .scenario-card {
   display: grid;
   grid-template-columns: 148px minmax(0, 1fr) auto auto;
@@ -403,12 +540,16 @@ h2 {
   line-height: 1.35;
 }
 
+/* El metadato (precio, noches) ahora usa el color Alerta/Coral */
 .scenario-copy em {
   color: var(--clay);
   font-size: 0.82rem;
   font-weight: 900;
 }
 
+/* =============================================================================
+   TARJETA DE IMAGEN
+   ============================================================================= */
 .image-card {
   position: relative;
   min-height: clamp(280px, 42vw, 560px);
@@ -462,6 +603,9 @@ h2 {
   line-height: 1.25;
 }
 
+/* =============================================================================
+   PALETA DE COLORES (SWATCHES)
+   ============================================================================= */
 .swatches {
   display: inline-flex;
   flex-shrink: 0;
@@ -476,12 +620,17 @@ h2 {
   border-radius: 50%;
 }
 
+/* =============================================================================
+   TARJETA DE VIDEO (FILM CARD)
+   =============================================================================
+   El fondo oscuro ahora es el Principal (#0D3B3B).
+   ============================================================================= */
 .film-card {
   position: relative;
   min-height: clamp(460px, 42vw, 640px);
   overflow: hidden;
   border-radius: 8px;
-  background: #101711;
+  background: var(--principal);
   color: #fffaf2;
 }
 
@@ -496,7 +645,7 @@ h2 {
   position: absolute;
   inset: 0;
   content: "";
-  background: linear-gradient(180deg, transparent 38%, rgba(16, 23, 17, 0.82));
+  background: linear-gradient(180deg, transparent 38%, rgba(13, 59, 59, 0.82));
 }
 
 .film-card div {
@@ -508,6 +657,7 @@ h2 {
   max-width: 520px;
 }
 
+/* El subtítulo del video ahora usa el Acento (#3FB4A7) */
 .film-card span {
   display: inline-flex;
   align-items: center;
@@ -525,12 +675,17 @@ h2 {
   line-height: 1.55;
 }
 
+/* =============================================================================
+   LAYOUT DEL PREDICTOR (formulario + resultado)
+   =============================================================================
+   El fondo oscuro ahora es el Principal (#0D3B3B).
+   ============================================================================= */
 .predictor-layout {
   display: grid;
   grid-template-columns: minmax(240px, 0.78fr) minmax(320px, 1fr) minmax(280px, 0.72fr);
   gap: 22px;
   align-items: start;
-  background: #18221c;
+  background: var(--principal);
   color: #fffaf2;
 }
 
@@ -558,6 +713,9 @@ h2 {
   color: rgba(255, 250, 242, 0.82);
 }
 
+/* =============================================================================
+   FORMULARIO DE RESERVA
+   ============================================================================= */
 .reservation-form,
 .result-card,
 .metric-row article {
@@ -584,6 +742,7 @@ fieldset:first-child {
   padding-top: 0;
 }
 
+/* El título de cada grupo de campos ahora usa el Secundario (#157A6E) */
 legend {
   gap: 8px;
   margin-bottom: 14px;
@@ -668,12 +827,18 @@ select {
   font-weight: 800;
 }
 
+/* El checkbox ahora usa el Principal oscuro (#0D3B3B) */
 .toggle-row input {
   width: 16px;
   height: 16px;
   accent-color: var(--jade);
 }
 
+/* =============================================================================
+   BOTÓN DE ENVIAR
+   =============================================================================
+   El botón ahora es Alerta/Coral (#FF6F7D) para que destaque mucho.
+   ============================================================================= */
 .submit-button {
   width: 100%;
   border: 0;
@@ -687,6 +852,14 @@ select {
   opacity: 0.72;
 }
 
+/* =============================================================================
+   TARJETA DE RESULTADO
+   =============================================================================
+   Los colores de riesgo ahora usan la nueva paleta:
+   - Alto:   Alerta/Coral (#FF6F7D)
+   - Medio:  Acento (#3FB4A7)
+   - Bajo:   Éxito/Verde claro (#C6E7C0)
+   ============================================================================= */
 .result-card {
   position: sticky;
   top: 110px;
@@ -694,16 +867,16 @@ select {
 }
 
 .result-card.high {
-  --risk: var(--rose);
+  --risk: var(--alerta);
 }
 
 .result-card.medium {
-  --risk: var(--clay);
+  --risk: var(--acento);
 }
 
 .result-card.low,
 .result-card.empty {
-  --risk: var(--jade);
+  --risk: var(--exito);
 }
 
 .result-top {
@@ -714,6 +887,11 @@ select {
   text-transform: uppercase;
 }
 
+/* =============================================================================
+   ANILLO DE PROBABILIDAD
+   =============================================================================
+   El círculo que muestra el porcentaje. La fuente ahora es Poppins.
+   ============================================================================= */
 .probability-ring {
   display: grid;
   width: min(220px, 70vw);
@@ -733,7 +911,7 @@ select {
 
 .probability-ring strong {
   margin-top: -18px;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Poppins", sans-serif;
   font-size: clamp(2.7rem, 7vw, 4.3rem);
 }
 
@@ -764,17 +942,25 @@ select {
   font-weight: 800;
 }
 
+/* =============================================================================
+   CAJA DE RECOMENDACIÓN
+   =============================================================================
+   El fondo ahora es Fondo suave (#A7D9CF) en vez del crema antiguo.
+   ============================================================================= */
 .recommendation {
   gap: 12px;
   border-radius: 8px;
   padding: 14px;
-  background: #f2eadb;
+  background: var(--fondo-suave);
 }
 
 .recommendation p {
   margin: 0;
 }
 
+/* =============================================================================
+   SECCIÓN DE SEÑALES (signals-section)
+   ============================================================================= */
 .signals-section {
   display: grid;
   grid-template-columns: minmax(240px, 0.8fr) minmax(320px, 1.2fr);
@@ -806,10 +992,15 @@ select {
 .metric-row strong {
   display: block;
   margin: 12px 0 6px;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Poppins", sans-serif;
   font-size: 2.8rem;
 }
 
+/* =============================================================================
+   RESPONSIVE (MÓVIL)
+   =============================================================================
+   Estas reglas solo se aplican cuando la pantalla es estrecha.
+   ============================================================================= */
 @media (max-width: 1060px) {
   .hero {
     min-height: 820px;
@@ -886,7 +1077,7 @@ select {
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 18px;
     padding: 10px;
-    background: rgba(21, 28, 23, 0.94);
+    background: rgba(13, 59, 59, 0.94);
   }
 
   .topbar.is-open .nav-links a {
