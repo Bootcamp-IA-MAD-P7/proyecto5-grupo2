@@ -13,7 +13,8 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Cliente del proyecto: plataforma de reservas hoteleras tipo Booking, Trivago o Agoda.
 - Problema de negocio: predecir si una reserva sera cancelada.
 - Target: `booking_status`.
-- Metrica principal inicial: F1-score de la clase `Canceled`, complementada con precision, recall, ROC-AUC y matriz de confusion.
+- Metrica principal: F1-score de la clase `Canceled`.
+- Metricas secundarias: precision, recall, ROC-AUC y matriz de confusion.
 - Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
@@ -291,15 +292,38 @@ El informe tecnico debe incluir:
 
 Si el problema es multiclase, se deben reportar promedios macro y weighted cuando sea relevante.
 
+### Metrica principal
+
+La metrica principal del proyecto es:
+
+```text
+F1-score de la clase Canceled
+```
+
+Justificacion:
+
+- El objetivo de negocio es anticipar reservas con riesgo de cancelacion.
+- El target tiene desbalance moderado: `Not_Canceled` es la clase mayoritaria.
+- `Accuracy` puede resultar enganosa si el modelo predice bien la clase mayoritaria pero falla cancelaciones.
+- F1-score equilibra `precision` y `recall`, por lo que evita priorizar solo volumen de alertas o solo cobertura de cancelaciones.
+
+Metricas secundarias:
+
+- `recall` de la clase `Canceled`, para medir cuantas cancelaciones reales detecta el modelo.
+- `precision` de la clase `Canceled`, para medir cuantas alertas son realmente utiles.
+- `ROC-AUC`, para evaluar separacion general entre clases.
+- Matriz de confusion, para explicar errores a negocio.
+- `accuracy`, solo como referencia complementaria.
+
 ## Regla de overfitting
 
 El overfitting debe ser inferior al 5%.
 
 Regla operativa:
 
-- Metrica principal operativa: F1-score de la clase `Canceled`.
-- Calcular la metrica en train.
-- Calcular la misma metrica en validacion o cross-validation.
+- Usar como metrica principal el F1-score de la clase `Canceled`.
+- Calcular F1-score de `Canceled` en train.
+- Calcular F1-score de `Canceled` en validacion o cross-validation.
 - La diferencia absoluta entre train y validacion debe ser menor a 0.05.
 
 Ejemplo:

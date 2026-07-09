@@ -124,7 +124,8 @@ Construir una primera solucion completa: preprocessing, baseline, metricas y app
 
 - La app recibe datos y devuelve prediccion.
 - El baseline tiene train y validacion.
-- La diferencia train-validacion de la metrica principal es menor a 0.05 o queda marcada como bloqueo.
+- La metrica principal es F1-score de la clase `Canceled`.
+- La diferencia train-validacion de F1-score de `Canceled` es menor a 0.05 o queda marcada como bloqueo.
 
 ### Riesgos
 
@@ -163,7 +164,7 @@ Mejorar el modelo con ensemble, validacion cruzada, tuning, Champion Model y fee
 
 ### Verificacion
 
-- Champion supera baseline o se justifica por estabilidad.
+- Champion supera baseline en F1-score de la clase `Canceled` o se justifica por estabilidad.
 - Champion cumple overfitting inferior al 5%.
 - Feedback queda persistido y revisable.
 
