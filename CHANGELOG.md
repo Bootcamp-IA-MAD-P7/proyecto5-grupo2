@@ -6,6 +6,14 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+### Pending
+
+- Manual app validation with screenshots.
+- Docker validation with the real baseline model.
+- Champion Model selection if the team promotes the Random Forest challenger.
+
+## [v0.4.0-essential-mvp] - 2026-07-09
+
 ### Added
 
 - Dataset status details in `.specify/2_spec.md`, including confirmed CSV path, row count, column count and target distribution.
@@ -40,6 +48,12 @@ This project follows an incremental delivery approach. Versions and tags will be
 ### Fixed
 
 - Removed obsolete dataset TODOs from `.specify/2_spec.md`.
+
+### Verified
+
+- Essential level covered: functional classification model, EDA, overfitting under 5%, productivized API solution and technical model report.
+- Local test suite verified with `python -m pytest`.
+- Frontend build verified with `pnpm build`.
 
 ## [v0.2.0-frontend-mock] - 2026-07-07
 
@@ -82,33 +96,13 @@ pnpm build
 
 ## Planned Milestones
 
-### v0.3.0-data-eda
-
-Dataset and exploratory analysis:
-
-- Dataset validation.
-- Data dictionary.
-- EDA visualizations.
-- Target distribution.
-- Initial feature analysis.
-
-### v0.4.0-baseline
-
-Essential ML baseline:
-
-- Preprocessing pipeline.
-- Baseline model.
-- Required classification metrics.
-- Overfitting check.
-
 ### v0.5.0-api
 
-Backend inference API:
+Next API/product increment:
 
-- FastAPI backend.
-- `POST /predict`.
-- Model loading.
-- Frontend-backend integration.
+- Manual validation evidence.
+- Docker validation with real baseline inference.
+- Feedback or prediction logging if scope allows.
 
 ### v0.6.0-champion
 

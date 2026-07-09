@@ -353,10 +353,17 @@ Estado actual destacado:
 [-] T-0.3 Definir candidatos de dataset
 [x] T-0.4 Disenar mock funcional de app
 [x] T-1.1 Elegir dataset definitivo
-[~] T-1.2 Definir target y clases
+[x] T-1.2 Definir target y clases
 [x] T-1.3 Crear diccionario de datos
-[~] T-1.4 Realizar EDA inicial
-[~] T-2.5 Crear app minima de prediccion
+[x] T-1.4 Realizar EDA inicial
+[x] T-2.1 Crear pipeline de preprocesamiento
+[x] T-2.2 Entrenar baseline
+[x] T-2.3 Calcular metricas obligatorias
+[x] T-2.4 Revisar overfitting inferior al 5%
+[x] T-2.5 Crear app minima de prediccion
+[x] T-3.1 Entrenar modelo ensemble
+[x] T-3.2 Aplicar validacion cruzada
+[~] T-3.3 Optimizar hiperparametros
 [~] T-4.3 Dockerizar app
 [~] T-4.5 Documentar instalacion y ejecucion
 ```
@@ -472,18 +479,18 @@ Tags creados:
 ```text
 v0.1.0-docs-foundation
 v0.2.0-frontend-mock
+v0.4.0-essential-mvp
 ```
 
 Significado:
 
 - `v0.1.0-docs-foundation`: base documental, SPEC, roadmap, flujo Git, README inicial, PR template y changelog.
 - `v0.2.0-frontend-mock`: frontend React + Vite con mock funcional de predicción.
+- `v0.4.0-essential-mvp`: Nivel Esencial cubierto con EDA, baseline, overfitting, API con inferencia real e informe técnico.
 
 Hitos previstos:
 
 ```text
-v0.3.0-data-eda
-v0.4.0-baseline
 v0.5.0-api
 v0.6.0-champion
 v0.7.0-operational
@@ -540,7 +547,7 @@ Leyenda:
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
 | [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado con Pipeline de Scikit-learn y guardado en `models/baseline/logistic_regression_baseline.pkl`. | Seleccionar Champion posterior si se decide avanzar a Nivel Medio. |
-| [~] | EDA con visualizaciones relevantes para clasificación | Notebooks iniciales de inspección y EDA en `notebooks/`; diccionario en `reports/data_dictionary.md`. | Cerrar conclusiones de negocio, visualizaciones finales y análisis de desbalance. |
+| [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest gap F1 `0.0186`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
 | [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y baseline real integrado. | Validación manual y despliegue posterior. |
 | [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
@@ -549,9 +556,9 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [ ] | Modelo con técnicas de ensemble | En roadmap ML. | Entrenar y comparar Random Forest, Gradient Boosting u otras alternativas. |
-| [ ] | Validación cruzada | En roadmap ML. | Definir estrategia de validación y registrar resultados. |
-| [ ] | Optimización de hiperparámetros | En roadmap ML. | Aplicar GridSearch, RandomSearch, Optuna u otra técnica acordada. |
+| [x] | Modelo con técnicas de ensemble | Random Forest challenger entrenado y comparado contra baseline en `reports/model_report.md`. | Decidir si se promociona a Champion. |
+| [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.7990`. | Ampliar folds solo si el equipo lo considera necesario. |
+| [~] | Optimización de hiperparámetros | Existe tuning provisional documentado en SPEC con mejora de F1 hasta `0.8042`. | Consolidar configuración ganadora en script reproducible y regenerar artefacto. |
 | [ ] | Recogida de feedback para monitorizar performance | Previsto en contrato producto/MLOps. | Diseñar almacenamiento y métrica de feedback en la app. |
 | [ ] | Recogida de datos nuevos para futuros reentrenamientos | Previsto como mejora de producto. | Definir pipeline de ingestión y persistencia. |
 
@@ -562,7 +569,7 @@ Leyenda:
 | [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Integrar modelo real dentro del flujo Docker. |
 | [ ] | Guardado en base de datos de datos recogidos | No implementado todavía. | Elegir base de datos y definir esquema mínimo. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
-| [~] | Tests unitarios | Tests smoke de API backend y workflows CI activos. | Añadir tests de preprocessing, métricas mínimas y modelo. |
+| [~] | Tests unitarios | Tests de API, preprocessing y baseline activos; workflows CI para backend y frontend. | Añadir tests de métricas mínimas y smoke test completo cuando se cierre la demo. |
 
 ### Nivel Experto
 

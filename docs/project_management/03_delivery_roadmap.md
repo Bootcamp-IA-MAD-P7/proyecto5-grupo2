@@ -80,7 +80,9 @@ Estado actual:
 - Dataset definitivo disponible en `data/raw/`.
 - Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
 - Notebooks iniciales disponibles en `notebooks/`.
-- Pendiente: cerrar visualizaciones finales, lectura de negocio y contrato definitivo de inputs.
+- EDA exploratorio disponible en `notebooks/02_eda_exploratory.ipynb` con distribucion del target, desbalance, histogramas, relaciones con target, matriz de correlacion y conclusiones.
+- Contrato de inputs alineado con el baseline productivizado.
+- Pendiente: reutilizar las visualizaciones clave en presentacion de negocio si el equipo lo necesita.
 
 ## 5. Fase 2 - MVP esencial
 
@@ -118,12 +120,13 @@ Criterio de cierre:
 Estado actual:
 
 - Frontend React + Vite integrado en `app/frontend`.
-- App mock valida flujo visual y experiencia de producto.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
-- Endpoint `GET /health` y `POST /predict` mock disponibles.
+- Endpoint `GET /health`, `GET /model/info` y `POST /predict` disponibles.
+- `POST /predict` usa el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`.
+- Informe tecnico inicial disponible en `reports/model_report.md` con metricas, overfitting, curva ROC, matriz de confusion, feature importance y analisis de errores.
 - Docker local inicial preparado para frontend y backend.
-- Pendiente: modelo real e integracion frontend-backend contra inferencia real.
+- Nivel Esencial cubierto; queda validacion manual con capturas para cierre de demo.
 
 ## 6. Fase 3 - Nivel medio
 
@@ -154,6 +157,13 @@ Criterio de cierre:
 - Champion supera o justifica su elección frente al baseline usando F1-score de la clase `Canceled` como métrica principal.
 - Champion cumple overfitting inferior al 5%.
 - La app muestra versión del modelo y permite registrar feedback.
+
+Estado actual:
+
+- Random Forest challenger entrenado y comparado contra baseline.
+- Validacion cruzada estratificada de 3 folds documentada.
+- Tuning provisional documentado, pendiente de consolidar en script reproducible.
+- Pendiente: seleccion formal de Champion, feedback y recogida de datos nuevos.
 
 ## 7. Fase 4 - Nivel avanzado operativo
 

@@ -346,7 +346,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
 - Comando de verificacion: ejecutar comandos documentados.
-- Nota de estado: documentada ejecucion parcial de frontend, backend, contrato API, tests iniciales y Docker. Queda integracion real con modelo.
+- Nota de estado: documentada ejecucion de frontend, backend, contrato API, tests iniciales y Docker. La API ya usa el baseline real; queda validar Docker con el baseline y revisar instrucciones finales antes de entrega.
 
 ## Fase 5 - Nivel Experto
 

@@ -645,7 +645,7 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 
-TODO: conectar Docker con modelo Champion cuando exista integracion real de inferencia.
+TODO: validar Docker con el baseline real integrado y actualizar la imagen si se promociona un Champion posterior.
 
 ## Documentacion e informes
 
@@ -674,6 +674,8 @@ El nivel esta cerrado si:
 - App funcional con prediccion.
 - Informe tecnico inicial.
 - README con instalacion y ejecucion.
+
+Estado actual: cubierto. Queda solo validacion manual de demo y revision final de redaccion antes de entrega.
 
 ### Nivel Medio
 
