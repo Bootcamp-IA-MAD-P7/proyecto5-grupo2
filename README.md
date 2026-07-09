@@ -4,6 +4,19 @@ Sistema de clasificación para anticipar cancelaciones de reservas hoteleras.
 
 Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
+![Python](https://img.shields.io/badge/Python-3.11-3776AB)
+![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)
+![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB)
+![Scikit-learn](https://img.shields.io/badge/ML-Scikit--learn-F7931E)
+![Docker](https://img.shields.io/badge/Docker-ready%20to%20validate-2496ED)
+![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF)
+![Milestone](https://img.shields.io/badge/tag-v0.4.0--essential--mvp-2E7D32)
+
+| Producto | Modelo | Entrega |
+| --- | --- | --- |
+| Web React + API FastAPI | Baseline Logistic Regression integrado | Nivel Esencial cubierto |
+| Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | Tests, CI, Docker inicial y tag de hito |
+
 ---
 
 ## 1. Descripción
@@ -107,7 +120,30 @@ Pendiente principal:
 
 ---
 
-## 5. Estructura del repositorio
+## 5. Condiciones de entrega
+
+| Estado | Condición | Cómo se cubre en Hotel Insights | Pendiente |
+| --- | --- | --- | --- |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Aplicación que recibe datos y devuelve una predicción | Frontend React + Vite conectado a backend FastAPI. `POST /predict` devuelve predicción, probabilidad, riesgo y versión de modelo. | Validación manual final con capturas. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Repositorio GitHub ordenado | Flujo con `develop`, ramas por tipo, Pull Requests, plantilla de PR, changelog, tags y GitHub Actions. | Mantener el flujo hasta entrega final. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Informe técnico de rendimiento | `reports/model_report.md` incluye métricas, overfitting, matriz de confusión, ROC, importancia de variables y análisis de errores. | Revisión de redacción antes de presentación. |
+| ![En progreso](https://img.shields.io/badge/estado-en%20progreso-C79500) | Presentación de negocio y presentación técnica | Carpetas preparadas en `docs/business_presentation/` y `docs/technical_presentation/`; producto y narrativa ya documentados. | Crear entregables finales de presentación. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Herramienta organizativa | Jira definido como herramienta oficial del equipo. | Mantener historias alineadas con SPEC y roadmap. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Overfitting inferior al 5% | Gap F1 baseline `0.0079`; gap F1 Random Forest `0.0186`, ambos por debajo de `0.05`. | Revalidar si se cambia el Champion Model. |
+
+### Tecnologías principales
+
+| Área | Tecnología | Uso en el proyecto |
+| --- | --- | --- |
+| Machine Learning | Scikit-learn, Pandas | Preprocesamiento, baseline, challenger, métricas y análisis. |
+| Aplicación web | React, Vite, FastAPI | Interfaz de predicción y API de inferencia. |
+| Calidad | Pytest, GitHub Actions | Tests backend, preprocessing, baseline y checks de PR. |
+| Operación | Docker, Docker Compose | Contenedores iniciales para frontend y backend. |
+| Gestión | Git, GitHub, Jira | Ramas, PRs, changelog, tags, issues/historias y seguimiento. |
+
+---
+
+## 6. Estructura del repositorio
 
 ```text
 .
@@ -169,7 +205,7 @@ POST /predict
 
 ---
 
-## 6. Frontend React
+## 7. Frontend React
 
 El frontend está en:
 
@@ -232,7 +268,7 @@ pnpm build
 
 ---
 
-## 7. Entorno Python
+## 8. Entorno Python
 
 Crear entorno virtual desde Git Bash:
 
@@ -261,7 +297,7 @@ deactivate
 
 ---
 
-## 8. Docker
+## 9. Docker
 
 El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
 
@@ -310,7 +346,7 @@ Nota: el backend actual carga el baseline Logistic Regression. Cuando se selecci
 
 ---
 
-## 9. Metodología SPEC / SDD
+## 10. Metodología SPEC / SDD
 
 El proyecto usa una metodología basada en SPEC / SDD.
 
@@ -370,7 +406,7 @@ Estado actual destacado:
 
 ---
 
-## 10. Documentación de organización
+## 11. Documentación de organización
 
 Documentos de organización del proyecto:
 
@@ -391,7 +427,7 @@ Estos documentos explican:
 
 ---
 
-## 11. Flujo Git
+## 12. Flujo Git
 
 Ramas principales:
 
@@ -433,7 +469,7 @@ compare: feature/nombre-tarea
 
 ---
 
-## 12. Pull Requests
+## 13. Pull Requests
 
 El repositorio incluye una plantilla de Pull Request en:
 
@@ -464,7 +500,7 @@ Tipos de cambio contemplados:
 
 ---
 
-## 13. Changelog y tags
+## 14. Changelog y tags
 
 El repositorio incluye:
 
@@ -499,7 +535,7 @@ v1.0.0-final
 
 ---
 
-## 14. Jira
+## 15. Jira
 
 La herramienta oficial de gestión es Jira.
 
@@ -517,7 +553,7 @@ Los tickets deben mantenerse alineados con:
 
 ---
 
-## 15. Roles del equipo
+## 16. Roles del equipo
 
 Roles sugeridos por la SPEC:
 
@@ -532,7 +568,7 @@ Los roles son colaborativos. Cada integrante puede apoyar tareas de otros bloque
 
 ---
 
-## 16. Niveles de entrega y progreso
+## 17. Niveles de entrega y progreso
 
 Leyenda:
 
@@ -566,7 +602,7 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Integrar modelo real dentro del flujo Docker. |
+| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Validar Docker con el baseline real integrado. |
 | [ ] | Guardado en base de datos de datos recogidos | No implementado todavía. | Elegir base de datos y definir esquema mínimo. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
 | [~] | Tests unitarios | Tests de API, preprocessing y baseline activos; workflows CI para backend y frontend. | Añadir tests de métricas mínimas y smoke test completo cuando se cierre la demo. |
@@ -582,7 +618,7 @@ Leyenda:
 
 ---
 
-## 17. Roadmap resumido
+## 18. Roadmap resumido
 
 1. Organización y acuerdos.
 2. Dataset, EDA y contrato de datos.
@@ -600,23 +636,20 @@ docs/project_management/03_delivery_roadmap.md
 
 ---
 
-## 18. Próximos pasos técnicos
+## 19. Próximos pasos técnicos
 
 Prioridades inmediatas:
 
-1. Cerrar distribución del target y desbalance.
-2. Consolidar EDA y visualizaciones finales.
-3. Aplicar F1-score de la clase `Canceled` como métrica principal.
-4. Consolidar pipeline de preprocesamiento.
-5. Validar manualmente frontend + backend + modelo real.
-6. Ampliar tests de preprocessing, modelo y métricas.
-10. Preparar informe técnico.
-11. Preparar presentación de negocio y presentación técnica.
-12. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
+1. Validar manualmente frontend + backend + modelo real con capturas.
+2. Validar Docker con el baseline real integrado.
+3. Decidir si Random Forest se promociona a Champion Model.
+4. Consolidar tuning de hiperparámetros en script reproducible si se mantiene en alcance.
+5. Preparar presentación de negocio y presentación técnica.
+6. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
 
 ---
 
-## 19. Sprint 1
+## 20. Sprint 1
 
 Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 
@@ -638,18 +671,17 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 
 Queda para Sprint 2:
 
-- Pipeline de preprocesamiento.
-- Baseline ML.
-- Métricas y overfitting.
-- Integración real del modelo en backend.
-- Conexión frontend-backend contra inferencia real.
-- Tests de preprocessing, modelo y métricas.
+- Validación manual de la demo completa.
+- Validación Docker con modelo real.
+- Decisión de Champion Model.
+- Consolidación de tuning reproducible si se mantiene en alcance.
+- Tests de métricas mínimas y smoke test completo de demo.
 - Persistencia o feedback de predicciones si el alcance lo permite.
 - Preparación de despliegue.
 
 ---
 
-## 20. Verificaciones útiles
+## 21. Verificaciones útiles
 
 Estado de Git:
 
@@ -690,12 +722,12 @@ git diff --check
 
 ---
 
-## 21. Equipo
+## 22. Equipo
 
 Proyecto desarrollado por el Grupo 2 del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
 ---
 
-## 22. Nota
+## 23. Nota
 
 Este README describe el estado y la dirección del proyecto. Debe actualizarse cada vez que cambien la forma de ejecutar la app, el modelo Champion, la arquitectura, los entregables principales, los hitos versionados o el flujo de trabajo del equipo.
