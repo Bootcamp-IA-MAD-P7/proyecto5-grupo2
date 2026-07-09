@@ -18,6 +18,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - GitHub Actions workflow for backend API tests.
 - GitHub Actions workflow for frontend build checks.
 - Explicit `httpx` dependency for FastAPI `TestClient` in CI.
+- Docker setup for backend, frontend and local compose orchestration.
 
 ### Changed
 

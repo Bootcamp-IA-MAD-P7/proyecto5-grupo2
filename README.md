@@ -248,7 +248,56 @@ deactivate
 
 ---
 
-## 8. Metodología SPEC / SDD
+## 8. Docker
+
+El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
+
+Servicios:
+
+- Backend FastAPI en `http://localhost:8000`.
+- Frontend servido por nginx en `http://localhost:8080`.
+
+Construir imágenes:
+
+```bash
+docker compose build
+```
+
+Levantar servicios:
+
+```bash
+docker compose up
+```
+
+Levantar servicios en segundo plano:
+
+```bash
+docker compose up -d
+```
+
+Parar servicios:
+
+```bash
+docker compose down
+```
+
+Comprobar backend:
+
+```text
+http://localhost:8000/health
+```
+
+Comprobar frontend:
+
+```text
+http://localhost:8080/
+```
+
+Nota: el backend actual usa una predicción mock compatible con el frontend. La inferencia real se conectará cuando ML Core confirme el pipeline y el Champion Model.
+
+---
+
+## 9. Metodología SPEC / SDD
 
 El proyecto usa una metodología basada en SPEC / SDD.
 
@@ -300,7 +349,7 @@ Estado actual destacado:
 
 ---
 
-## 9. Documentación de organización
+## 10. Documentación de organización
 
 Documentos de organización del proyecto:
 
@@ -321,7 +370,7 @@ Estos documentos explican:
 
 ---
 
-## 10. Flujo Git
+## 11. Flujo Git
 
 Ramas principales:
 
@@ -363,7 +412,7 @@ compare: feature/nombre-tarea
 
 ---
 
-## 11. Pull Requests
+## 12. Pull Requests
 
 El repositorio incluye una plantilla de Pull Request en:
 
@@ -394,7 +443,7 @@ Tipos de cambio contemplados:
 
 ---
 
-## 12. Changelog y tags
+## 13. Changelog y tags
 
 El repositorio incluye:
 
@@ -429,7 +478,7 @@ v1.0.0-final
 
 ---
 
-## 13. Jira
+## 14. Jira
 
 La herramienta oficial de gestión es Jira.
 
@@ -447,7 +496,7 @@ Los tickets deben mantenerse alineados con:
 
 ---
 
-## 14. Roles del equipo
+## 15. Roles del equipo
 
 Roles sugeridos por la SPEC:
 
@@ -462,7 +511,7 @@ Los roles son colaborativos. Cada integrante puede apoyar tareas de otros bloque
 
 ---
 
-## 15. Niveles de entrega
+## 16. Niveles de entrega
 
 ### Nivel Esencial
 
@@ -495,7 +544,7 @@ Los roles son colaborativos. Cada integrante puede apoyar tareas de otros bloque
 
 ---
 
-## 16. Roadmap resumido
+## 17. Roadmap resumido
 
 1. Organización y acuerdos.
 2. Dataset, EDA y contrato de datos.
@@ -513,7 +562,7 @@ docs/project_management/03_delivery_roadmap.md
 
 ---
 
-## 17. Próximos pasos técnicos
+## 18. Próximos pasos técnicos
 
 Prioridades inmediatas:
 
@@ -533,7 +582,7 @@ Prioridades inmediatas:
 
 ---
 
-## 18. Sprint 1
+## 19. Sprint 1
 
 Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 
@@ -561,7 +610,7 @@ Queda para Sprint 2:
 
 ---
 
-## 19. Verificaciones útiles
+## 20. Verificaciones útiles
 
 Estado de Git:
 
@@ -602,12 +651,12 @@ git diff --check
 
 ---
 
-## 20. Equipo
+## 21. Equipo
 
 Proyecto desarrollado por el Grupo 2 del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
 ---
 
-## 21. Nota
+## 22. Nota
 
 Este README describe el estado y la dirección del proyecto. Debe actualizarse cada vez que cambien la forma de ejecutar la app, el modelo Champion, la arquitectura, los entregables principales, los hitos versionados o el flujo de trabajo del equipo.
