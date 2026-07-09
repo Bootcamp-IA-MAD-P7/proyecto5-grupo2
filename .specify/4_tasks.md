@@ -214,7 +214,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 
 ## Fase 3 - Nivel Medio
 
-### [ ] T-3.1 Entrenar modelo ensemble
+### [x] T-3.1 Entrenar modelo ensemble
 
 - Archivos afectados: `src/models/`, `models/`, `reports/model_report.md`.
 - Accion: entrenar Random Forest, Gradient Boosting u otro ensemble justificado.
@@ -223,9 +223,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-2.1, T-2.3.
 - Criterio de verificacion: ensemble comparado contra baseline.
-- Comando de verificacion: TODO.
+- Evidencia: `src/models/train_challengers.py` entrena `random_forest_challenger` y lo compara contra `dummy_most_frequent` y `logistic_regression_balanced`; el artefacto queda en `models/challengers/random_forest_challenger.pkl`.
+- Resultado clave: F1 validacion clase `Canceled` mejora de 0,6870 en Logistic Regression a 0,7952 en Random Forest.
+- Comando de verificacion: `python -m src.models.train_challengers`.
 
-### [ ] T-3.2 Aplicar validacion cruzada
+### [x] T-3.2 Aplicar validacion cruzada
 
 - Archivos afectados: `src/models/`, `reports/model_report.md`.
 - Accion: ejecutar K-Fold o estrategia equivalente y reportar promedio/desviacion.
@@ -234,7 +236,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-3.1.
 - Criterio de verificacion: resultados de CV documentados.
-- Comando de verificacion: TODO.
+- Evidencia: `reports/model_report.md` incluye validacion cruzada estratificada de 3 folds para `random_forest_challenger`.
+- Resultado clave: F1 CV medio 0,7990 con desviacion 0,0034; ROC-AUC CV medio 0,9332 con desviacion 0,0020.
+- Comando de verificacion: `python -m src.models.train_challengers`.
 
 ### [ ] T-3.3 Optimizar hiperparametros
 
