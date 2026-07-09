@@ -7,6 +7,17 @@ class HealthResponse(BaseModel):
     version: str = "0.1.0"
 
 
+class ModelInfoResponse(BaseModel):
+    model_loaded: bool
+    model_version: str
+    model_status: str
+    model_type: str
+    primary_metric: str
+    target: str
+    positive_class: str
+    notes: list[str]
+
+
 class PredictionRequest(BaseModel):
     lead_time: int = Field(..., ge=0)
     no_of_special_requests: int = Field(..., ge=0)

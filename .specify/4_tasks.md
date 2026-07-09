@@ -87,10 +87,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-0.3.
 - Criterio de verificacion: dataset accesible y target posible.
-- Comando de verificacion: `ls data/raw`.
-- Evidencia: dataset de reservas hoteleras disponible en `data/raw/`.
+- Evidencia: dataset incorporado en `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv` con 36.275 filas y 19 columnas.
+- Comando de verificacion: `Test-Path "data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv"`.
 
-### [~] T-1.2 Definir target y clases
+### [x] T-1.2 Definir target y clases
 
 - Archivos afectados: `.specify/2_spec.md`, `reports/model_report.md`.
 - Accion: documentar columna target, clases, distribucion y posible desbalance.
@@ -99,8 +99,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: con apoyo en documentacion.
 - Dependencias: T-1.1.
 - Criterio de verificacion: target aceptado por el equipo y distribucion documentada.
-- Comando de verificacion: TODO.
-- Nota de estado: target definido como `booking_status`; queda cerrar distribucion y desbalance en informe tecnico.
+- Evidencia: target `booking_status`, clases `Not_Canceled` (67,24%) y `Canceled` (32,76%), documentado en `.specify/2_spec.md`, `reports/data_dictionary.md` y notebooks de EDA.
+- Comando de verificacion: revisar `notebooks/01_dataset_inspection.ipynb` y `notebooks/02_eda_exploratory.ipynb`.
 
 ### [x] T-1.3 Crear diccionario de datos
 
@@ -111,10 +111,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-1.1.
 - Criterio de verificacion: todas las columnas relevantes estan clasificadas.
+- Evidencia: diccionario inicial creado en `reports/data_dictionary.md`.
 - Comando de verificacion: no aplica.
-- Evidencia: existe `reports/data_dictionary.md`.
 
-### [~] T-1.4 Realizar EDA inicial
+### [x] T-1.4 Realizar EDA inicial
 
 - Archivos afectados: `notebooks/`, `reports/figures/`, `reports/model_report.md`.
 - Accion: analizar nulos, duplicados, distribuciones, target, correlaciones y relaciones con target.
@@ -123,10 +123,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-1.1, T-1.2.
 - Criterio de verificacion: existen graficos relevantes para clasificacion.
-- Comando de verificacion: TODO.
-- Nota de estado: existen notebooks iniciales de inspeccion y EDA; queda convertir resultados clave en informe y figuras finales.
+- Evidencia: `notebooks/02_eda_exploratory.ipynb` incluye revision de nulos, duplicados, target, distribuciones numericas, variables categoricas, relacion con target, correlaciones, interpretaciones y conclusiones finales.
+- Comando de verificacion: `rg -n "TODO|a completar" notebooks/02_eda_exploratory.ipynb`.
 
-### [ ] T-1.5 Interpretar graficos para negocio
+### [~] T-1.5 Interpretar graficos para negocio
 
 - Archivos afectados: `reports/model_report.md`, `docs/business_presentation/`.
 - Accion: escribir interpretaciones simples de los graficos principales.
@@ -135,22 +135,25 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-1.4.
 - Criterio de verificacion: cada grafico usado en presentacion tiene una lectura clara.
+- Avance: interpretaciones tecnicas agregadas en `notebooks/02_eda_exploratory.ipynb`.
+- Pendiente: trasladar las lecturas principales a informe o presentacion de negocio cuando se definan esos entregables.
 - Comando de verificacion: no aplica.
 
 ## Fase 2 - Nivel Esencial MVP
 
-### [ ] T-2.1 Crear pipeline de preprocesamiento
+### [x] T-2.1 Crear pipeline de preprocesamiento
 
-- Archivos afectados: `src/features/`, `src/models/`.
+- Archivos afectados: `src/features/`, `src/models/`, `tests/unit/`, `requirements.txt`.
 - Accion: construir transformaciones para numericas, categoricas y columnas excluidas.
 - Responsable sugerido: I1.
 - Dificultad: alta.
 - Apto junior: no.
-- Dependencias: T-1.2, T-1.3.
+- Dependencias: T-1.2, T-1.3, T-1.4.
 - Criterio de verificacion: el pipeline transforma train y validacion sin errores ni leakage.
-- Comando de verificacion: TODO: `python -m pytest` cuando existan tests.
+- Evidencia: `src/features/preprocessing.py` define columnas, target, exclusion de `Booking_ID`, split estratificado y `ColumnTransformer`.
+- Comando de verificacion: `python -m unittest tests.unit.test_preprocessing`.
 
-### [ ] T-2.2 Entrenar baseline
+### [x] T-2.2 Entrenar baseline
 
 - Archivos afectados: `src/models/`, `models/`, `reports/model_report.md`.
 - Accion: entrenar modelo simple y guardar metricas train-validacion, usando F1-score de la clase `Canceled` como metrica principal.
@@ -159,9 +162,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-2.1.
 - Criterio de verificacion: baseline registrado en tabla de experimentos.
-- Comando de verificacion: TODO.
+- Evidencia: `src/models/train_baseline.py` entrena `dummy_most_frequent` y `logistic_regression_balanced`; el modelo real queda guardado en `models/baseline/logistic_regression_baseline.pkl`.
+- Comando de verificacion: `python -m src.models.train_baseline` y `python -m unittest discover`.
 
-### [ ] T-2.3 Calcular metricas obligatorias
+### [x] T-2.3 Calcular metricas obligatorias
 
 - Archivos afectados: `src/evaluation/`, `reports/model_report.md`, `reports/figures/`.
 - Accion: calcular F1-score de la clase `Canceled` como metrica principal, junto con accuracy, precision, recall, ROC-AUC, matriz de confusion y curva ROC si aplica.
@@ -170,9 +174,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: con apoyo para documentar resultados.
 - Dependencias: T-2.2.
 - Criterio de verificacion: metricas visibles en informe.
-- Comando de verificacion: TODO.
+- Evidencia: `reports/model_report.md` incluye accuracy, precision, recall, F1, ROC-AUC y conteos de matriz de confusion para train y validacion; `reports/figures/` incluye matriz de confusion y curva ROC.
+- Comando de verificacion: `python -m src.models.train_baseline` y `python -m unittest discover`.
 
-### [ ] T-2.4 Revisar overfitting inferior al 5%
+### [x] T-2.4 Revisar overfitting inferior al 5%
 
 - Archivos afectados: `reports/model_report.md`, tabla de experimentos.
 - Accion: comparar F1-score de la clase `Canceled` en train y validacion.
@@ -181,7 +186,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si para checklist, no para decision tecnica final.
 - Dependencias: T-2.3.
 - Criterio de verificacion: diferencia < 0.05 o bloqueo documentado.
-- Comando de verificacion: TODO.
+- Evidencia: `reports/model_report.md` documenta F1 train 0,6949, F1 validacion 0,6870 y gap 0,0079 para Logistic Regression.
+- Comando de verificacion: revisar seccion "Revision inicial de overfitting" en `reports/model_report.md` y ejecutar `python -m unittest discover`.
 
 ### [~] T-2.5 Crear app minima de prediccion
 
@@ -193,7 +199,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
 - Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
-- Nota de estado: existe app frontend con prediccion mock y backend FastAPI inicial con `GET /health` y `POST /predict` mock. Falta conectar modelo real cuando ML Core confirme pipeline y Champion Model.
+- Nota de estado: existe app frontend con prediccion mock y backend FastAPI inicial con `GET /health`, `GET /model/info` y `POST /predict` mock. Falta conectar modelo real cuando ML Core confirme pipeline y Champion Model.
 
 ### [ ] T-2.6 Validacion manual de app
 
@@ -208,7 +214,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 
 ## Fase 3 - Nivel Medio
 
-### [ ] T-3.1 Entrenar modelo ensemble
+### [x] T-3.1 Entrenar modelo ensemble
 
 - Archivos afectados: `src/models/`, `models/`, `reports/model_report.md`.
 - Accion: entrenar Random Forest, Gradient Boosting u otro ensemble justificado.
@@ -217,9 +223,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-2.1, T-2.3.
 - Criterio de verificacion: ensemble comparado contra baseline.
-- Comando de verificacion: TODO.
+- Evidencia: `src/models/train_challengers.py` entrena `random_forest_challenger` y lo compara contra `dummy_most_frequent` y `logistic_regression_balanced`; el artefacto queda en `models/challengers/random_forest_challenger.pkl`.
+- Resultado clave: F1 validacion clase `Canceled` mejora de 0,6870 en Logistic Regression a 0,7952 en Random Forest.
+- Comando de verificacion: `python -m src.models.train_challengers`.
 
-### [ ] T-3.2 Aplicar validacion cruzada
+### [x] T-3.2 Aplicar validacion cruzada
 
 - Archivos afectados: `src/models/`, `reports/model_report.md`.
 - Accion: ejecutar K-Fold o estrategia equivalente y reportar promedio/desviacion.
@@ -228,9 +236,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-3.1.
 - Criterio de verificacion: resultados de CV documentados.
-- Comando de verificacion: TODO.
+- Evidencia: `reports/model_report.md` incluye validacion cruzada estratificada de 3 folds para `random_forest_challenger`.
+- Resultado clave: F1 CV medio 0,7990 con desviacion 0,0034; ROC-AUC CV medio 0,9332 con desviacion 0,0020.
+- Comando de verificacion: `python -m src.models.train_challengers`.
 
-### [ ] T-3.3 Optimizar hiperparametros
+### [~] T-3.3 Optimizar hiperparametros
 
 - Archivos afectados: `src/models/`, `reports/model_report.md`.
 - Accion: usar GridSearch, RandomSearch u Optuna si se justifica.
@@ -239,7 +249,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.2.
 - Criterio de verificacion: mejores parametros y comparacion documentados.
-- Comando de verificacion: TODO.
+- Avance: busqueda controlada de 12 configuraciones de `RandomForestClassifier` ejecutada con el mismo split train/validacion.
+- Mejor configuracion provisional: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
+- Resultado provisional: F1 validacion 0,8042, gap train-validacion 0,0242 y ROC-AUC validacion 0,9347.
+- Pendiente: aplicar la configuracion ganadora en `src/models/train_challengers.py`, regenerar artefacto e informe, y ejecutar verificacion final.
+- Comando de verificacion: pendiente de consolidar en script reproducible.
 
 ### [ ] T-3.4 Seleccionar Champion Model
 
@@ -331,7 +345,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
 - Comando de verificacion: ejecutar comandos documentados.
-- Nota de estado: documentada ejecucion parcial de frontend y contrato API. Existe backend FastAPI inicial; quedan tests, Docker e integracion real con modelo.
+- Nota de estado: documentada ejecucion parcial de frontend, backend, contrato API, tests iniciales y Docker. Queda integracion real con modelo.
 
 ## Fase 5 - Nivel Experto
 

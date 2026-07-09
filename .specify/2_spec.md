@@ -14,6 +14,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Problema de negocio: predecir si una reserva sera cancelada.
 - Target: `booking_status`.
 - Metrica principal: F1-score de la clase `Canceled`.
+- Metricas secundarias: precision, recall, ROC-AUC y matriz de confusion.
 - Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
@@ -51,6 +52,18 @@ Fuente de referencia:
 - Comando de referencia del kernel: `kaggle kernels pull marawaneslam/hotel-reservations-classification`.
 - Ruta usada en Kaggle: `/kaggle/input/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
 
+CSV incorporado en `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
+
+Validacion inicial:
+
+- Filas: 36.275.
+- Columnas: 19.
+- Valores nulos: 0.
+- Duplicados exactos: 0.
+- Notebook de inspeccion: `notebooks/01_dataset_inspection.ipynb`.
+- Notebook de EDA: `notebooks/02_eda_exploratory.ipynb`.
+- Diccionario de datos: `reports/data_dictionary.md`.
+
 ### Criterios para elegir dataset
 
 El dataset debe cumplir:
@@ -77,7 +90,7 @@ Debe documentarse:
   - `Not_Canceled`: 24.390 registros, 67,24%.
   - `Canceled`: 11.885 registros, 32,76%.
 - Desbalance: moderado. La clase mayoritaria es `Not_Canceled`, por lo que se recomienda vigilar precision, recall y F1, no solo accuracy.
-- Si se requiere binarizacion o agrupacion: no se requiere; el target ya es binario.
+- Si se requiere binarizacion o agrupacion: no se requiere agrupacion; para modelos se codificara como variable binaria.
 - Justificacion: es una variable categorica que indica el resultado historico de la reserva, por lo que permite entrenar un modelo de clasificacion supervisada.
 
 ### Features esperadas
@@ -106,31 +119,15 @@ Columna candidata a excluir:
 
 - `Booking_ID`: identificador de reserva sin valor predictivo generalizable.
 
-Columnas confirmadas en el CSV:
+Columnas confirmadas despues de cargar el CSV:
 
-- `Booking_ID`.
-- `no_of_adults`.
-- `no_of_children`.
-- `no_of_weekend_nights`.
-- `no_of_week_nights`.
-- `type_of_meal_plan`.
-- `required_car_parking_space`.
-- `room_type_reserved`.
-- `lead_time`.
-- `arrival_year`.
-- `arrival_month`.
-- `arrival_date`.
-- `market_segment_type`.
-- `repeated_guest`.
-- `no_of_previous_cancellations`.
-- `no_of_previous_bookings_not_canceled`.
-- `avg_price_per_room`.
-- `no_of_special_requests`.
-- `booking_status`.
+- Numericas: `no_of_adults`, `no_of_children`, `no_of_weekend_nights`, `no_of_week_nights`, `lead_time`, `arrival_year`, `arrival_month`, `arrival_date`, `no_of_previous_cancellations`, `no_of_previous_bookings_not_canceled`, `avg_price_per_room`, `no_of_special_requests`.
+- Categoricas nominales: `type_of_meal_plan`, `room_type_reserved`, `market_segment_type`.
+- Binarias: `required_car_parking_space`, `repeated_guest`.
+- Target: `booking_status`.
+- Excluida: `Booking_ID`.
 
-Exclusion inicial confirmada:
-
-- `Booking_ID`: identificador de reserva sin valor predictivo generalizable.
+No se detectaron columnas posteriores al evento que generen leakage evidente en esta revision inicial.
 
 La seleccion de features debe clasificar columnas en:
 
@@ -148,6 +145,136 @@ Columnas a excluir siempre:
 - Duplicados exactos.
 - Variables con informacion directa del target.
 - Datos sensibles no necesarios para la prediccion.
+
+## Estado del EDA exploratorio
+
+EDA inicial documentado en `notebooks/02_eda_exploratory.ipynb`.
+
+Hallazgos principales:
+
+- Dataset completo a nivel de nulos y sin duplicados exactos.
+- Target binario con desbalance moderado.
+- `lead_time` muestra una relacion fuerte con cancelacion: las reservas canceladas tienen mayor anticipacion media y mediana que las no canceladas.
+- `avg_price_per_room` tambien tiende a ser mayor en reservas canceladas, aunque con una diferencia menos marcada.
+- `no_of_special_requests` muestra relacion inversa con cancelacion: las reservas con mas solicitudes especiales tienden a cancelarse menos.
+- `market_segment_type` y `repeated_guest` muestran diferencias relevantes en tasa de cancelacion.
+- Hay variables con asimetria y rangos amplios, especialmente `lead_time`, `avg_price_per_room` y variables historicas con muchos ceros.
+
+Implicaciones para preprocessing:
+
+- Excluir `Booking_ID` antes del entrenamiento.
+- Separar train, validacion y test de forma estratificada.
+- Ajustar transformaciones solo con train para evitar leakage.
+- Usar One-Hot Encoding para categoricas con `handle_unknown='ignore'`.
+- Mantener variables binarias como 0/1.
+- Escalar numericas si el baseline usa Logistic Regression u otro modelo sensible a escala.
+- Comparar el baseline contra un `DummyClassifier` de clase mayoritaria.
+
+## Estado del preprocessing inicial
+
+Pipeline inicial implementado en `src/features/preprocessing.py`.
+
+Contrato implementado:
+
+- Carga del CSV crudo desde `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
+- Validacion de columnas requeridas antes de preparar datos.
+- Separacion de `X` e `y`.
+- Exclusion de `Booking_ID` antes de entrenar.
+- Codificacion del target: `Not_Canceled` = 0 y `Canceled` = 1.
+- Split estratificado train/validacion/test con proporcion 70% / 15% / 15%.
+- `ColumnTransformer` con:
+  - `StandardScaler` para variables numericas.
+  - `OneHotEncoder(handle_unknown="ignore")` para categoricas.
+  - `passthrough` para binarias.
+
+Verificacion actual:
+
+- Pruebas unitarias en `tests/unit/test_preprocessing.py`.
+- Comando: `python -m unittest tests.unit.test_preprocessing`.
+- Estado: el preprocessing transforma train y validacion sin errores y mantiene la distribucion del target en los splits.
+
+## Estado del baseline inicial
+
+Baseline reproducible implementado en `src/models/train_baseline.py`.
+
+Modelos evaluados:
+
+- `dummy_most_frequent`: referencia minima que siempre predice la clase mayoritaria.
+- `logistic_regression_balanced`: primer modelo real con el pipeline de preprocessing y pesos balanceados para el target.
+
+Resultados de validacion:
+
+- DummyClassifier: F1-score clase `Canceled` = 0,0000; ROC-AUC = 0,5000.
+- Logistic Regression: F1-score clase `Canceled` = 0,6870; ROC-AUC = 0,8604.
+- Gap train-validacion en F1 de Logistic Regression: 0,0079.
+- Resultado de overfitting: cumple la regla de diferencia inferior a 0,05.
+
+Evidencia:
+
+- Reporte tecnico: `reports/model_report.md`.
+- Modelo guardado: `models/baseline/logistic_regression_baseline.pkl`.
+- Matriz de confusion: `reports/figures/baseline_logistic_confusion_matrix.png`.
+- Curva ROC: `reports/figures/baseline_logistic_roc_curve.png`.
+- Comando: `python -m src.models.train_baseline`.
+- Pruebas automaticas: `tests/unit/test_baseline_training.py`.
+- Comando de pruebas: `python -m unittest discover`.
+
+Decision actual:
+
+- Logistic Regression queda como baseline inicial, no como Champion definitivo.
+- El test final queda reservado para evaluar candidatos posteriores de forma mas imparcial.
+
+## Estado del ensemble challenger
+
+Challenger reproducible implementado en `src/models/train_challengers.py`.
+
+Modelo evaluado:
+
+- `random_forest_challenger`: Random Forest con el mismo contrato de features que el baseline.
+- Preprocessing: One-Hot Encoding para categoricas, binarias en passthrough y numericas sin escalado porque el modelo es de arboles.
+- Artefacto guardado: `models/challengers/random_forest_challenger.pkl`.
+
+Resultados de validacion frente al baseline:
+
+- Logistic Regression: F1-score clase `Canceled` = 0,6870; ROC-AUC = 0,8604.
+- Random Forest inicial: F1-score clase `Canceled` = 0,7952; ROC-AUC = 0,9287.
+- Gap train-validacion en F1 de Random Forest inicial: 0,0186.
+- Resultado de overfitting: cumple la regla de diferencia inferior a 0,05.
+
+Validacion cruzada:
+
+- Estrategia: Stratified K-Fold de 3 folds.
+- F1 medio clase `Canceled`: 0,7990.
+- Desviacion F1: 0,0034.
+- ROC-AUC medio: 0,9332.
+- Desviacion ROC-AUC: 0,0020.
+
+Decision actual:
+
+- Random Forest queda como challenger fuerte.
+- Todavia no se declara Champion porque falta cerrar tuning y validar la decision con los criterios de `T-3.4`.
+
+## Estado del tuning inicial
+
+Busqueda controlada ejecutada para `RandomForestClassifier`.
+
+Configuracion provisional ganadora:
+
+- `n_estimators=200`.
+- `max_depth=16`.
+- `min_samples_leaf=8`.
+- `min_samples_split=16`.
+- `class_weight="balanced_subsample"`.
+
+Comparacion de validacion:
+
+- Random Forest inicial (`max_depth=14`, `min_samples_leaf=12`): F1 = 0,7952; gap = 0,0186; ROC-AUC = 0,9287.
+- Random Forest tuning provisional (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
+
+Decision actual:
+
+- La configuracion tuning provisional mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
+- Pendiente: aplicar esta configuracion al script reproducible, regenerar artefacto y actualizar el informe tecnico antes de cerrar `T-3.3`.
 
 ## Metricas obligatorias
 

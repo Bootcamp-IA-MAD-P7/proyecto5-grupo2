@@ -36,6 +36,22 @@ def test_health_returns_ok() -> None:
     }
 
 
+def test_model_info_returns_provisional_model_state() -> None:
+    response = client.get("/model/info")
+
+    assert response.status_code == 200
+    body = response.json()
+
+    assert body["model_loaded"] is False
+    assert body["model_version"] == "mock_api_v0"
+    assert body["model_status"] == "waiting_for_champion_model"
+    assert body["model_type"] == "mock"
+    assert body["primary_metric"] == "f1_score_canceled"
+    assert body["target"] == "booking_status"
+    assert body["positive_class"] == "Canceled"
+    assert isinstance(body["notes"], list)
+
+
 def test_predict_returns_contract_shape() -> None:
     response = client.post("/predict", json=valid_prediction_payload())
 
@@ -50,6 +66,13 @@ def test_predict_returns_contract_shape() -> None:
     assert isinstance(body["model_version"], str)
     assert isinstance(body["main_factors"], list)
     assert isinstance(body["recommendation"], str)
+
+
+def test_predict_model_version_matches_model_info() -> None:
+    model_info = client.get("/model/info").json()
+    prediction = client.post("/predict", json=valid_prediction_payload()).json()
+
+    assert prediction["model_version"] == model_info["model_version"]
 
 
 def test_predict_rejects_invalid_payload() -> None:
