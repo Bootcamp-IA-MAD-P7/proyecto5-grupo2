@@ -6,6 +6,14 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+### Pending
+
+- Manual app validation with screenshots.
+- Docker validation with the real baseline model.
+- Champion Model selection if the team promotes the Random Forest challenger.
+
+## [v0.4.0-essential-mvp] - 2026-07-09
+
 ### Added
 
 - Dataset status details in `.specify/2_spec.md`, including confirmed CSV path, row count, column count and target distribution.
@@ -24,6 +32,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Additional API contract tests for model info and model version consistency.
 - Real baseline inference in `POST /predict` using `models/baseline/logistic_regression_baseline.pkl`.
 - Arrival date fields in the API and frontend prediction payload to match the trained model feature contract.
+- Model diagnostics script for baseline coefficient importance and validation error analysis.
 
 ### Changed
 
@@ -34,10 +43,17 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Defined F1-score of the `Canceled` class as the primary model metric in SPEC, roadmap and README.
 - Updated API contract and README with model info endpoint.
 - Updated API contract, SPEC tasks and README to reflect real baseline inference instead of mock backend prediction.
+- Updated `reports/model_report.md` with feature importance, error analysis, limitations and next-step interpretation.
 
 ### Fixed
 
 - Removed obsolete dataset TODOs from `.specify/2_spec.md`.
+
+### Verified
+
+- Essential level covered: functional classification model, EDA, overfitting under 5%, productivized API solution and technical model report.
+- Local test suite verified with `python -m pytest`.
+- Frontend build verified with `pnpm build`.
 
 ## [v0.2.0-frontend-mock] - 2026-07-07
 
@@ -80,33 +96,13 @@ pnpm build
 
 ## Planned Milestones
 
-### v0.3.0-data-eda
-
-Dataset and exploratory analysis:
-
-- Dataset validation.
-- Data dictionary.
-- EDA visualizations.
-- Target distribution.
-- Initial feature analysis.
-
-### v0.4.0-baseline
-
-Essential ML baseline:
-
-- Preprocessing pipeline.
-- Baseline model.
-- Required classification metrics.
-- Overfitting check.
-
 ### v0.5.0-api
 
-Backend inference API:
+Next API/product increment:
 
-- FastAPI backend.
-- `POST /predict`.
-- Model loading.
-- Frontend-backend integration.
+- Manual validation evidence.
+- Docker validation with real baseline inference.
+- Feedback or prediction logging if scope allows.
 
 ### v0.6.0-champion
 

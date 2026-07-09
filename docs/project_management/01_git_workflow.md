@@ -219,13 +219,12 @@ Tags ya creados:
 ```text
 v0.1.0-docs-foundation
 v0.2.0-frontend-mock
+v0.4.0-essential-mvp
 ```
 
 Tags previstos:
 
 ```text
-v0.3.0-data-eda
-v0.4.0-baseline-model
 v0.5.0-api-integration
 v0.6.0-champion-model
 v1.0.0-final
@@ -234,8 +233,8 @@ v1.0.0-final
 Crear tag:
 
 ```bash
-git tag -a v0.3.0-data-eda -m "Dataset and EDA milestone"
-git push origin v0.3.0-data-eda
+git tag -a v0.4.0-essential-mvp -m "Essential MVP milestone"
+git push origin v0.4.0-essential-mvp
 ```
 
 No se deben crear tags sin acuerdo del equipo.
