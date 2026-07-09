@@ -193,7 +193,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
 - Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
-- Nota de estado: existe app frontend con prediccion mock y backend FastAPI inicial con `GET /health` y `POST /predict` mock. Falta conectar modelo real cuando ML Core confirme pipeline y Champion Model.
+- Nota de estado: existe app frontend con prediccion mock y backend FastAPI inicial con `GET /health`, `GET /model/info` y `POST /predict` mock. Falta conectar modelo real cuando ML Core confirme pipeline y Champion Model.
 
 ### [ ] T-2.6 Validacion manual de app
 
@@ -331,7 +331,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
 - Comando de verificacion: ejecutar comandos documentados.
-- Nota de estado: documentada ejecucion parcial de frontend y contrato API. Existe backend FastAPI inicial; quedan tests, Docker e integracion real con modelo.
+- Nota de estado: documentada ejecucion parcial de frontend, backend, contrato API, tests iniciales y Docker. Queda integracion real con modelo.
 
 ## Fase 5 - Nivel Experto
 

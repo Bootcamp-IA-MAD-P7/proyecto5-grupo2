@@ -48,7 +48,33 @@ Comprueba que la API esta disponible.
 }
 ```
 
-## 4. Prediction Endpoint
+## 4. Model Info
+
+### `GET /model/info`
+
+Devuelve el estado del modelo que usa la API.
+
+Mientras no exista Champion Model, este endpoint informa de que la API trabaja con una prediccion mock provisional.
+
+#### Response `200 OK`
+
+```json
+{
+  "model_loaded": false,
+  "model_version": "mock_api_v0",
+  "model_status": "waiting_for_champion_model",
+  "model_type": "mock",
+  "primary_metric": "f1_score_canceled",
+  "target": "booking_status",
+  "positive_class": "Canceled",
+  "notes": [
+    "Provisional mock model used until ML Core delivers the Champion Model.",
+    "The real model must preserve the current prediction response contract."
+  ]
+}
+```
+
+## 5. Prediction Endpoint
 
 ### `POST /predict`
 
@@ -56,7 +82,7 @@ Calcula el riesgo de cancelacion de una reserva.
 
 El endpoint debe aceptar un JSON con los campos iniciales del formulario actual. Estos campos coinciden con el mock frontend y con features candidatas del dataset.
 
-## 5. Request JSON
+## 6. Request JSON
 
 ```json
 {
@@ -77,7 +103,7 @@ El endpoint debe aceptar un JSON con los campos iniciales del formulario actual.
 }
 ```
 
-## 6. Input Fields
+## 7. Input Fields
 
 | Campo | Tipo | Obligatorio | Descripcion |
 | --- | --- | --- | --- |
@@ -96,7 +122,7 @@ El endpoint debe aceptar un JSON con los campos iniciales del formulario actual.
 | `no_of_previous_cancellations` | integer | si | Cancelaciones previas del cliente. |
 | `no_of_previous_bookings_not_canceled` | integer | si | Reservas previas no canceladas. |
 
-## 7. Valores Iniciales Permitidos
+## 8. Valores Iniciales Permitidos
 
 Valores actuales usados por el frontend:
 
@@ -109,7 +135,7 @@ Valores pendientes de cerrar con ML Core:
 - Rango maximo recomendado para campos numericos.
 - Tratamiento de categorias no vistas durante entrenamiento.
 
-## 8. Response JSON
+## 9. Response JSON
 
 ```json
 {
@@ -128,7 +154,7 @@ Valores pendientes de cerrar con ML Core:
 }
 ```
 
-## 9. Output Fields
+## 10. Output Fields
 
 | Campo | Tipo | Descripcion |
 | --- | --- | --- |
@@ -141,7 +167,7 @@ Valores pendientes de cerrar con ML Core:
 | `main_factors` | array[string] | Factores explicativos principales. |
 | `recommendation` | string | Recomendacion operativa para el equipo hotelero. |
 
-## 10. Error Response
+## 11. Error Response
 
 FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
 
@@ -159,14 +185,15 @@ Formato esperado:
 }
 ```
 
-## 11. Reglas Provisionales
+## 12. Reglas Provisionales
 
 - El backend inicial puede devolver prediccion mock mientras no exista Champion Model.
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
 - El modelo real debe respetar este contrato o proponer una actualizacion documentada.
+- `GET /model/info` debe reflejar la version y estado real del modelo cuando se sustituya el mock.
 
-## 12. Pendiente
+## 13. Pendiente
 
 - Confirmar inputs definitivos con ML Core.
 - Confirmar pipeline de preprocesamiento.

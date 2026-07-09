@@ -19,6 +19,9 @@ This project follows an incremental delivery approach. Versions and tags will be
 - GitHub Actions workflow for frontend build checks.
 - Explicit `httpx` dependency for FastAPI `TestClient` in CI.
 - Docker setup for backend, frontend and local compose orchestration.
+- `GET /model/info` endpoint for provisional model status and future Champion Model metadata.
+- Backend model service layer to isolate mock inference from API routes.
+- Additional API contract tests for model info and model version consistency.
 
 ### Changed
 
@@ -26,6 +29,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Updated dataset-related SPEC notes now that the CSV is already available in `data/raw/`.
 - Updated SPEC status to reflect the merged backend API base.
 - Updated `README.md` with delivery-level progress against the project briefing.
+- Updated API contract and README with model info endpoint.
 
 ### Fixed
 
