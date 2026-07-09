@@ -83,6 +83,7 @@ Estado actual:
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
 - Endpoint de salud disponible en `GET /health`.
+- Endpoint de información de modelo disponible en `GET /model/info`.
 - Endpoint provisional de predicción disponible en `POST /predict`.
 - Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
 - Workflows de GitHub Actions creados para tests backend y build frontend.
@@ -163,10 +164,11 @@ El backend actual es una API FastAPI con endpoints:
 
 ```text
 GET /health
+GET /model/info
 POST /predict
 ```
 
-`POST /predict` devuelve por ahora una respuesta mock compatible con el contrato API. La inferencia real se conectará cuando exista un pipeline ML validado y un Champion Model confirmado.
+`GET /model/info` devuelve el estado provisional del modelo. `POST /predict` devuelve por ahora una respuesta mock compatible con el contrato API. La inferencia real se conectará cuando exista un pipeline ML validado y un Champion Model confirmado.
 
 ---
 
@@ -543,7 +545,7 @@ Leyenda:
 | [ ] | Modelo funcional de clasificación | Dataset y target definidos. | Entrenar baseline reproducible y seleccionar modelo inicial. |
 | [~] | EDA con visualizaciones relevantes para clasificación | Notebooks iniciales de inspección y EDA en `notebooks/`; diccionario en `reports/data_dictionary.md`. | Cerrar conclusiones de negocio, visualizaciones finales y análisis de desbalance. |
 | [ ] | Overfitting inferior al 5% | Criterio documentado como requisito del proyecto. | Medir diferencia entre entrenamiento y validación cuando exista modelo. |
-| [~] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, Docker local y respuesta mock. | Sustituir mock por inferencia real del modelo. |
+| [~] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y respuesta mock. | Sustituir mock por inferencia real del modelo. |
 | [ ] | Informe técnico de rendimiento | Estructura documental y roadmap creados. | Añadir métricas de clasificación, matriz de confusión, ROC, feature importance y análisis de errores. |
 
 ### Nivel Medio
@@ -625,7 +627,7 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 - Frontend mock integrado.
 - Contrato API inicial creado.
 - Backend FastAPI base creado.
-- Endpoints `GET /health` y `POST /predict` creados.
+- Endpoints `GET /health`, `GET /model/info` y `POST /predict` creados.
 - Tests iniciales de API backend creados.
 - CI inicial para backend y frontend creado.
 - Docker local inicial para frontend y backend creado.
