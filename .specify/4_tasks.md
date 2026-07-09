@@ -240,7 +240,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Resultado clave: F1 CV medio 0,7990 con desviacion 0,0034; ROC-AUC CV medio 0,9332 con desviacion 0,0020.
 - Comando de verificacion: `python -m src.models.train_challengers`.
 
-### [ ] T-3.3 Optimizar hiperparametros
+### [~] T-3.3 Optimizar hiperparametros
 
 - Archivos afectados: `src/models/`, `reports/model_report.md`.
 - Accion: usar GridSearch, RandomSearch u Optuna si se justifica.
@@ -249,7 +249,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.2.
 - Criterio de verificacion: mejores parametros y comparacion documentados.
-- Comando de verificacion: TODO.
+- Avance: busqueda controlada de 12 configuraciones de `RandomForestClassifier` ejecutada con el mismo split train/validacion.
+- Mejor configuracion provisional: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
+- Resultado provisional: F1 validacion 0,8042, gap train-validacion 0,0242 y ROC-AUC validacion 0,9347.
+- Pendiente: aplicar la configuracion ganadora en `src/models/train_challengers.py`, regenerar artefacto e informe, y ejecutar verificacion final.
+- Comando de verificacion: pendiente de consolidar en script reproducible.
 
 ### [ ] T-3.4 Seleccionar Champion Model
 

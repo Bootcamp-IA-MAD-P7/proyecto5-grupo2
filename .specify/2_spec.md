@@ -223,6 +223,58 @@ Decision actual:
 - Logistic Regression queda como baseline inicial, no como Champion definitivo.
 - El test final queda reservado para evaluar candidatos posteriores de forma mas imparcial.
 
+## Estado del ensemble challenger
+
+Challenger reproducible implementado en `src/models/train_challengers.py`.
+
+Modelo evaluado:
+
+- `random_forest_challenger`: Random Forest con el mismo contrato de features que el baseline.
+- Preprocessing: One-Hot Encoding para categoricas, binarias en passthrough y numericas sin escalado porque el modelo es de arboles.
+- Artefacto guardado: `models/challengers/random_forest_challenger.pkl`.
+
+Resultados de validacion frente al baseline:
+
+- Logistic Regression: F1-score clase `Canceled` = 0,6870; ROC-AUC = 0,8604.
+- Random Forest inicial: F1-score clase `Canceled` = 0,7952; ROC-AUC = 0,9287.
+- Gap train-validacion en F1 de Random Forest inicial: 0,0186.
+- Resultado de overfitting: cumple la regla de diferencia inferior a 0,05.
+
+Validacion cruzada:
+
+- Estrategia: Stratified K-Fold de 3 folds.
+- F1 medio clase `Canceled`: 0,7990.
+- Desviacion F1: 0,0034.
+- ROC-AUC medio: 0,9332.
+- Desviacion ROC-AUC: 0,0020.
+
+Decision actual:
+
+- Random Forest queda como challenger fuerte.
+- Todavia no se declara Champion porque falta cerrar tuning y validar la decision con los criterios de `T-3.4`.
+
+## Estado del tuning inicial
+
+Busqueda controlada ejecutada para `RandomForestClassifier`.
+
+Configuracion provisional ganadora:
+
+- `n_estimators=200`.
+- `max_depth=16`.
+- `min_samples_leaf=8`.
+- `min_samples_split=16`.
+- `class_weight="balanced_subsample"`.
+
+Comparacion de validacion:
+
+- Random Forest inicial (`max_depth=14`, `min_samples_leaf=12`): F1 = 0,7952; gap = 0,0186; ROC-AUC = 0,9287.
+- Random Forest tuning provisional (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
+
+Decision actual:
+
+- La configuracion tuning provisional mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
+- Pendiente: aplicar esta configuracion al script reproducible, regenerar artefacto y actualizar el informe tecnico antes de cerrar `T-3.3`.
+
 ## Metricas obligatorias
 
 El informe tecnico debe incluir:
