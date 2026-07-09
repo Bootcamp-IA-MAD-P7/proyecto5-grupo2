@@ -1,5 +1,6 @@
 kagglehub
 fastapi
+httpx
 matplotlib
 numpy
 pandas

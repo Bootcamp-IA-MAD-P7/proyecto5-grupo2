@@ -17,6 +17,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Backend API smoke tests for `GET /health`, `POST /predict` and invalid payload validation.
 - GitHub Actions workflow for backend API tests.
 - GitHub Actions workflow for frontend build checks.
+- Explicit `httpx` dependency for FastAPI `TestClient` in CI.
 
 ### Changed
 
