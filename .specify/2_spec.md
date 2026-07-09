@@ -349,10 +349,13 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   `-- 4_tasks.md
 |-- app/
 |   |-- frontend/
+|   |   |-- Dockerfile
+|   |   |-- nginx.conf
 |   |   |-- src/
 |   |   |-- package.json
 |   |   `-- vite.config.js
 |   `-- backend/
+|       |-- Dockerfile
 |       |-- __init__.py
 |       |-- main.py
 |       `-- schemas.py
@@ -381,8 +384,8 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |-- tests/
 |-- .github/
 |   `-- pull_request_template.md
+|-- .dockerignore
 |-- CHANGELOG.md
-|-- Dockerfile
 |-- docker-compose.yml
 |-- requirements.txt
 `-- README.md
@@ -476,7 +479,15 @@ Backend inicial disponible:
 - `POST /predict` con respuesta mock.
 - Contrato documentado en `docs/api_contract.md`.
 
-TODO: definir puertos finales, Dockerfile y `docker-compose.yml` cuando exista integracion con modelo Champion o se decida dockerizar la version mock.
+Docker inicial disponible:
+
+- `app/backend/Dockerfile`.
+- `app/frontend/Dockerfile`.
+- `docker-compose.yml`.
+- Backend expuesto en `http://localhost:8000`.
+- Frontend expuesto en `http://localhost:8080`.
+
+TODO: conectar Docker con modelo Champion cuando exista integracion real de inferencia.
 
 ## Documentacion e informes
 
