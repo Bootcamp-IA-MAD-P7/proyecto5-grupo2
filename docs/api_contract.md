@@ -54,22 +54,22 @@ Comprueba que la API esta disponible.
 
 Devuelve el estado del modelo que usa la API.
 
-Mientras no exista Champion Model, este endpoint informa de que la API trabaja con una prediccion mock provisional.
+Este endpoint informa del modelo que usa la API para generar predicciones.
 
 #### Response `200 OK`
 
 ```json
 {
-  "model_loaded": false,
-  "model_version": "mock_api_v0",
-  "model_status": "waiting_for_champion_model",
-  "model_type": "mock",
+  "model_loaded": true,
+  "model_version": "baseline_logistic_v0.1.0",
+  "model_status": "loaded",
+  "model_type": "logistic_regression_baseline",
   "primary_metric": "f1_score_canceled",
   "target": "booking_status",
   "positive_class": "Canceled",
   "notes": [
-    "Provisional mock model used until ML Core delivers the Champion Model.",
-    "The real model must preserve the current prediction response contract."
+    "Baseline Logistic Regression pipeline loaded from repository artifact.",
+    "The pipeline includes preprocessing and binary cancellation classification."
   ]
 }
 ```
@@ -80,13 +80,16 @@ Mientras no exista Champion Model, este endpoint informa de que la API trabaja c
 
 Calcula el riesgo de cancelacion de una reserva.
 
-El endpoint debe aceptar un JSON con los campos iniciales del formulario actual. Estos campos coinciden con el mock frontend y con features candidatas del dataset.
+El endpoint acepta un JSON con los campos del formulario y las features requeridas por el baseline Logistic Regression.
 
 ## 6. Request JSON
 
 ```json
 {
   "lead_time": 120,
+  "arrival_year": 2018,
+  "arrival_month": 7,
+  "arrival_date": 15,
   "no_of_special_requests": 0,
   "avg_price_per_room": 156.0,
   "market_segment_type": "Online",
@@ -108,6 +111,9 @@ El endpoint debe aceptar un JSON con los campos iniciales del formulario actual.
 | Campo | Tipo | Obligatorio | Descripcion |
 | --- | --- | --- | --- |
 | `lead_time` | integer | si | Dias entre reserva y llegada. |
+| `arrival_year` | integer | si | Anio de llegada. |
+| `arrival_month` | integer | si | Mes de llegada, entre 1 y 12. |
+| `arrival_date` | integer | si | Dia de llegada, entre 1 y 31. |
 | `no_of_special_requests` | integer | si | Numero de solicitudes especiales. |
 | `avg_price_per_room` | float | si | Precio medio por habitacion. |
 | `market_segment_type` | string | si | Canal o segmento de mercado. |
@@ -144,7 +150,7 @@ Valores pendientes de cerrar con ML Core:
   "probability": 0.72,
   "risk_level": "high",
   "risk_label": "Alto",
-  "model_version": "mock_api_v0",
+  "model_version": "baseline_logistic_v0.1.0",
   "main_factors": [
     "Lead time elevado",
     "Sin solicitudes especiales",
@@ -163,7 +169,7 @@ Valores pendientes de cerrar con ML Core:
 | `probability` | float | Probabilidad estimada de cancelacion entre `0` y `1`. |
 | `risk_level` | string | Nivel tecnico: `low`, `medium` o `high`. |
 | `risk_label` | string | Etiqueta visible: `Bajo`, `Medio` o `Alto`. |
-| `model_version` | string | Version del modelo o mock usado. |
+| `model_version` | string | Version del modelo usado. |
 | `main_factors` | array[string] | Factores explicativos principales. |
 | `recommendation` | string | Recomendacion operativa para el equipo hotelero. |
 
@@ -187,17 +193,16 @@ Formato esperado:
 
 ## 12. Reglas Provisionales
 
-- El backend inicial puede devolver prediccion mock mientras no exista Champion Model.
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
 - El modelo real debe respetar este contrato o proponer una actualizacion documentada.
-- `GET /model/info` debe reflejar la version y estado real del modelo cuando se sustituya el mock.
+- `GET /model/info` debe reflejar la version y estado real del modelo cargado.
 
 ## 13. Pendiente
 
 - Confirmar inputs definitivos con ML Core.
 - Confirmar pipeline de preprocesamiento.
-- Confirmar Champion Model.
-- Confirmar versionado real de modelo.
+- Confirmar Champion Model definitivo.
+- Confirmar si el baseline se mantiene como modelo temporal o se sustituye por un Champion.
 - Confirmar estrategia de categorias no vistas.
 - Confirmar si la probabilidad corresponde siempre a la clase `Canceled`.

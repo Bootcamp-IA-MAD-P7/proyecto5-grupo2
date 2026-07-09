@@ -12,16 +12,18 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Initial API contract in `docs/api_contract.md`.
 - Initial FastAPI backend structure in `app/backend`.
 - `GET /health` endpoint for backend availability checks.
-- Provisional `POST /predict` endpoint with mock response compatible with the current frontend.
+- `POST /predict` endpoint with response contract compatible with the current frontend.
 - Backend dependencies in `requirements.txt`: `fastapi`, `pydantic` and `uvicorn`.
 - Backend API smoke tests for `GET /health`, `POST /predict` and invalid payload validation.
 - GitHub Actions workflow for backend API tests.
 - GitHub Actions workflow for frontend build checks.
 - Explicit `httpx` dependency for FastAPI `TestClient` in CI.
 - Docker setup for backend, frontend and local compose orchestration.
-- `GET /model/info` endpoint for provisional model status and future Champion Model metadata.
-- Backend model service layer to isolate mock inference from API routes.
+- `GET /model/info` endpoint for model status and future Champion Model metadata.
+- Backend model service layer to isolate model inference from API routes.
 - Additional API contract tests for model info and model version consistency.
+- Real baseline inference in `POST /predict` using `models/baseline/logistic_regression_baseline.pkl`.
+- Arrival date fields in the API and frontend prediction payload to match the trained model feature contract.
 
 ### Changed
 
@@ -31,6 +33,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Updated `README.md` with delivery-level progress against the project briefing.
 - Defined F1-score of the `Canceled` class as the primary model metric in SPEC, roadmap and README.
 - Updated API contract and README with model info endpoint.
+- Updated API contract, SPEC tasks and README to reflect real baseline inference instead of mock backend prediction.
 
 ### Fixed
 

@@ -80,12 +80,14 @@ Estado actual:
 - Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
 - Notebooks iniciales de inspección y EDA disponibles en `notebooks/`.
 - Frontend React + Vite integrado en `app/frontend`.
-- Mock visual y funcional de producto disponible para validar la experiencia.
+- Prototipo visual de producto disponible para validar la experiencia.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
 - Endpoint de salud disponible en `GET /health`.
 - Endpoint de información de modelo disponible en `GET /model/info`.
-- Endpoint provisional de predicción disponible en `POST /predict`.
+- Endpoint de predicción real disponible en `POST /predict` usando el baseline Logistic Regression.
+- Baseline reproducible entrenado y guardado en `models/baseline/logistic_regression_baseline.pkl`.
+- Métricas y overfitting documentados en `reports/model_report.md`.
 - Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
 - Workflows de GitHub Actions creados para tests backend y build frontend.
 - Configuración Docker inicial disponible para frontend y backend.
@@ -98,16 +100,11 @@ Estado actual:
 
 Pendiente principal:
 
-- Cerrar distribución del target y posible desbalance.
-- Consolidar visualizaciones finales de EDA.
-- Consolidar pipeline de preprocesamiento.
-- Entrenar baseline reproducible.
-- Registrar métricas usando F1-score de la clase `Canceled` como métrica principal.
-- Verificar overfitting con F1-score de la clase `Canceled`.
-- Seleccionar Champion Model.
-- Conectar frontend con predicción real.
+- Completar explicación de performance con feature importance y análisis de errores.
+- Validar manualmente la app con entradas reales y capturas.
+- Seleccionar Champion Model si se decide promocionar el challenger.
 - Completar informe técnico.
-- Ampliar tests, CI y Docker cuando se integre el modelo real.
+- Validar Docker con el baseline real integrado.
 
 ---
 
@@ -169,7 +166,7 @@ GET /model/info
 POST /predict
 ```
 
-`GET /model/info` devuelve el estado provisional del modelo. `POST /predict` devuelve por ahora una respuesta mock compatible con el contrato API. La inferencia real se conectará cuando exista un pipeline ML validado y un Champion Model confirmado.
+`GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`.
 
 ---
 
@@ -189,7 +186,7 @@ Tecnologías:
 - CSS custom.
 - Mock service de predicción.
 
-Actualmente el frontend trabaja con una predicción mock. Esto permite validar la experiencia de usuario antes de integrar el backend y el modelo real.
+Actualmente el frontend consulta el backend real por defecto. El mock editorial puede activarse solo para demos aisladas con `VITE_USE_MOCK_API=true`.
 
 ### Ejecutar frontend
 
@@ -310,7 +307,7 @@ Comprobar frontend:
 http://localhost:8080/
 ```
 
-Nota: el backend actual usa una predicción mock compatible con el frontend. La inferencia real se conectará cuando ML Core confirme el pipeline y el Champion Model.
+Nota: el backend actual carga el baseline Logistic Regression. Cuando se seleccione un Champion posterior, el servicio de inferencia deberá apuntar al nuevo artefacto versionado.
 
 ---
 
@@ -543,11 +540,11 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [ ] | Modelo funcional de clasificación | Dataset, target y métrica principal definidos. | Entrenar baseline reproducible y seleccionar modelo inicial. |
+| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado con Pipeline de Scikit-learn y guardado en `models/baseline/logistic_regression_baseline.pkl`. | Seleccionar Champion posterior si se decide avanzar a Nivel Medio. |
 | [~] | EDA con visualizaciones relevantes para clasificación | Notebooks iniciales de inspección y EDA en `notebooks/`; diccionario en `reports/data_dictionary.md`. | Cerrar conclusiones de negocio, visualizaciones finales y análisis de desbalance. |
-| [ ] | Overfitting inferior al 5% | Regla documentada usando F1-score de `Canceled` como métrica principal. | Medir diferencia entre entrenamiento y validación cuando exista modelo. |
-| [~] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y respuesta mock. | Sustituir mock por inferencia real del modelo. |
-| [ ] | Informe técnico de rendimiento | Estructura documental, roadmap y métrica principal definidos. | Añadir métricas de clasificación, matriz de confusión, ROC, feature importance y análisis de errores. |
+| [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest gap F1 `0.0186`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
+| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y baseline real integrado. | Validación manual y despliegue posterior. |
+| [~] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC y overfitting documentados en `reports/model_report.md`. | Añadir feature importance y análisis de errores. |
 
 ### Nivel Medio
 
@@ -605,11 +602,9 @@ Prioridades inmediatas:
 2. Consolidar EDA y visualizaciones finales.
 3. Aplicar F1-score de la clase `Canceled` como métrica principal.
 4. Consolidar pipeline de preprocesamiento.
-5. Entrenar baseline reproducible.
-6. Registrar métricas y overfitting.
-7. Conectar frontend y backend con modelo real.
-8. Sustituir respuesta mock por inferencia real.
-9. Ampliar tests de preprocessing, modelo y métricas.
+5. Completar feature importance y análisis de errores.
+6. Validar manualmente frontend + backend + modelo real.
+7. Ampliar tests de preprocessing, modelo y métricas.
 10. Preparar informe técnico.
 11. Preparar presentación de negocio y presentación técnica.
 12. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
