@@ -25,6 +25,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Replaced remaining Trello references with Jira in SPEC and agent prompt documentation.
 - Updated dataset-related SPEC notes now that the CSV is already available in `data/raw/`.
 - Updated SPEC status to reflect the merged backend API base.
+- Updated `README.md` with delivery-level progress against the project briefing.
 
 ### Fixed
 
