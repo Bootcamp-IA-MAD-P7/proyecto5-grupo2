@@ -16,12 +16,16 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Backend dependencies in `requirements.txt`: `fastapi`, `pydantic` and `uvicorn`.
 - Backend API smoke tests for `GET /health`, `POST /predict` and invalid payload validation.
 - GitHub Actions workflow for backend API tests.
+- GitHub Actions workflow for frontend build checks.
+- Explicit `httpx` dependency for FastAPI `TestClient` in CI.
+- Docker setup for backend, frontend and local compose orchestration.
 
 ### Changed
 
 - Replaced remaining Trello references with Jira in SPEC and agent prompt documentation.
 - Updated dataset-related SPEC notes now that the CSV is already available in `data/raw/`.
 - Updated SPEC status to reflect the merged backend API base.
+- Updated `README.md` with delivery-level progress against the project briefing.
 
 ### Fixed
 

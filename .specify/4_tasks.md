@@ -312,7 +312,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: tests pasan y fallan si la regla se incumple.
 - Comando de verificacion: `python -m pytest`
 
-### [ ] T-4.3 Dockerizar app
+### [~] T-4.3 Dockerizar app
 
 - Archivos afectados: `Dockerfile`, `docker-compose.yml`, `README.md`.
 - Accion: crear imagen que levante la app y cargue el modelo Champion.
@@ -321,7 +321,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-2.5, T-3.4.
 - Criterio de verificacion: app levanta con Docker.
-- Comando de verificacion: TODO: `docker build` y `docker run` cuando exista app.
+- Comando de verificacion: `docker compose build` y `docker compose up`.
+- Nota de estado: Docker inicial preparado para frontend y backend mock; queda conectar modelo Champion real cuando exista.
 
 ### [ ] T-4.4 Conectar almacenamiento persistente
 

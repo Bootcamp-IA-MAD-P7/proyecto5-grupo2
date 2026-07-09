@@ -80,6 +80,13 @@ Estado actual:
 - Notebooks iniciales de inspección y EDA disponibles en `notebooks/`.
 - Frontend React + Vite integrado en `app/frontend`.
 - Mock visual y funcional de producto disponible para validar la experiencia.
+- Backend FastAPI inicial integrado en `app/backend`.
+- Contrato API inicial documentado en `docs/api_contract.md`.
+- Endpoint de salud disponible en `GET /health`.
+- Endpoint provisional de predicción disponible en `POST /predict`.
+- Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
+- Workflows de GitHub Actions creados para tests backend y build frontend.
+- Configuración Docker inicial disponible para frontend y backend.
 - Metodología SPEC creada en `.specify/`.
 - Documentos de organización creados en `docs/project_management/`.
 - Jira definido como herramienta oficial de gestión.
@@ -96,10 +103,9 @@ Pendiente principal:
 - Entrenar baseline reproducible.
 - Registrar métricas y overfitting.
 - Seleccionar Champion Model.
-- Crear backend de inferencia con FastAPI.
 - Conectar frontend con predicción real.
 - Completar informe técnico.
-- Añadir tests, CI y Docker si el avance lo permite.
+- Ampliar tests, CI y Docker cuando se integre el modelo real.
 
 ---
 
@@ -108,15 +114,25 @@ Pendiente principal:
 ```text
 .
 |-- .github/
-|   `-- pull_request_template.md
+|   |-- pull_request_template.md
+|   `-- workflows/
+|       |-- backend-tests.yml
+|       `-- frontend-build.yml
 |-- .specify/
 |   |-- 1_intent.md
 |   |-- 2_spec.md
 |   |-- 3_plan.md
 |   `-- 4_tasks.md
 |-- app/
+|   |-- backend/
+|   |   |-- Dockerfile
+|   |   |-- __init__.py
+|   |   |-- main.py
+|   |   `-- schemas.py
 |   |-- components/
 |   |-- frontend/
+|   |   |-- Dockerfile
+|   |   |-- nginx.conf
 |   |   |-- src/
 |   |   |-- package.json
 |   |   |-- pnpm-lock.yaml
@@ -138,21 +154,19 @@ Pendiente principal:
 |-- src/
 |-- tests/
 |-- CHANGELOG.md
+|-- docker-compose.yml
 |-- requirements.txt
 `-- README.md
 ```
 
-Estructura prevista pendiente:
+El backend actual es una API FastAPI con endpoints:
 
 ```text
-app/backend/
-```
-
-El backend previsto será una API FastAPI con endpoint:
-
-```text
+GET /health
 POST /predict
 ```
+
+`POST /predict` devuelve por ahora una respuesta mock compatible con el contrato API. La inferencia real se conectará cuando exista un pipeline ML validado y un Champion Model confirmado.
 
 ---
 
@@ -248,7 +262,56 @@ deactivate
 
 ---
 
-## 8. Metodología SPEC / SDD
+## 8. Docker
+
+El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
+
+Servicios:
+
+- Backend FastAPI en `http://localhost:8000`.
+- Frontend servido por nginx en `http://localhost:8080`.
+
+Construir imágenes:
+
+```bash
+docker compose build
+```
+
+Levantar servicios:
+
+```bash
+docker compose up
+```
+
+Levantar servicios en segundo plano:
+
+```bash
+docker compose up -d
+```
+
+Parar servicios:
+
+```bash
+docker compose down
+```
+
+Comprobar backend:
+
+```text
+http://localhost:8000/health
+```
+
+Comprobar frontend:
+
+```text
+http://localhost:8080/
+```
+
+Nota: el backend actual usa una predicción mock compatible con el frontend. La inferencia real se conectará cuando ML Core confirme el pipeline y el Champion Model.
+
+---
+
+## 9. Metodología SPEC / SDD
 
 El proyecto usa una metodología basada en SPEC / SDD.
 
@@ -295,12 +358,13 @@ Estado actual destacado:
 [x] T-1.3 Crear diccionario de datos
 [~] T-1.4 Realizar EDA inicial
 [~] T-2.5 Crear app minima de prediccion
+[~] T-4.3 Dockerizar app
 [~] T-4.5 Documentar instalacion y ejecucion
 ```
 
 ---
 
-## 9. Documentación de organización
+## 10. Documentación de organización
 
 Documentos de organización del proyecto:
 
@@ -321,7 +385,7 @@ Estos documentos explican:
 
 ---
 
-## 10. Flujo Git
+## 11. Flujo Git
 
 Ramas principales:
 
@@ -363,7 +427,7 @@ compare: feature/nombre-tarea
 
 ---
 
-## 11. Pull Requests
+## 12. Pull Requests
 
 El repositorio incluye una plantilla de Pull Request en:
 
@@ -394,7 +458,7 @@ Tipos de cambio contemplados:
 
 ---
 
-## 12. Changelog y tags
+## 13. Changelog y tags
 
 El repositorio incluye:
 
@@ -429,7 +493,7 @@ v1.0.0-final
 
 ---
 
-## 13. Jira
+## 14. Jira
 
 La herramienta oficial de gestión es Jira.
 
@@ -447,7 +511,7 @@ Los tickets deben mantenerse alineados con:
 
 ---
 
-## 14. Roles del equipo
+## 15. Roles del equipo
 
 Roles sugeridos por la SPEC:
 
@@ -462,40 +526,57 @@ Los roles son colaborativos. Cada integrante puede apoyar tareas de otros bloque
 
 ---
 
-## 15. Niveles de entrega
+## 16. Niveles de entrega y progreso
+
+Leyenda:
+
+```text
+[x] completado o base funcional verificada
+[~] en progreso
+[ ] pendiente
+```
 
 ### Nivel Esencial
 
-- Modelo funcional de clasificación.
-- EDA con visualizaciones.
-- Overfitting inferior al 5%.
-- App productivizada.
-- Informe técnico con métricas de clasificación.
+| Estado | Requisito | Evidencia actual | Pendiente |
+| --- | --- | --- | --- |
+| [ ] | Modelo funcional de clasificación | Dataset y target definidos. | Entrenar baseline reproducible y seleccionar modelo inicial. |
+| [~] | EDA con visualizaciones relevantes para clasificación | Notebooks iniciales de inspección y EDA en `notebooks/`; diccionario en `reports/data_dictionary.md`. | Cerrar conclusiones de negocio, visualizaciones finales y análisis de desbalance. |
+| [ ] | Overfitting inferior al 5% | Criterio documentado como requisito del proyecto. | Medir diferencia entre entrenamiento y validación cuando exista modelo. |
+| [~] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, Docker local y respuesta mock. | Sustituir mock por inferencia real del modelo. |
+| [ ] | Informe técnico de rendimiento | Estructura documental y roadmap creados. | Añadir métricas de clasificación, matriz de confusión, ROC, feature importance y análisis de errores. |
 
 ### Nivel Medio
 
-- Ensemble.
-- Validación cruzada.
-- Tuning de hiperparámetros.
-- Feedback o registro de predicciones.
+| Estado | Requisito | Evidencia actual | Pendiente |
+| --- | --- | --- | --- |
+| [ ] | Modelo con técnicas de ensemble | En roadmap ML. | Entrenar y comparar Random Forest, Gradient Boosting u otras alternativas. |
+| [ ] | Validación cruzada | En roadmap ML. | Definir estrategia de validación y registrar resultados. |
+| [ ] | Optimización de hiperparámetros | En roadmap ML. | Aplicar GridSearch, RandomSearch, Optuna u otra técnica acordada. |
+| [ ] | Recogida de feedback para monitorizar performance | Previsto en contrato producto/MLOps. | Diseñar almacenamiento y métrica de feedback en la app. |
+| [ ] | Recogida de datos nuevos para futuros reentrenamientos | Previsto como mejora de producto. | Definir pipeline de ingestión y persistencia. |
 
 ### Nivel Avanzado
 
-- Docker.
-- Persistencia.
-- Tests unitarios.
-- Despliegue o preparación para despliegue.
+| Estado | Requisito | Evidencia actual | Pendiente |
+| --- | --- | --- | --- |
+| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Integrar modelo real dentro del flujo Docker. |
+| [ ] | Guardado en base de datos de datos recogidos | No implementado todavía. | Elegir base de datos y definir esquema mínimo. |
+| [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
+| [~] | Tests unitarios | Tests smoke de API backend y workflows CI activos. | Añadir tests de preprocessing, métricas mínimas y modelo. |
 
 ### Nivel Experto
 
-- Red neuronal experimental.
-- A/B Testing.
-- Data Drift.
-- Auto-reemplazo condicionado de modelos.
+| Estado | Requisito | Evidencia actual | Pendiente |
+| --- | --- | --- | --- |
+| [ ] | Experimentos con redes neuronales | No iniciado. | Valorar si aporta frente a modelos clásicos. |
+| [ ] | A/B Testing para comparar modelos | Documentado como posibilidad MLOps. | Definir Champion/Challenger y reparto de tráfico o evaluación offline. |
+| [ ] | Monitorización de Data Drift | Documentado como objetivo experto. | Definir variables a monitorizar y umbrales de alerta. |
+| [ ] | Auto-reemplazo condicionado de modelos | Documentado como objetivo experto. | Diseñar política de promoción solo si el nuevo modelo supera métricas mínimas. |
 
 ---
 
-## 16. Roadmap resumido
+## 17. Roadmap resumido
 
 1. Organización y acuerdos.
 2. Dataset, EDA y contrato de datos.
@@ -513,7 +594,7 @@ docs/project_management/03_delivery_roadmap.md
 
 ---
 
-## 17. Próximos pasos técnicos
+## 18. Próximos pasos técnicos
 
 Prioridades inmediatas:
 
@@ -523,17 +604,16 @@ Prioridades inmediatas:
 4. Consolidar pipeline de preprocesamiento.
 5. Entrenar baseline reproducible.
 6. Registrar métricas y overfitting.
-7. Definir contrato API.
-8. Crear backend FastAPI.
-9. Crear endpoint `POST /predict`.
-10. Conectar frontend con modelo real.
-11. Documentar ejecución completa.
-12. Añadir tests mínimos.
-13. Preparar informe técnico.
+7. Conectar frontend y backend con modelo real.
+8. Sustituir respuesta mock por inferencia real.
+9. Ampliar tests de preprocessing, modelo y métricas.
+10. Preparar informe técnico.
+11. Preparar presentación de negocio y presentación técnica.
+12. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
 
 ---
 
-## 18. Sprint 1
+## 19. Sprint 1
 
 Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 
@@ -543,25 +623,30 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 - Documentación de organización creada.
 - Jira definido como herramienta de gestión.
 - Frontend mock integrado.
+- Contrato API inicial creado.
+- Backend FastAPI base creado.
+- Endpoints `GET /health` y `POST /predict` creados.
+- Tests iniciales de API backend creados.
+- CI inicial para backend y frontend creado.
+- Docker local inicial para frontend y backend creado.
 - Flujo Git definido.
 - Plantilla de PR creada.
 - Changelog y tags iniciales creados.
 
 Queda para Sprint 2:
 
-- Contrato API.
-- Backend FastAPI.
-- Integración frontend-backend.
 - Pipeline de preprocesamiento.
 - Baseline ML.
 - Métricas y overfitting.
-- Tests mínimos.
-- CI inicial.
-- Docker cuando exista una app integrable de extremo a extremo.
+- Integración real del modelo en backend.
+- Conexión frontend-backend contra inferencia real.
+- Tests de preprocessing, modelo y métricas.
+- Persistencia o feedback de predicciones si el alcance lo permite.
+- Preparación de despliegue.
 
 ---
 
-## 19. Verificaciones útiles
+## 20. Verificaciones útiles
 
 Estado de Git:
 
@@ -602,12 +687,12 @@ git diff --check
 
 ---
 
-## 20. Equipo
+## 21. Equipo
 
 Proyecto desarrollado por el Grupo 2 del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
 ---
 
-## 21. Nota
+## 22. Nota
 
 Este README describe el estado y la dirección del proyecto. Debe actualizarse cada vez que cambien la forma de ejecutar la app, el modelo Champion, la arquitectura, los entregables principales, los hitos versionados o el flujo de trabajo del equipo.
