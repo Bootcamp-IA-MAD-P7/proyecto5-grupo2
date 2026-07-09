@@ -7,7 +7,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Repositorio: `proyecto5-grupo2`.
 - README inicial: actualizado con descripcion del proyecto, estructura, ejecucion del frontend, metodologia SPEC, flujo Git, roles y roadmap.
 - Dataset: Hotel Reservations Classification Dataset.
-- Archivo esperado: `Hotel Reservations.csv`.
+- Archivo incorporado: `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
 - Fuente de referencia: Kaggle, kernel `marawaneslam/hotel-reservations-classification`.
 - Ruta original en Kaggle: `/kaggle/input/hotel-reservations-classification-dataset/Hotel Reservations.csv`.
 - Cliente del proyecto: plataforma de reservas hoteleras tipo Booking, Trivago o Agoda.
@@ -18,7 +18,8 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con prediccion mock para validar UX/UI.
-- Backend actual: TODO, previsto en `app/backend` con endpoint `POST /predict`.
+- Backend actual: existe API FastAPI inicial en `app/backend` con `GET /health` y `POST /predict` mock compatible con el frontend.
+- Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
 ## Tipo de problema
@@ -32,7 +33,17 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 
 Dataset definitivo: Hotel Reservations Classification Dataset.
 
-Archivo de trabajo esperado: `Hotel Reservations.csv`.
+Archivo de trabajo:
+
+```text
+data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv
+```
+
+Estado del archivo:
+
+- CSV incorporado en el repositorio.
+- Filas: 36.275.
+- Columnas: 19.
 
 Fuente de referencia:
 
@@ -74,9 +85,11 @@ Debe documentarse:
 
 - Nombre de columna: `booking_status`.
 - Clases esperadas: `Canceled` y `Not_Canceled`.
-- Distribucion de clases: `Not_Canceled` 24.390 registros (67,24%) y `Canceled` 11.885 registros (32,76%).
-- Si hay desbalance: hay desbalance moderado, por lo que `accuracy` no debe usarse como unica metrica.
-- Si se requiere binarizacion o agrupacion: no requiere agrupacion; para modelos se codificara como variable binaria.
+- Distribucion de clases:
+  - `Not_Canceled`: 24.390 registros, 67,24%.
+  - `Canceled`: 11.885 registros, 32,76%.
+- Desbalance: moderado. La clase mayoritaria es `Not_Canceled`, por lo que se recomienda vigilar precision, recall y F1, no solo accuracy.
+- Si se requiere binarizacion o agrupacion: no se requiere agrupacion; para modelos se codificara como variable binaria.
 - Justificacion: es una variable categorica que indica el resultado historico de la reserva, por lo que permite entrenar un modelo de clasificacion supervisada.
 
 ### Features esperadas
@@ -409,8 +422,14 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   |-- 3_plan.md
 |   `-- 4_tasks.md
 |-- app/
-|   |-- main.py
-|   `-- components/
+|   |-- frontend/
+|   |   |-- src/
+|   |   |-- package.json
+|   |   `-- vite.config.js
+|   `-- backend/
+|       |-- __init__.py
+|       |-- main.py
+|       `-- schemas.py
 |-- data/
 |   |-- raw/
 |   |-- interim/
@@ -418,6 +437,7 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   `-- feedback/
 |-- docs/
 |   |-- business_presentation/
+|   |-- project_management/
 |   `-- technical_presentation/
 |-- models/
 |   |-- champion/
@@ -433,6 +453,9 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   |-- evaluation/
 |   `-- mlops/
 |-- tests/
+|-- .github/
+|   `-- pull_request_template.md
+|-- CHANGELOG.md
 |-- Dockerfile
 |-- docker-compose.yml
 |-- requirements.txt
@@ -519,7 +542,15 @@ Docker debe permitir:
 - Exponer el puerto de la app.
 - Documentar el comando de ejecucion.
 
-TODO: definir puerto y tecnologia de app.
+Tecnologia de app definida: frontend React + Vite y backend de inferencia con FastAPI.
+
+Backend inicial disponible:
+
+- `GET /health`.
+- `POST /predict` con respuesta mock.
+- Contrato documentado en `docs/api_contract.md`.
+
+TODO: definir puertos finales, Dockerfile y `docker-compose.yml` cuando exista integracion con modelo Champion o se decida dockerizar la version mock.
 
 ## Documentacion e informes
 
@@ -531,7 +562,7 @@ El proyecto debe incluir:
 - Capturas de app.
 - Presentacion de negocio.
 - Presentacion tecnica del codigo.
-- Enlace a Trello o herramienta equivalente.
+- Enlace al tablero Jira oficial.
 
 ## Criterios de cierre por nivel
 

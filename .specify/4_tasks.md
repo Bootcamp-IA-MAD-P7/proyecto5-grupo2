@@ -1,6 +1,6 @@
 # SPEC 4 - Tasks
 
-Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket debe moverse de estado solo cuando su criterio de verificacion este cumplido.
+Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de estado solo cuando su criterio de verificacion este cumplido.
 
 ## Protocolo de ejecucion
 
@@ -28,18 +28,19 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 
 ## Fase 0 - Preparacion
 
-### [ ] T-0.1 Crear tablero de gestion
+### [x] T-0.1 Crear tablero de gestion
 
-- Archivos afectados: ninguno o `README.md` si se agrega enlace.
-- Accion: crear Trello o herramienta equivalente con columnas Backlog, In Progress, Review, Done y Blocked.
+- Archivos afectados: `.specify/2_spec.md`.
+- Accion: crear Jira o herramienta equivalente con columnas Backlog, In Progress, Review, Done y Blocked.
 - Responsable sugerido: I4.
 - Dificultad: baja.
 - Apto junior: si.
 - Dependencias: ninguna.
-- Criterio de verificacion: tablero creado con tickets iniciales.
+- Criterio de verificacion: tablero creado con tickets iniciales y enlace documentado.
 - Comando de verificacion: no aplica.
+- Evidencia: Jira oficial documentado en `.specify/2_spec.md`.
 
-### [ ] T-0.2 Revisar y aceptar SPEC inicial
+### [x] T-0.2 Revisar y aceptar SPEC inicial
 
 - Archivos afectados: `.specify/`.
 - Accion: leer los cuatro documentos SPEC y anotar dudas o cambios.
@@ -49,8 +50,9 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: `.specify/` creado.
 - Criterio de verificacion: acuerdos registrados y TODO principales identificados.
 - Comando de verificacion: no aplica.
+- Evidencia: SPEC actualizada con stack React + Vite, FastAPI previsto y Jira oficial.
 
-### [ ] T-0.3 Definir candidatos de dataset
+### [-] T-0.3 Definir candidatos de dataset
 
 - Archivos afectados: `.specify/2_spec.md`, `README.md`.
 - Accion: listar 2 o 3 datasets candidatos con target posible, fuente, ventajas y riesgos.
@@ -60,17 +62,19 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: T-0.2.
 - Criterio de verificacion: el equipo puede elegir dataset con criterios claros.
 - Comando de verificacion: no aplica.
+- Nota de estado: no aplica ya como tarea activa; el dataset definitivo de reservas hoteleras ya fue seleccionado.
 
-### [ ] T-0.4 Disenar mock funcional de app
+### [x] T-0.4 Disenar mock funcional de app
 
-- Archivos afectados: `docs/` o tablero.
+- Archivos afectados: `app/frontend/`, `.specify/2_spec.md`.
 - Accion: definir pantallas minimas de app: formulario, resultado, feedback y version de modelo.
 - Responsable sugerido: I2.
 - Dificultad: baja.
 - Apto junior: con apoyo visual.
-- Dependencias: T-0.3 parcial.
+- Dependencias: dataset definitivo seleccionado.
 - Criterio de verificacion: flujo de app entendido por todo el equipo.
-- Comando de verificacion: no aplica.
+- Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
+- Evidencia: frontend React + Vite integrado en `app/frontend` y mergeado en `develop`.
 
 ## Fase 1 - Dataset y EDA
 
@@ -94,7 +98,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dificultad: media.
 - Apto junior: con apoyo en documentacion.
 - Dependencias: T-1.1.
-- Criterio de verificacion: target aceptado por el equipo.
+- Criterio de verificacion: target aceptado por el equipo y distribucion documentada.
 - Evidencia: target `booking_status`, clases `Not_Canceled` (67,24%) y `Canceled` (32,76%), documentado en `.specify/2_spec.md`, `reports/data_dictionary.md` y notebooks de EDA.
 - Comando de verificacion: revisar `notebooks/01_dataset_inspection.ipynb` y `notebooks/02_eda_exploratory.ipynb`.
 
@@ -185,7 +189,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Evidencia: `reports/model_report.md` documenta F1 train 0,6949, F1 validacion 0,6870 y gap 0,0079 para Logistic Regression.
 - Comando de verificacion: revisar seccion "Revision inicial de overfitting" en `reports/model_report.md` y ejecutar `python -m unittest discover`.
 
-### [ ] T-2.5 Crear app minima de prediccion
+### [~] T-2.5 Crear app minima de prediccion
 
 - Archivos afectados: `app/`, `README.md`.
 - Accion: crear formulario, cargar modelo y devolver prediccion.
@@ -194,7 +198,8 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Apto junior: no.
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
-- Comando de verificacion: TODO: comando de ejecucion de app.
+- Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
+- Nota de estado: existe app frontend con prediccion mock y backend FastAPI inicial con `GET /health` y `POST /predict` mock. Falta conectar modelo real cuando ML Core confirme pipeline y Champion Model.
 
 ### [ ] T-2.6 Validacion manual de app
 
@@ -321,9 +326,9 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Criterio de verificacion: datos persisten tras reiniciar app.
 - Comando de verificacion: TODO.
 
-### [ ] T-4.5 Documentar instalacion y ejecucion
+### [~] T-4.5 Documentar instalacion y ejecucion
 
-- Archivos afectados: `README.md`.
+- Archivos afectados: `README.md`, `docs/project_management/`.
 - Accion: escribir pasos para entorno local, app, tests y Docker.
 - Responsable sugerido: I4 con revision de I2 e I3.
 - Dificultad: baja.
@@ -331,6 +336,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
 - Comando de verificacion: ejecutar comandos documentados.
+- Nota de estado: documentada ejecucion parcial de frontend y contrato API. Existe backend FastAPI inicial; quedan tests, Docker e integracion real con modelo.
 
 ## Fase 5 - Nivel Experto
 
@@ -438,7 +444,7 @@ Este backlog puede pasarse a Trello, Jira, Notion o GitHub Projects. Cada ticket
 ### [ ] T-6.5 Checklist final de consigna
 
 - Archivos afectados: `README.md`, `reports/`, `.specify/4_tasks.md`.
-- Accion: revisar app, GitHub, informe, presentaciones, Trello, Docker, tests y niveles alcanzados.
+- Accion: revisar app, GitHub, informe, presentaciones, Jira, Docker, tests y niveles alcanzados.
 - Responsable sugerido: I4 con revision de todo el equipo.
 - Dificultad: baja.
 - Apto junior: si.

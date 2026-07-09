@@ -75,19 +75,28 @@ El objetivo de clasificación es predecir si una reserva será cancelada.
 Estado actual:
 
 - Dataset incorporado en `data/raw/`.
-- Notebooks iniciales de inspección y EDA.
-- Diccionario de datos inicial.
-- Frontend React integrado en `app/frontend`.
+- Target definido como `booking_status`.
+- Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
+- Notebooks iniciales de inspección y EDA disponibles en `notebooks/`.
+- Frontend React + Vite integrado en `app/frontend`.
+- Mock visual y funcional de producto disponible para validar la experiencia.
 - Metodología SPEC creada en `.specify/`.
-- Documentos de organización del proyecto creados en `docs/project_management/`.
+- Documentos de organización creados en `docs/project_management/`.
+- Jira definido como herramienta oficial de gestión.
+- Plantilla de Pull Request creada en `.github/pull_request_template.md`.
+- Changelog creado en `CHANGELOG.md`.
+- Tags iniciales creados y publicados.
 
 Pendiente principal:
 
+- Cerrar distribución del target y posible desbalance.
+- Consolidar visualizaciones finales de EDA.
 - Definir métrica principal.
 - Consolidar pipeline de preprocesamiento.
 - Entrenar baseline reproducible.
+- Registrar métricas y overfitting.
 - Seleccionar Champion Model.
-- Crear backend de inferencia.
+- Crear backend de inferencia con FastAPI.
 - Conectar frontend con predicción real.
 - Completar informe técnico.
 - Añadir tests, CI y Docker si el avance lo permite.
@@ -98,26 +107,51 @@ Pendiente principal:
 
 ```text
 .
-├── .specify/                  # Metodología SPEC / SDD
-├── app/
-│   ├── components/            # Componentes base existentes
-│   ├── frontend/              # Frontend React + Vite
-│   └── pages/                 # Páginas base existentes
-├── config/                    # Configuración del proyecto
-├── data/
-│   └── raw/                   # Dataset original
-├── docs/
-│   ├── assets/                # Recursos visuales y capturas
-│   ├── business_presentation/ # Material para presentación de negocio
-│   ├── project_management/    # Organización, Git, SDD y roadmap
-│   └── technical_presentation/# Material para presentación técnica
-├── models/                    # Modelos entrenados y artefactos
-├── notebooks/                 # EDA e inspección de datos
-├── reports/                   # Informes, diccionario de datos y figuras
-├── src/                       # Código ML reutilizable
-├── tests/                     # Tests
-├── requirements.txt           # Dependencias Python
-└── README.md
+|-- .github/
+|   `-- pull_request_template.md
+|-- .specify/
+|   |-- 1_intent.md
+|   |-- 2_spec.md
+|   |-- 3_plan.md
+|   `-- 4_tasks.md
+|-- app/
+|   |-- components/
+|   |-- frontend/
+|   |   |-- src/
+|   |   |-- package.json
+|   |   |-- pnpm-lock.yaml
+|   |   |-- pnpm-workspace.yaml
+|   |   `-- vite.config.js
+|   `-- pages/
+|-- config/
+|-- data/
+|   `-- raw/
+|-- docs/
+|   |-- assets/
+|   |-- business_presentation/
+|   |-- project_management/
+|   `-- technical_presentation/
+|-- models/
+|-- notebooks/
+|-- reports/
+|   `-- data_dictionary.md
+|-- src/
+|-- tests/
+|-- CHANGELOG.md
+|-- requirements.txt
+`-- README.md
+```
+
+Estructura prevista pendiente:
+
+```text
+app/backend/
+```
+
+El backend previsto será una API FastAPI con endpoint:
+
+```text
+POST /predict
 ```
 
 ---
@@ -137,6 +171,8 @@ Tecnologías:
 - pnpm.
 - CSS custom.
 - Mock service de predicción.
+
+Actualmente el frontend trabaja con una predicción mock. Esto permite validar la experiencia de usuario antes de integrar el backend y el modelo real.
 
 ### Ejecutar frontend
 
@@ -235,6 +271,33 @@ La SPEC define:
 
 Antes de implementar cambios importantes, se debe revisar la SPEC.
 
+El archivo `.specify/4_tasks.md` funciona como checklist vivo del proyecto.
+
+Estados utilizados:
+
+```text
+[ ] pendiente
+[~] en progreso
+[x] completada y verificada
+[!] bloqueada
+[-] cancelada/no aplica
+```
+
+Estado actual destacado:
+
+```text
+[x] T-0.1 Crear tablero de gestion
+[x] T-0.2 Revisar y aceptar SPEC inicial
+[-] T-0.3 Definir candidatos de dataset
+[x] T-0.4 Disenar mock funcional de app
+[x] T-1.1 Elegir dataset definitivo
+[~] T-1.2 Definir target y clases
+[x] T-1.3 Crear diccionario de datos
+[~] T-1.4 Realizar EDA inicial
+[~] T-2.5 Crear app minima de prediccion
+[~] T-4.5 Documentar instalacion y ejecucion
+```
+
 ---
 
 ## 9. Documentación de organización
@@ -254,6 +317,7 @@ Estos documentos explican:
 - Flujo Git.
 - Uso de agentes de IA.
 - Roadmap de entrega.
+- Organización profesional del proyecto.
 
 ---
 
@@ -269,10 +333,12 @@ develop
 Reglas:
 
 - No trabajar directamente en `main`.
-- No trabajar directamente en `develop` salvo acuerdo puntual.
+- `main` queda reservada para la entrega final estable.
+- `develop` es la rama principal de integración durante el desarrollo.
 - Crear ramas desde `develop`.
 - Abrir Pull Request hacia `develop`.
 - Usar commits descriptivos.
+- No subir carpetas generadas como `node_modules/`, `dist/`, `.venv/` o archivos `.env`.
 
 Ejemplo:
 
@@ -297,7 +363,91 @@ compare: feature/nombre-tarea
 
 ---
 
-## 11. Roles del equipo
+## 11. Pull Requests
+
+El repositorio incluye una plantilla de Pull Request en:
+
+```text
+.github/pull_request_template.md
+```
+
+Cada PR debe indicar:
+
+- Resumen del cambio.
+- Tarea SPEC relacionada.
+- Tipo de cambio.
+- Verificación realizada.
+- Evidencias o capturas si aplica.
+- Pendientes.
+- Checklist de buenas prácticas.
+
+Tipos de cambio contemplados:
+
+- Documentation.
+- Frontend.
+- Backend.
+- ML / Data.
+- Tests.
+- CI / DevOps.
+- Refactor.
+- Other.
+
+---
+
+## 12. Changelog y tags
+
+El repositorio incluye:
+
+```text
+CHANGELOG.md
+```
+
+El changelog resume hitos relevantes del proyecto. No sustituye al historial de commits ni a `.specify/4_tasks.md`.
+
+Tags creados:
+
+```text
+v0.1.0-docs-foundation
+v0.2.0-frontend-mock
+```
+
+Significado:
+
+- `v0.1.0-docs-foundation`: base documental, SPEC, roadmap, flujo Git, README inicial, PR template y changelog.
+- `v0.2.0-frontend-mock`: frontend React + Vite con mock funcional de predicción.
+
+Hitos previstos:
+
+```text
+v0.3.0-data-eda
+v0.4.0-baseline
+v0.5.0-api
+v0.6.0-champion
+v0.7.0-operational
+v1.0.0-final
+```
+
+---
+
+## 13. Jira
+
+La herramienta oficial de gestión es Jira.
+
+Tablero del proyecto:
+
+```text
+https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog
+```
+
+Los tickets deben mantenerse alineados con:
+
+```text
+.specify/4_tasks.md
+```
+
+---
+
+## 14. Roles del equipo
 
 Roles sugeridos por la SPEC:
 
@@ -308,9 +458,11 @@ Roles sugeridos por la SPEC:
 | MLOps / Experto | Tests, Docker, CI/CD, drift, Champion/Challenger |
 | QA / Docs / Presentación | README, informe, checklist, capturas, presentaciones |
 
+Los roles son colaborativos. Cada integrante puede apoyar tareas de otros bloques, pero evitando mezclar cambios no relacionados en el mismo PR.
+
 ---
 
-## 12. Niveles de entrega
+## 15. Niveles de entrega
 
 ### Nivel Esencial
 
@@ -343,7 +495,7 @@ Roles sugeridos por la SPEC:
 
 ---
 
-## 13. Roadmap resumido
+## 16. Roadmap resumido
 
 1. Organización y acuerdos.
 2. Dataset, EDA y contrato de datos.
@@ -361,28 +513,101 @@ docs/project_management/03_delivery_roadmap.md
 
 ---
 
-## 14. Próximos pasos técnicos
+## 17. Próximos pasos técnicos
 
 Prioridades inmediatas:
 
-1. Definir métrica principal.
-2. Consolidar pipeline de preprocesamiento.
-3. Entrenar baseline reproducible.
-4. Registrar métricas y overfitting.
-5. Crear backend de inferencia.
-6. Conectar frontend con modelo real.
-7. Documentar ejecución completa.
-8. Añadir tests mínimos.
-9. Preparar informe técnico.
+1. Cerrar distribución del target y desbalance.
+2. Consolidar EDA y visualizaciones finales.
+3. Definir métrica principal.
+4. Consolidar pipeline de preprocesamiento.
+5. Entrenar baseline reproducible.
+6. Registrar métricas y overfitting.
+7. Definir contrato API.
+8. Crear backend FastAPI.
+9. Crear endpoint `POST /predict`.
+10. Conectar frontend con modelo real.
+11. Documentar ejecución completa.
+12. Añadir tests mínimos.
+13. Preparar informe técnico.
 
 ---
 
-## 15. Equipo
+## 18. Sprint 1
+
+Sprint 1 se considera orientado a dejar preparada la base del proyecto:
+
+- Repositorio ordenado.
+- Dataset incorporado.
+- SPEC inicial creada.
+- Documentación de organización creada.
+- Jira definido como herramienta de gestión.
+- Frontend mock integrado.
+- Flujo Git definido.
+- Plantilla de PR creada.
+- Changelog y tags iniciales creados.
+
+Queda para Sprint 2:
+
+- Contrato API.
+- Backend FastAPI.
+- Integración frontend-backend.
+- Pipeline de preprocesamiento.
+- Baseline ML.
+- Métricas y overfitting.
+- Tests mínimos.
+- CI inicial.
+- Docker cuando exista una app integrable de extremo a extremo.
+
+---
+
+## 19. Verificaciones útiles
+
+Estado de Git:
+
+```bash
+git status
+```
+
+Actualizar `develop`:
+
+```bash
+git switch develop
+git pull origin develop
+```
+
+Ver ramas:
+
+```bash
+git branch -a
+```
+
+Ver tags:
+
+```bash
+git tag --list
+```
+
+Ver archivos modificados:
+
+```bash
+git diff --name-only
+```
+
+Comprobar problemas básicos de diff:
+
+```bash
+git diff --check
+```
+
+---
+
+## 20. Equipo
 
 Proyecto desarrollado por el Grupo 2 del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
 ---
 
-## 16. Nota
+## 21. Nota
 
-Este README describe el estado y la dirección del proyecto. Debe actualizarse cada vez que cambien la forma de ejecutar la app, el modelo Champion, la arquitectura o los entregables principales.
+Este README describe el estado y la dirección del proyecto. Debe actualizarse cada vez que cambien la forma de ejecutar la app, el modelo Champion, la arquitectura, los entregables principales, los hitos versionados o el flujo de trabajo del equipo.

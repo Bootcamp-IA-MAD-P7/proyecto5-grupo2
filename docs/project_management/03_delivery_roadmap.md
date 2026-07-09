@@ -32,12 +32,22 @@ Entregables:
 - `docs/project_management/01_git_workflow.md`
 - `docs/project_management/02_sdd_ai_agents.md`
 - `docs/project_management/03_delivery_roadmap.md`
+- `.github/pull_request_template.md`
+- `CHANGELOG.md`
+- Tags `v0.1.0-docs-foundation` y `v0.2.0-frontend-mock`
 
 Criterio de cierre:
 
 - El equipo entiende cómo se trabajará.
 - No se toca código funcional.
 - Todo entra por Pull Request a `develop`.
+
+Estado actual:
+
+- Fase de organizacion cerrada en `develop`.
+- Flujo de Pull Requests documentado.
+- Changelog y tags iniciales creados.
+- Jira definido como herramienta oficial de gestion.
 
 ## 4. Fase 1 - Dataset, EDA y contrato de datos
 
@@ -64,6 +74,13 @@ Criterio de cierre:
 - El equipo puede explicar qué se predice, con qué columnas y por qué.
 - No hay leakage evidente sin documentar.
 - El contrato de inputs está claro para App / Producto.
+
+Estado actual:
+
+- Dataset definitivo disponible en `data/raw/`.
+- Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
+- Notebooks iniciales disponibles en `notebooks/`.
+- Pendiente: cerrar visualizaciones finales, lectura de negocio y contrato definitivo de inputs.
 
 ## 5. Fase 2 - MVP esencial
 
@@ -96,6 +113,12 @@ Criterio de cierre:
 - El modelo predice.
 - El overfitting está por debajo del 5% o queda documentado como bloqueo.
 - Otra persona puede ejecutar el proyecto siguiendo el README.
+
+Estado actual:
+
+- Frontend React + Vite integrado en `app/frontend`.
+- App mock valida flujo visual y experiencia de producto.
+- Pendiente: modelo real, backend FastAPI, endpoint `POST /predict` e integracion frontend-backend.
 
 ## 6. Fase 3 - Nivel medio
 
@@ -228,8 +251,6 @@ Criterio de cierre:
 Después de esta propuesta, se recomienda avanzar en PRs pequeños:
 
 ```text
-docs/readme-professional
-docs/update-spec-app-stack
 feature/backend-health-api
 feature/ml-baseline-pipeline
 feature/backend-predict-api
@@ -238,6 +259,7 @@ test/minimal-ci
 ci/frontend-build
 ci/python-tests
 docs/final-report-structure
+docs/ux-ui-visual-identity
 ```
 
 Cada PR debe tener una verificación clara y no mezclar responsabilidades.
