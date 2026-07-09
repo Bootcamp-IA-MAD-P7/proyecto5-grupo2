@@ -21,6 +21,9 @@ import { predictReservation } from "./services/predictionService";
 
 const initialForm = {
   lead_time: 120,
+  arrival_year: 2018,
+  arrival_month: 7,
+  arrival_date: 15,
   no_of_special_requests: 0,
   avg_price_per_room: 156,
   market_segment_type: "Online",
@@ -46,6 +49,9 @@ const scenarios = [
       "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=900&q=82",
     values: {
       lead_time: 42,
+      arrival_year: 2018,
+      arrival_month: 8,
+      arrival_date: 12,
       avg_price_per_room: 210,
       market_segment_type: "Online",
       no_of_weekend_nights: 1,
@@ -63,6 +69,9 @@ const scenarios = [
       "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=900&q=82",
     values: {
       lead_time: 28,
+      arrival_year: 2018,
+      arrival_month: 9,
+      arrival_date: 6,
       avg_price_per_room: 148,
       market_segment_type: "Offline",
       no_of_weekend_nights: 2,
@@ -80,6 +89,9 @@ const scenarios = [
       "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=900&q=82",
     values: {
       lead_time: 168,
+      arrival_year: 2018,
+      arrival_month: 12,
+      arrival_date: 22,
       avg_price_per_room: 186,
       market_segment_type: "Online",
       no_of_weekend_nights: 1,
@@ -96,6 +108,8 @@ const inputGroups = [
     icon: CalendarDays,
     fields: [
       { name: "lead_time", label: "Antelación", type: "number", suffix: "días" },
+      { name: "arrival_month", label: "Mes de llegada", type: "number" },
+      { name: "arrival_date", label: "Día de llegada", type: "number" },
       { name: "no_of_weekend_nights", label: "Noches fin de semana", type: "number" },
       { name: "no_of_week_nights", label: "Noches entre semana", type: "number" }
     ]

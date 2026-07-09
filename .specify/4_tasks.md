@@ -189,7 +189,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia: `reports/model_report.md` documenta F1 train 0,6949, F1 validacion 0,6870 y gap 0,0079 para Logistic Regression.
 - Comando de verificacion: revisar seccion "Revision inicial de overfitting" en `reports/model_report.md` y ejecutar `python -m unittest discover`.
 
-### [~] T-2.5 Crear app minima de prediccion
+### [x] T-2.5 Crear app minima de prediccion
 
 - Archivos afectados: `app/`, `README.md`.
 - Accion: crear formulario, cargar modelo y devolver prediccion.
@@ -198,8 +198,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
-- Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
-- Nota de estado: existe app frontend con prediccion mock y backend FastAPI inicial con `GET /health`, `GET /model/info` y `POST /predict` mock. Falta conectar modelo real cuando ML Core confirme pipeline y Champion Model.
+- Evidencia: `POST /predict` carga el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`; `GET /model/info` devuelve `baseline_logistic_v0.1.0`.
+- Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
+- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el baseline. Queda validacion manual con capturas en T-2.6.
 
 ### [ ] T-2.6 Validacion manual de app
 
@@ -322,7 +323,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.5, T-3.4.
 - Criterio de verificacion: app levanta con Docker.
 - Comando de verificacion: `docker compose build` y `docker compose up`.
-- Nota de estado: Docker inicial preparado para frontend y backend mock; queda conectar modelo Champion real cuando exista.
+- Nota de estado: Docker inicial preparado para frontend y backend. Queda validar Docker con el baseline real y, mas adelante, actualizarlo si se selecciona un Champion.
 
 ### [ ] T-4.4 Conectar almacenamiento persistente
 

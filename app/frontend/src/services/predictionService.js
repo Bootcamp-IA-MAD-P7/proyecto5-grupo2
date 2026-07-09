@@ -1,5 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API !== "false";
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === "true";
 
 const riskCopy = {
   low: {

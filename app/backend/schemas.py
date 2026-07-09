@@ -20,6 +20,9 @@ class ModelInfoResponse(BaseModel):
 
 class PredictionRequest(BaseModel):
     lead_time: int = Field(..., ge=0)
+    arrival_year: int = Field(..., ge=2000)
+    arrival_month: int = Field(..., ge=1, le=12)
+    arrival_date: int = Field(..., ge=1, le=31)
     no_of_special_requests: int = Field(..., ge=0)
     avg_price_per_room: float = Field(..., ge=0)
     market_segment_type: str

@@ -18,8 +18,8 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
-- Frontend actual: existe en `app/frontend` con prediccion mock para validar UX/UI.
-- Backend actual: existe API FastAPI inicial en `app/backend` con `GET /health` y `POST /predict` mock compatible con el frontend.
+- Frontend actual: existe en `app/frontend` con formulario conectado al contrato de prediccion.
+- Backend actual: existe API FastAPI inicial en `app/backend` con `GET /health`, `GET /model/info` y `POST /predict` usando el baseline Logistic Regression.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -377,6 +377,14 @@ Debe incluir:
 
 Modelo seleccionado para productivizar.
 
+Estado actual:
+
+- Baseline productivizado temporalmente: `baseline_logistic_v0.1.0`.
+- Artefacto cargado por FastAPI: `models/baseline/logistic_regression_baseline.pkl`.
+- Endpoint de inferencia: `POST /predict`.
+- Endpoint de metadata: `GET /model/info`.
+- Este baseline permite cerrar la productivizacion esencial, aunque puede ser reemplazado por un Champion posterior.
+
 Debe cumplir:
 
 - Mejor equilibrio entre metrica principal, overfitting, interpretabilidad y estabilidad.
@@ -626,7 +634,7 @@ Tecnologia de app definida: frontend React + Vite y backend de inferencia con Fa
 Backend inicial disponible:
 
 - `GET /health`.
-- `POST /predict` con respuesta mock.
+- `POST /predict` con inferencia del baseline real.
 - Contrato documentado en `docs/api_contract.md`.
 
 Docker inicial disponible:
