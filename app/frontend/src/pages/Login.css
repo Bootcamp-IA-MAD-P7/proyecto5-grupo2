@@ -1,0 +1,175 @@
+/* LOGIN - estilos aislados, no afectan al resto de la app */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+.login-left {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-left-img {
+  position: absolute;
+  inset: 0;
+  background-image: url('/hotel-bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.login-left-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(13,59,59,0.92) 0%, rgba(13,59,59,0.7) 50%, rgba(21,122,110,0.6) 100%);
+}
+
+.login-left-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 48px;
+  max-width: 480px;
+}
+
+.login-left-content h2 {
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  font-size: 2.4rem;
+  margin: 0 0 16px 0;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  line-height: 1.1;
+}
+
+.login-left-content p {
+  color: rgba(255,255,255,0.75);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.login-right {
+  width: 420px;
+  background: rgba(255,250,242,0.97);
+  backdrop-filter: blur(20px);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-logo-area {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-logo-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  background: #fff;
+  border: 2px solid #A7D9CF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.login-logo-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.login-logo-text {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.4rem;
+  color: #0D3B3B;
+  font-weight: 700;
+}
+
+.login-logo-sub {
+  font-size: 0.85rem;
+  color: #6d756f;
+  margin-top: 4px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0D3B3B;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.login-field input {
+  padding: 12px 16px;
+  border: 1px solid rgba(13,59,59,0.15);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #0D3B3B;
+  transition: all 0.2s;
+}
+
+.login-field input:focus {
+  outline: none;
+  border-color: #157A6E;
+  box-shadow: 0 0 0 3px rgba(21,122,110,0.1);
+}
+
+.login-btn {
+  padding: 14px;
+  background: linear-gradient(135deg, #157A6E, #0D3B3B);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13,59,59,0.3);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.8rem;
+  color: #6d756f;
+}
+
+.login-footer a {
+  color: #157A6E;
+  font-weight: 600;
+  text-decoration: none;
+}

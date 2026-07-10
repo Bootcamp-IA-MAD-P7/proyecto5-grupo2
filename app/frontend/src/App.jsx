@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import Login from "./pages/Login";
 import {
   ArrowUpRight,
   BellRing,
@@ -145,6 +146,12 @@ const inputGroups = [
 ];
 
 function App() {
+    // Estado para controlar si mostrar login o la app
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
   const [form, setForm] = useState(initialForm);
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -191,6 +198,13 @@ function App() {
     }
   }
 
+  // Si NO está logueado, muestra el Login
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  // Si está logueado, muestra la app normal
+  
   return (
     <main className="app-shell">
       <nav className={`topbar ${isMenuOpen ? "is-open" : ""}`} aria-label="Navegación principal">

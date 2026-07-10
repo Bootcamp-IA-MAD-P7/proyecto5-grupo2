@@ -37,6 +37,13 @@
    Esto hace que la página se vea más limpia y profesional, acorde al diseño.
    ============================================================================= */
 :root {
+    /* ... mantén todos los colores ... */
+  
+  /* COMENTA ESTAS DOS LÍNEAS TEMPORALMENTE: */
+  /* font-family: Inter, system-ui, ...; */
+  /* background: var(--paper); */
+  /* color: var(--ink); */
+
   color-scheme: light;
 
   /* --- COLORES NUEVOS DE LA PALETA --- */
@@ -98,6 +105,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
+  /* background: linear-gradient(...); */
   background:
     linear-gradient(180deg, rgba(248, 249, 250, 0) 0%, var(--paper) 42%),
     radial-gradient(circle at 18% 22%, rgba(63, 180, 167, 0.16), transparent 32%),
@@ -1145,4 +1153,6 @@ select {
   .signals-section {
     padding-inline: 18px;
   }
-}
+  }
+
+  
