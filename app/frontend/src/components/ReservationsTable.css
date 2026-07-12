@@ -1,0 +1,250 @@
+/* =============================================================================
+   RESERVATIONS TABLE STYLES
+   =============================================================================
+   Estilos exclusivos para el componente ReservationsTable.
+   RAMA: feature/frontend-reservations-table
+   ============================================================================= */
+
+/* Fondo de imagen difuminada */
+
+.reservations-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("/hotel-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: blur(4px) brightness(1.1);
+  z-index: 0;
+}
+
+.reservations-bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, rgba(13, 59, 59, 0.25) 0%, rgba(21, 122, 110, 0.15) 100%);
+  z-index: 1;
+}
+
+/* Contenedor principal de la página */
+.reservations-page {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 140px 24px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header con título y filtros */
+.reservations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  background: rgba(255, 250, 242, 0.92);
+  padding: 16px 24px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.reservations-header h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.6rem;
+  color: #0D3B3B;
+  margin: 0;
+}
+
+.reservations-header p {
+  color: #6d756f;
+  font-size: 0.9rem;
+  margin: 4px 0 0 0;
+}
+
+/* Botones de filtro */
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-buttons button {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #dee2e6;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #6d756f;
+  transition: all 0.2s;
+}
+
+.filter-buttons button:hover {
+  border-color: #157A6E;
+  color: #157A6E;
+}
+
+.filter-buttons button.active {
+  background: #0D3B3B;
+  color: #fff;
+  border-color: #0D3B3B;
+}
+
+/* Contenedor de la tabla */
+.reservations-table-container {
+  background: rgba(255, 250, 242, 0.9);
+  border: 1px solid rgba(23, 32, 27, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(25, 21, 14, 0.1);
+}
+
+/* Tabla */
+.reservations-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reservations-table thead {
+  background: rgba(13, 59, 59, 0.05);
+}
+
+.reservations-table th {
+  text-align: left;
+  padding: 14px 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6d756f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(23, 32, 27, 0.08);
+}
+
+.reservations-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(23, 32, 27, 0.06);
+  font-size: 0.85rem;
+  color: #0D3B3B;
+}
+
+.reservations-table tbody tr:hover {
+  background: rgba(63, 180, 167, 0.05);
+}
+
+/* Info del huésped */
+.guest-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guest-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #A7D9CF, #3FB4A7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #0D3B3B;
+}
+
+.guest-name {
+  font-weight: 700;
+  color: #0D3B3B;
+}
+
+.guest-email {
+  font-size: 0.75rem;
+  color: #6d756f;
+}
+
+/* Fecha de llegada */
+.arrival-date {
+  font-weight: 600;
+}
+
+.days-left {
+  font-size: 0.75rem;
+  color: #FF6F7D;
+  font-weight: 700;
+}
+
+/* Badges de riesgo */
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.risk-badge.high {
+  background: rgba(255, 111, 125, 0.15);
+  color: #FF6F7D;
+}
+
+.risk-badge.medium {
+  background: rgba(63, 180, 167, 0.15);
+  color: #157A6E;
+}
+
+.risk-badge.low {
+  background: rgba(198, 231, 192, 0.5);
+  color: #157A6E;
+}
+
+/* Botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.action-buttons button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-email {
+  background: #157A6E;
+  color: #fff;
+}
+
+.btn-email:hover {
+  background: #0D3B3B;
+}
+
+.btn-call {
+  background: transparent;
+  color: #157A6E;
+  border: 1px solid #157A6E;
+}
+
+.btn-upgrade {
+  background: #3FB4A7;
+  color: #fff;
+}
+
+.btn-upgrade:hover {
+  background: #157A6E;
+}
+
+.no-action {
+  font-size: 0.8rem;
+  color: #6d756f;
+}
