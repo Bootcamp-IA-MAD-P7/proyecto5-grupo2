@@ -587,7 +587,7 @@ La salida minima debe incluir:
 
 ### Guardado de feedback
 
-Feedback minimo recomendado:
+Feedback implementado:
 
 - Timestamp.
 - Model version.
@@ -596,16 +596,29 @@ Feedback minimo recomendado:
 - Probabilidad si aplica.
 - Feedback del usuario.
 - Target real si se conoce posteriormente.
+- Fuente del registro.
+- Comentarios opcionales.
+
+Estado actual:
+
+- Endpoint de escritura: `POST /feedback`.
+- Endpoint de resumen: `GET /feedback/summary`.
+- Almacenamiento local: `data/feedback/prediction_feedback.csv`.
+- Los CSV operativos de feedback se ignoran en Git mediante `data/feedback/*.csv`.
+- Utilidad de ingesta para reentrenamiento: `src/data/feedback_ingestion.py`.
+- El dataset de reentrenamiento se construye solo con registros que tienen `actual_status` conocido.
 
 ## Base de datos o almacenamiento
 
 Nivel Medio minimo:
 
 - Guardar feedback y datos nuevos en CSV o SQLite.
+- Estado actual: cubierto con CSV local en `data/feedback/prediction_feedback.csv`.
 
 Nivel Avanzado recomendado:
 
 - SQLite o PostgreSQL para predicciones y feedback.
+- Estado actual: CSV local implementado; SQLite o PostgreSQL quedan como mejora posterior si el despliegue lo requiere.
 
 No guardar datos personales sensibles salvo que sean estrictamente necesarios y esten justificados.
 
@@ -647,8 +660,11 @@ Docker inicial disponible:
 - `docker-compose.yml`.
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
+- Validado con Champion Random Forest `random_forest_champion_v0.1.0`.
+- Validado con endpoints `GET /health`, `GET /model/info`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
+- Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
 
-TODO: validar Docker con el Champion Random Forest integrado.
+Pendiente: optimizar imagen y variables de entorno si se aborda despliegue cloud.
 
 ## Documentacion e informes
 
@@ -691,6 +707,8 @@ El nivel esta cerrado si:
 - Feedback guardado.
 - Datos nuevos disponibles para futuro reentrenamiento.
 
+Estado actual: cubierto salvo posibles mejoras de producto sobre la interfaz visual de feedback.
+
 ### Nivel Avanzado
 
 El nivel esta cerrado si:
@@ -700,6 +718,8 @@ El nivel esta cerrado si:
 - Tests unitarios minimos.
 - App desplegada o preparada para despliegue.
 - Smoke test documentado.
+
+Estado actual: Docker, almacenamiento CSV local, tests y smoke test estan cubiertos. El despliegue web queda fuera del cierre actual.
 
 ### Nivel Experto
 

@@ -174,7 +174,87 @@ Valores pendientes de cerrar con ML Core:
 | `main_factors` | array[string] | Factores explicativos principales. |
 | `recommendation` | string | Recomendacion operativa para el equipo hotelero. |
 
-## 11. Error Response
+## 11. Feedback Endpoint
+
+### `POST /feedback`
+
+Guarda feedback de usuario y datos de prediccion para monitorizar performance y preparar futuros reentrenamientos.
+
+#### Request JSON
+
+```json
+{
+  "input_data": {
+    "lead_time": 120,
+    "arrival_year": 2018,
+    "arrival_month": 7,
+    "arrival_date": 15,
+    "no_of_special_requests": 0,
+    "avg_price_per_room": 156.0,
+    "market_segment_type": "Online",
+    "no_of_weekend_nights": 1,
+    "no_of_week_nights": 2,
+    "type_of_meal_plan": "Meal Plan 1",
+    "room_type_reserved": "Room_Type 1",
+    "no_of_adults": 2,
+    "no_of_children": 0,
+    "required_car_parking_space": 0,
+    "repeated_guest": 0,
+    "no_of_previous_cancellations": 0,
+    "no_of_previous_bookings_not_canceled": 0
+  },
+  "prediction": "Canceled",
+  "probability": 0.8338,
+  "risk_level": "high",
+  "model_version": "random_forest_champion_v0.1.0",
+  "user_feedback": "unknown",
+  "actual_status": null,
+  "comments": "Feedback de validacion operativa.",
+  "source": "web_app"
+}
+```
+
+#### Response `200 OK`
+
+```json
+{
+  "status": "stored",
+  "record_id": "uuid-generado",
+  "stored": true
+}
+```
+
+Valores permitidos:
+
+- `prediction`: `Canceled` o `Not_Canceled`.
+- `risk_level`: `low`, `medium` o `high`.
+- `user_feedback`: `correct`, `incorrect` o `unknown`.
+- `actual_status`: `Canceled`, `Not_Canceled` o `null`.
+
+Almacenamiento actual:
+
+```text
+data/feedback/prediction_feedback.csv
+```
+
+Los CSV operativos de feedback estan ignorados por Git.
+
+## 12. Feedback Summary
+
+### `GET /feedback/summary`
+
+Devuelve un resumen minimo de registros de feedback persistidos.
+
+#### Response `200 OK`
+
+```json
+{
+  "total_records": 1,
+  "storage": "ruta/local/data/feedback/prediction_feedback.csv"
+}
+```
+
+## 13. Error Response
 
 FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
 
@@ -192,17 +272,18 @@ Formato esperado:
 }
 ```
 
-## 12. Reglas Provisionales
+## 14. Reglas Provisionales
 
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
 - El modelo real debe respetar este contrato o proponer una actualizacion documentada.
 - `GET /model/info` debe reflejar la version y estado real del modelo cargado.
 
-## 13. Pendiente
+## 15. Pendiente
 
 - Confirmar inputs definitivos con ML Core.
 - Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.
 - Mantener sincronizada la version del Champion si se promociona un nuevo modelo.
 - Confirmar estrategia de categorias no vistas.
 - Confirmar si la probabilidad corresponde siempre a la clase `Canceled`.
+- Evolucionar feedback CSV a SQLite/PostgreSQL si se aborda despliegue cloud.

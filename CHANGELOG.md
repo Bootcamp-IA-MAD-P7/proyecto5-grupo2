@@ -11,17 +11,24 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Unit tests for the optimized Random Forest challenger tuning, including selected hyperparameters, minimum validation F1 and overfitting rule checks.
 - Champion Random Forest integration in the FastAPI backend.
 - Champion metadata loading from `models/champion/champion_metadata.json`.
+- Feedback logging endpoint `POST /feedback`.
+- Feedback summary endpoint `GET /feedback/summary`.
+- CSV feedback persistence under `data/feedback/prediction_feedback.csv`.
+- Feedback ingestion utility for future retraining datasets.
+- End-to-end smoke test covering health, model info, prediction, feedback and feedback summary.
+- Docker validation with backend, frontend, Champion inference and feedback endpoints.
 
 ### Changed
 
 - Updated SPEC tasks, technical SPEC and README to mark `T-3.3 Optimizar hiperparametros` as completed after the optimized challenger was integrated and verified.
 - Updated API contract, SPEC tasks, technical SPEC and README to reflect `random_forest_champion_v0.1.0` as the model served by the API.
+- Updated SPEC tasks, technical SPEC and README to mark feedback, new-data collection, Docker validation and smoke flow as completed.
 
 ### Pending
 
 - Manual app validation with screenshots.
-- Docker validation with the Champion Random Forest model.
-- Feedback and new-data persistence design.
+- Cloud deployment decision.
+- Frontend UX review or alternative beta flow.
 
 ## [v0.4.0-essential-mvp] - 2026-07-09
 
@@ -112,8 +119,8 @@ pnpm build
 Next API/product increment:
 
 - Manual validation evidence.
-- Docker validation with real baseline inference.
-- Feedback or prediction logging if scope allows.
+- Frontend UX evidence.
+- Optional cloud deployment preparation.
 
 ### v0.6.0-champion
 

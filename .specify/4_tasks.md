@@ -280,7 +280,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: todos los modelos probados aparecen en la tabla.
 - Comando de verificacion: no aplica.
 
-### [ ] T-3.6 Implementar feedback
+### [x] T-3.6 Implementar feedback
 
 - Archivos afectados: `app/`, `data/feedback/`, `src/data/`.
 - Accion: guardar feedback de usuario y predicciones para futuro reentrenamiento.
@@ -289,7 +289,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-2.5.
 - Criterio de verificacion: feedback queda persistido y se puede abrir.
-- Comando de verificacion: TODO.
+- Evidencia: `POST /feedback` guarda prediccion, probabilidad, version de modelo, input validado, feedback de usuario y estado real si se conoce en `data/feedback/prediction_feedback.csv`.
+- Evidencia adicional: `GET /feedback/summary` devuelve el numero de registros persistidos.
+- Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
 
 ## Fase 4 - Nivel Avanzado
 
@@ -304,7 +306,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: tests pasan.
 - Comando de verificacion: `python -m pytest`
 
-### [ ] T-4.2 Crear tests minimos de metricas
+### [x] T-4.2 Crear tests minimos de metricas
 
 - Archivos afectados: `tests/`, `src/evaluation/`.
 - Accion: testear umbral minimo y regla de overfitting.
@@ -313,9 +315,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: con guia.
 - Dependencias: T-2.3, T-2.4.
 - Criterio de verificacion: tests pasan y fallan si la regla se incumple.
+- Evidencia: `tests/unit/test_baseline_training.py` y `tests/unit/test_challenger_training.py` verifican metricas minimas, versionado, parametros del challenger y regla de overfitting.
 - Comando de verificacion: `python -m pytest`
 
-### [~] T-4.3 Dockerizar app
+### [x] T-4.3 Dockerizar app
 
 - Archivos afectados: `Dockerfile`, `docker-compose.yml`, `README.md`.
 - Accion: crear imagen que levante la app y cargue el modelo Champion.
@@ -324,10 +327,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-2.5, T-3.4.
 - Criterio de verificacion: app levanta con Docker.
-- Comando de verificacion: `docker compose build` y `docker compose up`.
-- Nota de estado: Docker inicial preparado para frontend y backend. Queda validar Docker con el Champion Random Forest integrado.
+- Comando de verificacion: `docker compose build`, `docker compose up -d`, `GET /health`, `GET /model/info`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `curl.exe -I http://localhost:8080/` y `docker compose down`.
+- Evidencia: Docker validado con frontend nginx, backend FastAPI, Champion Random Forest y endpoints de feedback.
+- Resultado clave: Docker devuelve `random_forest_champion_v0.1.0`, prediccion correcta, feedback persistido y frontend `HTTP/1.1 200 OK`.
 
-### [ ] T-4.4 Conectar almacenamiento persistente
+### [x] T-4.4 Conectar almacenamiento persistente
 
 - Archivos afectados: `app/`, `src/data/`, `data/feedback/`.
 - Accion: usar CSV, SQLite o base de datos para predicciones y feedback.
@@ -336,7 +340,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-3.6.
 - Criterio de verificacion: datos persisten tras reiniciar app.
-- Comando de verificacion: TODO.
+- Evidencia: almacenamiento CSV local en `data/feedback/prediction_feedback.csv`, ignorado por Git mediante `data/feedback/*.csv`.
+- Evidencia adicional: `src/data/feedback_ingestion.py` permite convertir feedback etiquetado con `actual_status` en dataset compatible con el pipeline para futuros reentrenamientos.
+- Comando de verificacion: `python -m pytest tests/unit/test_feedback_ingestion.py`.
 
 ### [~] T-4.5 Documentar instalacion y ejecucion
 
@@ -348,7 +354,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
 - Comando de verificacion: ejecutar comandos documentados.
-- Nota de estado: documentada ejecucion de frontend, backend, contrato API, tests iniciales y Docker. La API ya usa el Champion Random Forest; queda validar Docker con Champion y revisar instrucciones finales antes de entrega.
+- Nota de estado: documentada ejecucion de frontend, backend, contrato API, tests, Docker y feedback. Queda revisar instrucciones finales antes de entrega.
 
 ## Fase 5 - Nivel Experto
 
@@ -409,7 +415,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 
 ## Fase 6 - Cierre
 
-### [ ] T-6.1 Smoke test completo
+### [x] T-6.1 Smoke test completo
 
 - Archivos afectados: `reports/`, `README.md`.
 - Accion: ejecutar app, cargar modelo, hacer prediccion, guardar feedback y revisar salida.
@@ -418,7 +424,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si para validacion manual.
 - Dependencias: T-2.5, T-3.6.
 - Criterio de verificacion: checklist de demo completo.
-- Comando de verificacion: TODO: comando final de app.
+- Evidencia: `tests/integration/test_prediction_feedback_smoke.py` valida flujo completo de API con health, metadata de modelo, prediccion, feedback y resumen de feedback.
+- Evidencia Docker: flujo validado manualmente con `docker compose build`, `docker compose up -d`, endpoints backend y frontend nginx.
+- Comando de verificacion: `python -m pytest tests/integration/test_prediction_feedback_smoke.py`.
 
 ### [ ] T-6.2 Revision final de overfitting y metricas
 
