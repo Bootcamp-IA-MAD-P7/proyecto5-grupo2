@@ -1,4 +1,5 @@
-import React, { Fragment } from "react";
+import React, { useState, Fragment } from "react";
+import ReservationDetailModal from "./ReservationDetailModal";
 import "./AlertsPanel.css";
 
 const mockAlerts = [
@@ -25,6 +26,7 @@ const mockAlerts = [
 ];
 
 function AlertsPanel() {
+  const [selectedReservation, setSelectedReservation] = useState(null);
   function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString("es-ES", {
@@ -36,6 +38,12 @@ function AlertsPanel() {
 
   return (
     <Fragment>
+       {selectedReservation && (
+        <ReservationDetailModal
+          reservation={selectedReservation}
+          onClose={() => setSelectedReservation(null)}
+        />
+      )}
       <div className="alerts-bg" />
       <div className="alerts-bg-overlay" />
       <div className="alerts-page">
@@ -49,7 +57,7 @@ function AlertsPanel() {
 
       <div className="alerts-list">
         {mockAlerts.map((alert) => (
-          <div key={alert.id} className="alert-card">
+          <div key={alert.id} className="alert-card" onClick={() => setSelectedReservation(alert)} style={{ cursor: "pointer" }}>
             <div className="alert-card-header">
               <div className="alert-guest">
                 <div className="alert-avatar">
