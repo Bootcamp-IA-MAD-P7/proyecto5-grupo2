@@ -2,7 +2,6 @@
    ALERTS PANEL STYLES
    =============================================================================
    Estilos exclusivos para el componente AlertsPanel.
-   RAMA: feature/frontend-alerts-section
    ============================================================================= */
 
    /* Fondo de imagen difuminada */
@@ -108,6 +107,10 @@
 .alert-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.alert-card-clickable {
+  cursor: pointer;
 }
 
 /* Header de la tarjeta */

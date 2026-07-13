@@ -35,7 +35,11 @@ function AlertsPanel() {
 
       <div className="alerts-list">
         {mockAlerts.map((alert) => (
-          <div key={alert.id} className="alert-card" onClick={() => setSelectedReservation(alert)} style={{ cursor: "pointer" }}>
+          <div
+            key={alert.id}
+            className="alert-card alert-card-clickable"
+            onClick={() => setSelectedReservation(alert)}
+          >
             <div className="alert-card-header">
               <div className="alert-guest">
                 <div className="alert-avatar">

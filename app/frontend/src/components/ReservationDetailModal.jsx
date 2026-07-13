@@ -61,7 +61,7 @@ function ReservationDetailModal({ reservation, onClose }) {
           </div>
           <div className="modal-info-item risk">
             <div className="modal-info-label">Riesgo</div>
-            <div className="modal-info-value" style={{ color: "#FF6F7D" }}>
+            <div className="modal-info-value modal-info-value-risk">
               {reservation.riskPercent}% ALTO
             </div>
           </div>

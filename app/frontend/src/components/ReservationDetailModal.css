@@ -2,7 +2,6 @@
    RESERVATION DETAIL MODAL STYLES
    =============================================================================
    Estilos exclusivos para el componente ReservationDetailModal.
-   RAMA: feature/frontend-reservation-detail-modal
    ============================================================================= */
 
 /* Overlay oscuro */
@@ -145,6 +144,10 @@
   font-size: 1rem;
   font-weight: 700;
   color: #0D3B3B;
+}
+
+.modal-info-value-risk {
+  color: #FF6F7D;
 }
 
 /* Secciones */

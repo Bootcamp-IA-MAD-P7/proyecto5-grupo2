@@ -3,8 +3,6 @@
    =============================================================================
    Tabla de reservas con riesgo de cancelación.
    Ahora usa datos mock (ficticios), luego se conectará con el backend.
-   
-   RAMA: feature/frontend-reservations-table
    ============================================================================= */
 
 import React, { useState, Fragment  } from "react";
@@ -123,7 +121,11 @@ function ReservationsTable() {
           </thead>
           <tbody>
                         {filteredReservations.map((reservation) => (
-              <tr key={reservation.id} onClick={() => setSelectedReservation(reservation)} style={{ cursor: "pointer" }}>
+              <tr
+                key={reservation.id}
+                className="reservation-row-clickable"
+                onClick={() => setSelectedReservation(reservation)}
+              >
                 {/* Huésped */}
                 <td>
                   <div className="guest-info">
