@@ -156,7 +156,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 ### [x] T-2.2 Entrenar baseline
 
 - Archivos afectados: `src/models/`, `models/`, `reports/model_report.md`.
-- Accion: entrenar modelo simple y guardar metricas train-validacion.
+- Accion: entrenar modelo simple y guardar metricas train-validacion, usando F1-score de la clase `Canceled` como metrica principal.
 - Responsable sugerido: I1.
 - Dificultad: media.
 - Apto junior: no como responsable unico.
@@ -168,19 +168,19 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 ### [x] T-2.3 Calcular metricas obligatorias
 
 - Archivos afectados: `src/evaluation/`, `reports/model_report.md`, `reports/figures/`.
-- Accion: calcular accuracy, precision, recall, F1, ROC-AUC, matriz de confusion y curva ROC si aplica.
+- Accion: calcular F1-score de la clase `Canceled` como metrica principal, junto con accuracy, precision, recall, ROC-AUC, matriz de confusion y curva ROC si aplica.
 - Responsable sugerido: I1.
 - Dificultad: media.
 - Apto junior: con apoyo para documentar resultados.
 - Dependencias: T-2.2.
 - Criterio de verificacion: metricas visibles en informe.
-- Evidencia: `reports/model_report.md` incluye accuracy, precision, recall, F1, ROC-AUC y conteos de matriz de confusion para train y validacion; `reports/figures/` incluye matriz de confusion y curva ROC.
-- Comando de verificacion: `python -m src.models.train_baseline` y `python -m unittest discover`.
+- Evidencia: `reports/model_report.md` incluye accuracy, precision, recall, F1, ROC-AUC, conteos de matriz de confusion, feature importance equivalente y analisis de errores; `reports/figures/` incluye matriz de confusion y curva ROC.
+- Comando de verificacion: `python -m src.models.train_baseline`, `python -m src.evaluation.model_diagnostics` y `python -m pytest`.
 
 ### [x] T-2.4 Revisar overfitting inferior al 5%
 
 - Archivos afectados: `reports/model_report.md`, tabla de experimentos.
-- Accion: comparar metrica principal en train y validacion.
+- Accion: comparar F1-score de la clase `Canceled` en train y validacion.
 - Responsable sugerido: I1 con QA de I4.
 - Dificultad: media.
 - Apto junior: si para checklist, no para decision tecnica final.
@@ -189,7 +189,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia: `reports/model_report.md` documenta F1 train 0,6949, F1 validacion 0,6870 y gap 0,0079 para Logistic Regression.
 - Comando de verificacion: revisar seccion "Revision inicial de overfitting" en `reports/model_report.md` y ejecutar `python -m unittest discover`.
 
-### [~] T-2.5 Crear app minima de prediccion
+### [x] T-2.5 Crear app minima de prediccion
 
 - Archivos afectados: `app/`, `README.md`.
 - Accion: crear formulario, cargar modelo y devolver prediccion.
@@ -198,8 +198,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
-- Comando de verificacion: `cd app/frontend && pnpm install && pnpm dev`.
-- Nota de estado: existe app frontend con prediccion mock y backend FastAPI inicial con `GET /health` y `POST /predict` mock. Falta conectar modelo real cuando ML Core confirme pipeline y Champion Model.
+- Evidencia: `POST /predict` carga el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`; `GET /model/info` devuelve `baseline_logistic_v0.1.0`.
+- Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
+- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el baseline. Queda validacion manual con capturas en T-2.6.
 
 ### [ ] T-2.6 Validacion manual de app
 
@@ -322,7 +323,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.5, T-3.4.
 - Criterio de verificacion: app levanta con Docker.
 - Comando de verificacion: `docker compose build` y `docker compose up`.
-- Nota de estado: Docker inicial preparado para frontend y backend mock; queda conectar modelo Champion real cuando exista.
+- Nota de estado: Docker inicial preparado para frontend y backend. Queda validar Docker con el baseline real y, mas adelante, actualizarlo si se selecciona un Champion.
 
 ### [ ] T-4.4 Conectar almacenamiento persistente
 
@@ -345,7 +346,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
 - Comando de verificacion: ejecutar comandos documentados.
-- Nota de estado: documentada ejecucion parcial de frontend y contrato API. Existe backend FastAPI inicial; quedan tests, Docker e integracion real con modelo.
+- Nota de estado: documentada ejecucion de frontend, backend, contrato API, tests iniciales y Docker. La API ya usa el baseline real; queda validar Docker con el baseline y revisar instrucciones finales antes de entrega.
 
 ## Fase 5 - Nivel Experto
 

@@ -4,6 +4,19 @@ Sistema de clasificación para anticipar cancelaciones de reservas hoteleras.
 
 Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
+![Python](https://img.shields.io/badge/Python-3.11-3776AB)
+![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)
+![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB)
+![Scikit-learn](https://img.shields.io/badge/ML-Scikit--learn-F7931E)
+![Docker](https://img.shields.io/badge/Docker-ready%20to%20validate-2496ED)
+![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF)
+![Milestone](https://img.shields.io/badge/tag-v0.4.0--essential--mvp-2E7D32)
+
+| Producto | Modelo | Entrega |
+| --- | --- | --- |
+| Web React + API FastAPI | Baseline Logistic Regression integrado | Nivel Esencial cubierto |
+| Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | Tests, CI, Docker inicial y tag de hito |
+
 ---
 
 ## 1. Descripción
@@ -76,14 +89,18 @@ Estado actual:
 
 - Dataset incorporado en `data/raw/`.
 - Target definido como `booking_status`.
+- Métrica principal definida: F1-score de la clase `Canceled`.
 - Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
 - Notebooks iniciales de inspección y EDA disponibles en `notebooks/`.
 - Frontend React + Vite integrado en `app/frontend`.
-- Mock visual y funcional de producto disponible para validar la experiencia.
+- Prototipo visual de producto disponible para validar la experiencia.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
 - Endpoint de salud disponible en `GET /health`.
-- Endpoint provisional de predicción disponible en `POST /predict`.
+- Endpoint de información de modelo disponible en `GET /model/info`.
+- Endpoint de predicción real disponible en `POST /predict` usando el baseline Logistic Regression.
+- Baseline reproducible entrenado y guardado en `models/baseline/logistic_regression_baseline.pkl`.
+- Métricas y overfitting documentados en `reports/model_report.md`.
 - Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
 - Workflows de GitHub Actions creados para tests backend y build frontend.
 - Configuración Docker inicial disponible para frontend y backend.
@@ -96,20 +113,37 @@ Estado actual:
 
 Pendiente principal:
 
-- Cerrar distribución del target y posible desbalance.
-- Consolidar visualizaciones finales de EDA.
-- Definir métrica principal.
-- Consolidar pipeline de preprocesamiento.
-- Entrenar baseline reproducible.
-- Registrar métricas y overfitting.
-- Seleccionar Champion Model.
-- Conectar frontend con predicción real.
-- Completar informe técnico.
-- Ampliar tests, CI y Docker cuando se integre el modelo real.
+- Validar manualmente la app con entradas reales y capturas.
+- Seleccionar Champion Model si se decide promocionar el challenger.
+- Revisar el informe técnico final antes de la entrega.
+- Validar Docker con el baseline real integrado.
 
 ---
 
-## 5. Estructura del repositorio
+## 5. Condiciones de entrega
+
+| Estado | Condición | Cómo se cubre en Hotel Insights | Pendiente |
+| --- | --- | --- | --- |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Aplicación que recibe datos y devuelve una predicción | Frontend React + Vite conectado a backend FastAPI. `POST /predict` devuelve predicción, probabilidad, riesgo y versión de modelo. | Validación manual final con capturas. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Repositorio GitHub ordenado | Flujo con `develop`, ramas por tipo, Pull Requests, plantilla de PR, changelog, tags y GitHub Actions. | Mantener el flujo hasta entrega final. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Informe técnico de rendimiento | `reports/model_report.md` incluye métricas, overfitting, matriz de confusión, ROC, importancia de variables y análisis de errores. | Revisión de redacción antes de presentación. |
+| ![En progreso](https://img.shields.io/badge/estado-en%20progreso-C79500) | Presentación de negocio y presentación técnica | Carpetas preparadas en `docs/business_presentation/` y `docs/technical_presentation/`; producto y narrativa ya documentados. | Crear entregables finales de presentación. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Herramienta organizativa | Jira definido como herramienta oficial del equipo. | Mantener historias alineadas con SPEC y roadmap. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Overfitting inferior al 5% | Gap F1 baseline `0.0079`; gap F1 Random Forest `0.0186`, ambos por debajo de `0.05`. | Revalidar si se cambia el Champion Model. |
+
+### Tecnologías principales
+
+| Área | Tecnología | Uso en el proyecto |
+| --- | --- | --- |
+| Machine Learning | Scikit-learn, Pandas | Preprocesamiento, baseline, challenger, métricas y análisis. |
+| Aplicación web | React, Vite, FastAPI | Interfaz de predicción y API de inferencia. |
+| Calidad | Pytest, GitHub Actions | Tests backend, preprocessing, baseline y checks de PR. |
+| Operación | Docker, Docker Compose | Contenedores iniciales para frontend y backend. |
+| Gestión | Git, GitHub, Jira | Ramas, PRs, changelog, tags, issues/historias y seguimiento. |
+
+---
+
+## 6. Estructura del repositorio
 
 ```text
 .
@@ -163,14 +197,15 @@ El backend actual es una API FastAPI con endpoints:
 
 ```text
 GET /health
+GET /model/info
 POST /predict
 ```
 
-`POST /predict` devuelve por ahora una respuesta mock compatible con el contrato API. La inferencia real se conectará cuando exista un pipeline ML validado y un Champion Model confirmado.
+`GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`.
 
 ---
 
-## 6. Frontend React
+## 7. Frontend React
 
 El frontend está en:
 
@@ -186,7 +221,7 @@ Tecnologías:
 - CSS custom.
 - Mock service de predicción.
 
-Actualmente el frontend trabaja con una predicción mock. Esto permite validar la experiencia de usuario antes de integrar el backend y el modelo real.
+Actualmente el frontend consulta el backend real por defecto. El mock editorial puede activarse solo para demos aisladas con `VITE_USE_MOCK_API=true`.
 
 ### Ejecutar frontend
 
@@ -233,7 +268,7 @@ pnpm build
 
 ---
 
-## 7. Entorno Python
+## 8. Entorno Python
 
 Crear entorno virtual desde Git Bash:
 
@@ -262,7 +297,7 @@ deactivate
 
 ---
 
-## 8. Docker
+## 9. Docker
 
 El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
 
@@ -307,11 +342,11 @@ Comprobar frontend:
 http://localhost:8080/
 ```
 
-Nota: el backend actual usa una predicción mock compatible con el frontend. La inferencia real se conectará cuando ML Core confirme el pipeline y el Champion Model.
+Nota: el backend actual carga el baseline Logistic Regression. Cuando se seleccione un Champion posterior, el servicio de inferencia deberá apuntar al nuevo artefacto versionado.
 
 ---
 
-## 9. Metodología SPEC / SDD
+## 10. Metodología SPEC / SDD
 
 El proyecto usa una metodología basada en SPEC / SDD.
 
@@ -354,17 +389,24 @@ Estado actual destacado:
 [-] T-0.3 Definir candidatos de dataset
 [x] T-0.4 Disenar mock funcional de app
 [x] T-1.1 Elegir dataset definitivo
-[~] T-1.2 Definir target y clases
+[x] T-1.2 Definir target y clases
 [x] T-1.3 Crear diccionario de datos
-[~] T-1.4 Realizar EDA inicial
-[~] T-2.5 Crear app minima de prediccion
+[x] T-1.4 Realizar EDA inicial
+[x] T-2.1 Crear pipeline de preprocesamiento
+[x] T-2.2 Entrenar baseline
+[x] T-2.3 Calcular metricas obligatorias
+[x] T-2.4 Revisar overfitting inferior al 5%
+[x] T-2.5 Crear app minima de prediccion
+[x] T-3.1 Entrenar modelo ensemble
+[x] T-3.2 Aplicar validacion cruzada
+[~] T-3.3 Optimizar hiperparametros
 [~] T-4.3 Dockerizar app
 [~] T-4.5 Documentar instalacion y ejecucion
 ```
 
 ---
 
-## 10. Documentación de organización
+## 11. Documentación de organización
 
 Documentos de organización del proyecto:
 
@@ -385,7 +427,7 @@ Estos documentos explican:
 
 ---
 
-## 11. Flujo Git
+## 12. Flujo Git
 
 Ramas principales:
 
@@ -427,7 +469,7 @@ compare: feature/nombre-tarea
 
 ---
 
-## 12. Pull Requests
+## 13. Pull Requests
 
 El repositorio incluye una plantilla de Pull Request en:
 
@@ -458,7 +500,7 @@ Tipos de cambio contemplados:
 
 ---
 
-## 13. Changelog y tags
+## 14. Changelog y tags
 
 El repositorio incluye:
 
@@ -473,18 +515,18 @@ Tags creados:
 ```text
 v0.1.0-docs-foundation
 v0.2.0-frontend-mock
+v0.4.0-essential-mvp
 ```
 
 Significado:
 
 - `v0.1.0-docs-foundation`: base documental, SPEC, roadmap, flujo Git, README inicial, PR template y changelog.
 - `v0.2.0-frontend-mock`: frontend React + Vite con mock funcional de predicción.
+- `v0.4.0-essential-mvp`: Nivel Esencial cubierto con EDA, baseline, overfitting, API con inferencia real e informe técnico.
 
 Hitos previstos:
 
 ```text
-v0.3.0-data-eda
-v0.4.0-baseline
 v0.5.0-api
 v0.6.0-champion
 v0.7.0-operational
@@ -493,7 +535,7 @@ v1.0.0-final
 
 ---
 
-## 14. Jira
+## 15. Jira
 
 La herramienta oficial de gestión es Jira.
 
@@ -511,7 +553,7 @@ Los tickets deben mantenerse alineados con:
 
 ---
 
-## 15. Roles del equipo
+## 16. Roles del equipo
 
 Roles sugeridos por la SPEC:
 
@@ -526,7 +568,7 @@ Los roles son colaborativos. Cada integrante puede apoyar tareas de otros bloque
 
 ---
 
-## 16. Niveles de entrega y progreso
+## 17. Niveles de entrega y progreso
 
 Leyenda:
 
@@ -540,19 +582,19 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [ ] | Modelo funcional de clasificación | Dataset y target definidos. | Entrenar baseline reproducible y seleccionar modelo inicial. |
-| [~] | EDA con visualizaciones relevantes para clasificación | Notebooks iniciales de inspección y EDA en `notebooks/`; diccionario en `reports/data_dictionary.md`. | Cerrar conclusiones de negocio, visualizaciones finales y análisis de desbalance. |
-| [ ] | Overfitting inferior al 5% | Criterio documentado como requisito del proyecto. | Medir diferencia entre entrenamiento y validación cuando exista modelo. |
-| [~] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, Docker local y respuesta mock. | Sustituir mock por inferencia real del modelo. |
-| [ ] | Informe técnico de rendimiento | Estructura documental y roadmap creados. | Añadir métricas de clasificación, matriz de confusión, ROC, feature importance y análisis de errores. |
+| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado con Pipeline de Scikit-learn y guardado en `models/baseline/logistic_regression_baseline.pkl`. | Seleccionar Champion posterior si se decide avanzar a Nivel Medio. |
+| [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
+| [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest gap F1 `0.0186`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
+| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y baseline real integrado. | Validación manual y despliegue posterior. |
+| [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
 ### Nivel Medio
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [ ] | Modelo con técnicas de ensemble | En roadmap ML. | Entrenar y comparar Random Forest, Gradient Boosting u otras alternativas. |
-| [ ] | Validación cruzada | En roadmap ML. | Definir estrategia de validación y registrar resultados. |
-| [ ] | Optimización de hiperparámetros | En roadmap ML. | Aplicar GridSearch, RandomSearch, Optuna u otra técnica acordada. |
+| [x] | Modelo con técnicas de ensemble | Random Forest challenger entrenado y comparado contra baseline en `reports/model_report.md`. | Decidir si se promociona a Champion. |
+| [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.7990`. | Ampliar folds solo si el equipo lo considera necesario. |
+| [~] | Optimización de hiperparámetros | Existe tuning provisional documentado en SPEC con mejora de F1 hasta `0.8042`. | Consolidar configuración ganadora en script reproducible y regenerar artefacto. |
 | [ ] | Recogida de feedback para monitorizar performance | Previsto en contrato producto/MLOps. | Diseñar almacenamiento y métrica de feedback en la app. |
 | [ ] | Recogida de datos nuevos para futuros reentrenamientos | Previsto como mejora de producto. | Definir pipeline de ingestión y persistencia. |
 
@@ -560,10 +602,10 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Integrar modelo real dentro del flujo Docker. |
+| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Validar Docker con el baseline real integrado. |
 | [ ] | Guardado en base de datos de datos recogidos | No implementado todavía. | Elegir base de datos y definir esquema mínimo. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
-| [~] | Tests unitarios | Tests smoke de API backend y workflows CI activos. | Añadir tests de preprocessing, métricas mínimas y modelo. |
+| [~] | Tests unitarios | Tests de API, preprocessing y baseline activos; workflows CI para backend y frontend. | Añadir tests de métricas mínimas y smoke test completo cuando se cierre la demo. |
 
 ### Nivel Experto
 
@@ -576,7 +618,7 @@ Leyenda:
 
 ---
 
-## 17. Roadmap resumido
+## 18. Roadmap resumido
 
 1. Organización y acuerdos.
 2. Dataset, EDA y contrato de datos.
@@ -594,26 +636,20 @@ docs/project_management/03_delivery_roadmap.md
 
 ---
 
-## 18. Próximos pasos técnicos
+## 19. Próximos pasos técnicos
 
 Prioridades inmediatas:
 
-1. Cerrar distribución del target y desbalance.
-2. Consolidar EDA y visualizaciones finales.
-3. Definir métrica principal.
-4. Consolidar pipeline de preprocesamiento.
-5. Entrenar baseline reproducible.
-6. Registrar métricas y overfitting.
-7. Conectar frontend y backend con modelo real.
-8. Sustituir respuesta mock por inferencia real.
-9. Ampliar tests de preprocessing, modelo y métricas.
-10. Preparar informe técnico.
-11. Preparar presentación de negocio y presentación técnica.
-12. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
+1. Validar manualmente frontend + backend + modelo real con capturas.
+2. Validar Docker con el baseline real integrado.
+3. Decidir si Random Forest se promociona a Champion Model.
+4. Consolidar tuning de hiperparámetros en script reproducible si se mantiene en alcance.
+5. Preparar presentación de negocio y presentación técnica.
+6. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
 
 ---
 
-## 19. Sprint 1
+## 20. Sprint 1
 
 Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 
@@ -625,7 +661,7 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 - Frontend mock integrado.
 - Contrato API inicial creado.
 - Backend FastAPI base creado.
-- Endpoints `GET /health` y `POST /predict` creados.
+- Endpoints `GET /health`, `GET /model/info` y `POST /predict` creados.
 - Tests iniciales de API backend creados.
 - CI inicial para backend y frontend creado.
 - Docker local inicial para frontend y backend creado.
@@ -635,18 +671,17 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 
 Queda para Sprint 2:
 
-- Pipeline de preprocesamiento.
-- Baseline ML.
-- Métricas y overfitting.
-- Integración real del modelo en backend.
-- Conexión frontend-backend contra inferencia real.
-- Tests de preprocessing, modelo y métricas.
+- Validación manual de la demo completa.
+- Validación Docker con modelo real.
+- Decisión de Champion Model.
+- Consolidación de tuning reproducible si se mantiene en alcance.
+- Tests de métricas mínimas y smoke test completo de demo.
 - Persistencia o feedback de predicciones si el alcance lo permite.
 - Preparación de despliegue.
 
 ---
 
-## 20. Verificaciones útiles
+## 21. Verificaciones útiles
 
 Estado de Git:
 
@@ -687,12 +722,12 @@ git diff --check
 
 ---
 
-## 21. Equipo
+## 22. Equipo
 
 Proyecto desarrollado por el Grupo 2 del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
 ---
 
-## 22. Nota
+## 23. Nota
 
 Este README describe el estado y la dirección del proyecto. Debe actualizarse cada vez que cambien la forma de ejecutar la app, el modelo Champion, la arquitectura, los entregables principales, los hitos versionados o el flujo de trabajo del equipo.

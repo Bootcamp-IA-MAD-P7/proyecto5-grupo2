@@ -13,12 +13,13 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Cliente del proyecto: plataforma de reservas hoteleras tipo Booking, Trivago o Agoda.
 - Problema de negocio: predecir si una reserva sera cancelada.
 - Target: `booking_status`.
-- Metrica principal inicial: F1-score de la clase `Canceled`, complementada con precision, recall, ROC-AUC y matriz de confusion.
+- Metrica principal: F1-score de la clase `Canceled`.
+- Metricas secundarias: precision, recall, ROC-AUC y matriz de confusion.
 - Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
-- Frontend actual: existe en `app/frontend` con prediccion mock para validar UX/UI.
-- Backend actual: existe API FastAPI inicial en `app/backend` con `GET /health` y `POST /predict` mock compatible con el frontend.
+- Frontend actual: existe en `app/frontend` con formulario conectado al contrato de prediccion.
+- Backend actual: existe API FastAPI inicial en `app/backend` con `GET /health`, `GET /model/info` y `POST /predict` usando el baseline Logistic Regression.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -291,15 +292,38 @@ El informe tecnico debe incluir:
 
 Si el problema es multiclase, se deben reportar promedios macro y weighted cuando sea relevante.
 
+### Metrica principal
+
+La metrica principal del proyecto es:
+
+```text
+F1-score de la clase Canceled
+```
+
+Justificacion:
+
+- El objetivo de negocio es anticipar reservas con riesgo de cancelacion.
+- El target tiene desbalance moderado: `Not_Canceled` es la clase mayoritaria.
+- `Accuracy` puede resultar enganosa si el modelo predice bien la clase mayoritaria pero falla cancelaciones.
+- F1-score equilibra `precision` y `recall`, por lo que evita priorizar solo volumen de alertas o solo cobertura de cancelaciones.
+
+Metricas secundarias:
+
+- `recall` de la clase `Canceled`, para medir cuantas cancelaciones reales detecta el modelo.
+- `precision` de la clase `Canceled`, para medir cuantas alertas son realmente utiles.
+- `ROC-AUC`, para evaluar separacion general entre clases.
+- Matriz de confusion, para explicar errores a negocio.
+- `accuracy`, solo como referencia complementaria.
+
 ## Regla de overfitting
 
 El overfitting debe ser inferior al 5%.
 
 Regla operativa:
 
-- Metrica principal operativa: F1-score de la clase `Canceled`.
-- Calcular la metrica en train.
-- Calcular la misma metrica en validacion o cross-validation.
+- Usar como metrica principal el F1-score de la clase `Canceled`.
+- Calcular F1-score de `Canceled` en train.
+- Calcular F1-score de `Canceled` en validacion o cross-validation.
 - La diferencia absoluta entre train y validacion debe ser menor a 0.05.
 
 Ejemplo:
@@ -352,6 +376,14 @@ Debe incluir:
 ### Modelo Champion
 
 Modelo seleccionado para productivizar.
+
+Estado actual:
+
+- Baseline productivizado temporalmente: `baseline_logistic_v0.1.0`.
+- Artefacto cargado por FastAPI: `models/baseline/logistic_regression_baseline.pkl`.
+- Endpoint de inferencia: `POST /predict`.
+- Endpoint de metadata: `GET /model/info`.
+- Este baseline permite cerrar la productivizacion esencial, aunque puede ser reemplazado por un Champion posterior.
 
 Debe cumplir:
 
@@ -602,7 +634,7 @@ Tecnologia de app definida: frontend React + Vite y backend de inferencia con Fa
 Backend inicial disponible:
 
 - `GET /health`.
-- `POST /predict` con respuesta mock.
+- `POST /predict` con inferencia del baseline real.
 - Contrato documentado en `docs/api_contract.md`.
 
 Docker inicial disponible:
@@ -613,7 +645,7 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 
-TODO: conectar Docker con modelo Champion cuando exista integracion real de inferencia.
+TODO: validar Docker con el baseline real integrado y actualizar la imagen si se promociona un Champion posterior.
 
 ## Documentacion e informes
 
@@ -642,6 +674,8 @@ El nivel esta cerrado si:
 - App funcional con prediccion.
 - Informe tecnico inicial.
 - README con instalacion y ejecucion.
+
+Estado actual: cubierto. Queda solo validacion manual de demo y revision final de redaccion antes de entrega.
 
 ### Nivel Medio
 

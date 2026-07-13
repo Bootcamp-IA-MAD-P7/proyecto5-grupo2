@@ -97,3 +97,63 @@ La regla del proyecto pide que la diferencia absoluta entre train y validacion s
 - El gap train-validacion del challenger es 0.0242, por debajo del limite operativo de 0.05.
 - La validacion cruzada de 3 folds muestra F1 medio de 0.8082.
 - Este modelo queda como challenger optimizado, pero no se selecciona Champion todavia porque falta revision final contra los criterios de `T-3.4`.
+
+## Interpretabilidad y analisis de errores
+
+### Modelo analizado
+
+Esta seccion analiza el baseline productivizado en la API:
+
+- Modelo: `logistic_regression_balanced`.
+- Artefacto: `models/baseline/logistic_regression_baseline.pkl`.
+- Clase positiva: `Canceled`.
+- Split analizado: validacion.
+
+### Feature importance equivalente
+
+Para Logistic Regression se usa el valor absoluto de los coeficientes como aproximacion de importancia. Los coeficientes positivos empujan la prediccion hacia `Canceled`; los negativos empujan hacia `Not_Canceled`.
+
+| feature | coefficient | absolute_coefficient | effect_on_canceled |
+| --- | --- | --- | --- |
+| repeated_guest | -2.1494 | 2.1494 | decreases_risk |
+| market_segment_type_Complementary | -1.7523 | 1.7523 | decreases_risk |
+| required_car_parking_space | -1.5491 | 1.5491 | decreases_risk |
+| lead_time | 1.3578 | 1.3578 | increases_risk |
+| no_of_special_requests | -1.1481 | 1.1481 | decreases_risk |
+| room_type_reserved_Room_Type 7 | -1.1301 | 1.1301 | decreases_risk |
+| market_segment_type_Aviation | 0.9868 | 0.9868 | increases_risk |
+| market_segment_type_Online | 0.9308 | 0.9308 | increases_risk |
+| market_segment_type_Offline | -0.8437 | 0.8437 | decreases_risk |
+| no_of_previous_bookings_not_canceled | -0.8244 | 0.8244 | decreases_risk |
+| avg_price_per_room | 0.6137 | 0.6137 | increases_risk |
+| room_type_reserved_Room_Type 1 | 0.5055 | 0.5055 | increases_risk |
+
+Lectura:
+
+- `lead_time` aparece como una de las senales mas fuertes: reservas con mayor antelacion tienden a elevar el riesgo de cancelacion.
+- `no_of_special_requests` tiene coeficiente negativo: mas solicitudes especiales tienden a reducir el riesgo estimado.
+- Algunas categorias de `market_segment_type` y `room_type_reserved` aportan senal relevante, pero deben interpretarse como asociaciones historicas, no como causas directas.
+
+### Analisis de errores
+
+| tipo_error | cantidad | lectura |
+| --- | --- | --- |
+| false_positive | 805 | Reservas que el modelo marca como riesgo de cancelacion, pero finalmente no se cancelan. |
+| false_negative | 429 | Reservas que el modelo no marca como riesgo, pero finalmente se cancelan. |
+
+Tasas sobre validacion:
+
+- False positive rate sobre `Not_Canceled`: 0.2200.
+- False negative rate sobre `Canceled`: 0.2406.
+
+Interpretacion de negocio:
+
+- Los falsos positivos pueden generar acciones comerciales innecesarias, pero suelen ser menos costosos que perder una cancelacion real no anticipada.
+- Los falsos negativos son mas sensibles para negocio porque representan cancelaciones que no se detectaron a tiempo.
+- Como siguiente mejora, el equipo puede ajustar el umbral de decision si quiere priorizar mas recall de `Canceled` o mas precision de las alertas.
+
+### Limitaciones y siguientes mejoras
+
+- El baseline es funcional y cumple el Nivel Esencial, pero no es necesariamente el mejor modelo final.
+- Random Forest ya muestra mejor F1 de validacion como challenger, por lo que puede evaluarse como Champion en el Nivel Medio.
+- La interpretabilidad de coeficientes aplica al baseline lineal; si se promueve un modelo de arboles, conviene reportar importancias del modelo final.

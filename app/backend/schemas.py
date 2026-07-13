@@ -7,8 +7,22 @@ class HealthResponse(BaseModel):
     version: str = "0.1.0"
 
 
+class ModelInfoResponse(BaseModel):
+    model_loaded: bool
+    model_version: str
+    model_status: str
+    model_type: str
+    primary_metric: str
+    target: str
+    positive_class: str
+    notes: list[str]
+
+
 class PredictionRequest(BaseModel):
     lead_time: int = Field(..., ge=0)
+    arrival_year: int = Field(..., ge=2000)
+    arrival_month: int = Field(..., ge=1, le=12)
+    arrival_date: int = Field(..., ge=1, le=31)
     no_of_special_requests: int = Field(..., ge=0)
     avg_price_per_room: float = Field(..., ge=0)
     market_segment_type: str

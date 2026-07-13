@@ -9,6 +9,9 @@ client = TestClient(app)
 def valid_prediction_payload() -> dict:
     return {
         "lead_time": 120,
+        "arrival_year": 2018,
+        "arrival_month": 7,
+        "arrival_date": 15,
         "no_of_special_requests": 0,
         "avg_price_per_room": 156.0,
         "market_segment_type": "Online",
@@ -36,6 +39,22 @@ def test_health_returns_ok() -> None:
     }
 
 
+def test_model_info_returns_loaded_baseline_state() -> None:
+    response = client.get("/model/info")
+
+    assert response.status_code == 200
+    body = response.json()
+
+    assert body["model_loaded"] is True
+    assert body["model_version"] == "baseline_logistic_v0.1.0"
+    assert body["model_status"] == "loaded"
+    assert body["model_type"] == "logistic_regression_baseline"
+    assert body["primary_metric"] == "f1_score_canceled"
+    assert body["target"] == "booking_status"
+    assert body["positive_class"] == "Canceled"
+    assert isinstance(body["notes"], list)
+
+
 def test_predict_returns_contract_shape() -> None:
     response = client.post("/predict", json=valid_prediction_payload())
 
@@ -50,6 +69,13 @@ def test_predict_returns_contract_shape() -> None:
     assert isinstance(body["model_version"], str)
     assert isinstance(body["main_factors"], list)
     assert isinstance(body["recommendation"], str)
+
+
+def test_predict_model_version_matches_model_info() -> None:
+    model_info = client.get("/model/info").json()
+    prediction = client.post("/predict", json=valid_prediction_payload()).json()
+
+    assert prediction["model_version"] == model_info["model_version"]
 
 
 def test_predict_rejects_invalid_payload() -> None:
