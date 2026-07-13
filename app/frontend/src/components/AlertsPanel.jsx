@@ -1,10 +1,44 @@
-import React, { useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import ReservationDetailModal from "./ReservationDetailModal";
-import { mockAlerts } from "../data/mockReservations";
+import { fetchPredictedReservations } from "../services/predictionService";
 import "./AlertsPanel.css";
 
 function AlertsPanel() {
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const [alerts, setAlerts] = useState([]);
+  const [isLoadingAlerts, setIsLoadingAlerts] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadAlerts() {
+      setIsLoadingAlerts(true);
+      setError("");
+      try {
+        const reservations = await fetchPredictedReservations(12);
+        const highRiskReservations = reservations.filter((reservation) => reservation.riskLevel === "high");
+        if (isMounted) {
+          setAlerts(highRiskReservations);
+        }
+      } catch {
+        if (isMounted) {
+          setError("No se pudieron cargar las alertas reales del backend.");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingAlerts(false);
+        }
+      }
+    }
+
+    loadAlerts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString("es-ES", {
@@ -30,11 +64,16 @@ function AlertsPanel() {
           <span className="alert-dot" />
           Alertas Urgentes
         </h2>
-        <p>{mockAlerts.length} reservas requieren acción inmediata</p>
+        <p>
+          {isLoadingAlerts
+            ? "Cargando alertas reales..."
+            : `${alerts.length} reservas requieren acción inmediata`}
+        </p>
+        {error && <p>{error}</p>}
       </div>
 
       <div className="alerts-list">
-        {mockAlerts.map((alert) => (
+        {alerts.map((alert) => (
           <div
             key={alert.id}
             className="alert-card alert-card-clickable"

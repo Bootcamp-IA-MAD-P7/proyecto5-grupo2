@@ -11,7 +11,6 @@ services:
       context: app/frontend
       args:
         VITE_API_URL: http://localhost:8000
-        VITE_USE_MOCK_API: "false"
     ports:
       - "8080:80"
     depends_on:

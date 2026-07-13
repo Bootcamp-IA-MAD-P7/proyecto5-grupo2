@@ -5,6 +5,7 @@ from .schemas import (
     FeedbackRequest,
     FeedbackResponse,
     FeedbackSummaryResponse,
+    DemoReservationsResponse,
     HealthResponse,
     ModelInfoResponse,
     PredictionRequest,
@@ -12,6 +13,7 @@ from .schemas import (
 )
 from .services.feedback_service import get_feedback_summary, save_feedback
 from .services.model_service import get_model_info, predict_cancellation
+from .services.reservation_service import get_demo_reservations
 
 
 app = FastAPI(
@@ -47,6 +49,11 @@ def model_info() -> ModelInfoResponse:
 @app.post("/predict", response_model=PredictionResponse)
 def predict(payload: PredictionRequest) -> PredictionResponse:
     return predict_cancellation(payload)
+
+
+@app.get("/reservations/demo", response_model=DemoReservationsResponse)
+def demo_reservations(limit: int = 8) -> DemoReservationsResponse:
+    return get_demo_reservations(limit=limit)
 
 
 @app.post("/feedback", response_model=FeedbackResponse)
