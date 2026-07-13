@@ -238,6 +238,13 @@
 }
 
 /* Feedback */
+.modal-feedback-note {
+  color: #6d756f;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
 .modal-feedback {
   display: flex;
   gap: 10px;
@@ -261,4 +268,13 @@
 
 .modal-btn-no:hover {
   background: rgba(63, 180, 167, 0.25);
+}
+
+.modal-feedback button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.modal-feedback button:disabled:hover {
+  background: inherit;
 }
