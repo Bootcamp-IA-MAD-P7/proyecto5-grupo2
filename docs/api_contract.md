@@ -77,13 +77,86 @@ Este endpoint informa del modelo que usa la API para generar predicciones.
 
 ## 5. Prediction Endpoint
 
+## 5. Reservation Candidates Endpoint
+
+### `GET /reservations/demo`
+
+Devuelve una lista de reservas candidatas obtenidas desde el CSV real del proyecto.
+
+Uso actual:
+
+- Alimentar la tabla de reservas del frontend principal.
+- Alimentar el panel de alertas del frontend principal.
+- Permitir que la app calcule predicciones reales para reservas reales del dataset.
+
+Query params:
+
+| Parametro | Tipo | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| `limit` | integer | no | Numero maximo de reservas a devolver. Valor usado por defecto: `8`. |
+
+#### Response `200 OK`
+
+```json
+{
+  "total_available": 36275,
+  "returned": 2,
+  "source": "data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv",
+  "reservations": [
+    {
+      "id": "INN02825",
+      "display_name": "Reserva INN02825",
+      "stay_label": "Suite familiar · 7 noches",
+      "status_label": "Conviene confirmar",
+      "image_key": "terrace",
+      "input_data": {
+        "lead_time": 279,
+        "arrival_year": 2018,
+        "arrival_month": 9,
+        "arrival_date": 20,
+        "no_of_special_requests": 0,
+        "avg_price_per_room": 177.3,
+        "market_segment_type": "Online",
+        "no_of_weekend_nights": 2,
+        "no_of_week_nights": 5,
+        "type_of_meal_plan": "Meal Plan 1",
+        "room_type_reserved": "Room_Type 6",
+        "no_of_adults": 2,
+        "no_of_children": 2,
+        "required_car_parking_space": 0,
+        "repeated_guest": 0,
+        "no_of_previous_cancellations": 0,
+        "no_of_previous_bookings_not_canceled": 0
+      }
+    }
+  ]
+}
+```
+
+### Reservation Output Fields
+
+| Campo | Tipo | Descripcion |
+| --- | --- | --- |
+| `total_available` | integer | Numero total de filas disponibles en el CSV real. |
+| `returned` | integer | Numero de reservas devueltas en la respuesta. |
+| `source` | string | Ruta relativa del dataset usado por el backend. |
+| `reservations` | array | Lista de reservas candidatas. |
+| `id` | string | Identificador historico de reserva. |
+| `display_name` | string | Nombre visible de la reserva en la app. |
+| `stay_label` | string | Texto de estancia para la interfaz. |
+| `status_label` | string | Etiqueta operativa calculada para priorizacion visual. |
+| `image_key` | string | Clave visual usada por el frontend si necesita imagen asociada. |
+| `input_data` | object | Payload compatible con `POST /predict`. |
+
+## 6. Prediction Endpoint
+
 ### `POST /predict`
 
 Calcula el riesgo de cancelacion de una reserva.
 
 El endpoint acepta un JSON con los campos del formulario y las features requeridas por el Champion Random Forest.
 
-## 6. Request JSON
+## 7. Request JSON
 
 ```json
 {
@@ -107,7 +180,7 @@ El endpoint acepta un JSON con los campos del formulario y las features requerid
 }
 ```
 
-## 7. Input Fields
+## 8. Input Fields
 
 | Campo | Tipo | Obligatorio | Descripcion |
 | --- | --- | --- | --- |
@@ -129,7 +202,7 @@ El endpoint acepta un JSON con los campos del formulario y las features requerid
 | `no_of_previous_cancellations` | integer | si | Cancelaciones previas del cliente. |
 | `no_of_previous_bookings_not_canceled` | integer | si | Reservas previas no canceladas. |
 
-## 8. Valores Iniciales Permitidos
+## 9. Valores Iniciales Permitidos
 
 Valores actuales usados por el frontend:
 
@@ -142,7 +215,7 @@ Valores pendientes de cerrar con ML Core:
 - Rango maximo recomendado para campos numericos.
 - Tratamiento de categorias no vistas durante entrenamiento.
 
-## 9. Response JSON
+## 10. Response JSON
 
 ```json
 {
@@ -161,7 +234,7 @@ Valores pendientes de cerrar con ML Core:
 }
 ```
 
-## 10. Output Fields
+## 11. Output Fields
 
 | Campo | Tipo | Descripcion |
 | --- | --- | --- |
@@ -174,7 +247,7 @@ Valores pendientes de cerrar con ML Core:
 | `main_factors` | array[string] | Factores explicativos principales. |
 | `recommendation` | string | Recomendacion operativa para el equipo hotelero. |
 
-## 11. Feedback Endpoint
+## 12. Feedback Endpoint
 
 ### `POST /feedback`
 
@@ -239,7 +312,7 @@ data/feedback/prediction_feedback.csv
 
 Los CSV operativos de feedback estan ignorados por Git.
 
-## 12. Feedback Summary
+## 13. Feedback Summary
 
 ### `GET /feedback/summary`
 
@@ -254,7 +327,7 @@ Devuelve un resumen minimo de registros de feedback persistidos.
 }
 ```
 
-## 13. Error Response
+## 14. Error Response
 
 FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
 
@@ -272,14 +345,15 @@ Formato esperado:
 }
 ```
 
-## 14. Reglas Provisionales
+## 15. Reglas Provisionales
 
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
 - El modelo real debe respetar este contrato o proponer una actualizacion documentada.
 - `GET /model/info` debe reflejar la version y estado real del modelo cargado.
+- `GET /reservations/demo` debe devolver `input_data` compatible con `POST /predict`.
 
-## 15. Pendiente
+## 16. Pendiente
 
 - Confirmar inputs definitivos con ML Core.
 - Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.

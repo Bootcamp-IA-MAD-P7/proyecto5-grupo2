@@ -17,16 +17,22 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Feedback ingestion utility for future retraining datasets.
 - End-to-end smoke test covering health, model info, prediction, feedback and feedback summary.
 - Docker validation with backend, frontend, Champion inference and feedback endpoints.
+- Real reservation candidates endpoint `GET /reservations/demo`, sourced from the CSV dataset in `data/raw/`.
+- Frontend main reservation table and alerts connected to real backend data.
+- Frontend detail modal connected to real prediction factors, recommendations and feedback persistence.
+- Backend test coverage for the real reservation endpoint contract.
 
 ### Changed
 
 - Updated SPEC tasks, technical SPEC and README to mark `T-3.3 Optimizar hiperparametros` as completed after the optimized challenger was integrated and verified.
 - Updated API contract, SPEC tasks, technical SPEC and README to reflect `random_forest_champion_v0.1.0` as the model served by the API.
 - Updated SPEC tasks, technical SPEC and README to mark feedback, new-data collection, Docker validation and smoke flow as completed.
+- Removed frontend fixture-based reservation data from the main app flow; prediction data now comes from the backend.
+- Removed the frontend mock prediction mode from production service configuration.
 
 ### Pending
 
-- Manual app validation with screenshots.
+- Manual app validation with screenshots using the frontend connected to real backend data.
 - Cloud deployment decision.
 - Frontend UX review or alternative beta flow.
 

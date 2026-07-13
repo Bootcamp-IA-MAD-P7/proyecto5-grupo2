@@ -199,6 +199,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
 - Evidencia: `POST /predict` carga el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`; `GET /model/info` devuelve `random_forest_champion_v0.1.0`.
+- Evidencia frontend: la tabla de reservas, las alertas y el modal consumen reservas reales desde `GET /reservations/demo` y predicciones reales desde `POST /predict`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
 - Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el Champion. Queda validacion manual con capturas en T-2.6.
 
@@ -291,6 +292,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: feedback queda persistido y se puede abrir.
 - Evidencia: `POST /feedback` guarda prediccion, probabilidad, version de modelo, input validado, feedback de usuario y estado real si se conoce en `data/feedback/prediction_feedback.csv`.
 - Evidencia adicional: `GET /feedback/summary` devuelve el numero de registros persistidos.
+- Evidencia frontend: el modal de detalle del frontend principal registra feedback mediante `POST /feedback`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
 
 ## Fase 4 - Nivel Avanzado
@@ -330,6 +332,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Comando de verificacion: `docker compose build`, `docker compose up -d`, `GET /health`, `GET /model/info`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `curl.exe -I http://localhost:8080/` y `docker compose down`.
 - Evidencia: Docker validado con frontend nginx, backend FastAPI, Champion Random Forest y endpoints de feedback.
 - Resultado clave: Docker devuelve `random_forest_champion_v0.1.0`, prediccion correcta, feedback persistido y frontend `HTTP/1.1 200 OK`.
+- Evidencia adicional: Docker incluye `data/raw/` en la imagen backend para servir `GET /reservations/demo` y permitir que el frontend principal use reservas reales.
 
 ### [x] T-4.4 Conectar almacenamiento persistente
 
@@ -426,6 +429,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: checklist de demo completo.
 - Evidencia: `tests/integration/test_prediction_feedback_smoke.py` valida flujo completo de API con health, metadata de modelo, prediccion, feedback y resumen de feedback.
 - Evidencia Docker: flujo validado manualmente con `docker compose build`, `docker compose up -d`, endpoints backend y frontend nginx.
+- Evidencia frontend: `pnpm build` valida el frontend principal conectado al servicio real de prediccion y reservas.
 - Comando de verificacion: `python -m pytest tests/integration/test_prediction_feedback_smoke.py`.
 
 ### [ ] T-6.2 Revision final de overfitting y metricas

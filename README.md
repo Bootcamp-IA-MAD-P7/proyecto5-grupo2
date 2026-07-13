@@ -10,12 +10,12 @@ Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 ![Scikit-learn](https://img.shields.io/badge/ML-Scikit--learn-F7931E)
 ![Docker](https://img.shields.io/badge/Docker-validated%20with%20Champion-2496ED)
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF)
-![Milestone](https://img.shields.io/badge/tag-v0.4.0--essential--mvp-2E7D32)
+![Milestone](https://img.shields.io/badge/tag-v0.5.0--operational--mvp-2E7D32)
 
 | Producto | Modelo | Entrega |
 | --- | --- | --- |
-| Web React + API FastAPI | Champion Random Forest integrado | Nivel Esencial cubierto |
-| Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | Tests, CI, Docker, feedback y smoke test |
+| Web React + API FastAPI | Champion Random Forest integrado | Nivel Esencial y Medio cubiertos |
+| Frontend principal con datos reales | F1 de `Canceled` como métrica principal | Tests, CI, Docker, feedback y smoke test |
 
 ---
 
@@ -99,6 +99,8 @@ Estado actual:
 - Endpoint de salud disponible en `GET /health`.
 - Endpoint de información de modelo disponible en `GET /model/info`.
 - Endpoint de predicción real disponible en `POST /predict` usando el Champion Random Forest.
+- Endpoint de reservas reales disponible en `GET /reservations/demo`, alimentado desde el CSV de `data/raw/`.
+- Frontend principal conectado a reservas reales, predicciones reales y feedback real.
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
@@ -126,7 +128,7 @@ Pendiente principal:
 
 | Estado | Condición | Cómo se cubre en Hotel Insights | Pendiente |
 | --- | --- | --- | --- |
-| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Aplicación que recibe datos y devuelve una predicción | Frontend React + Vite conectado a backend FastAPI. `POST /predict` devuelve predicción, probabilidad, riesgo y versión de modelo. | Validación manual final con capturas. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Aplicación que recibe datos y devuelve una predicción | Frontend React + Vite conectado a backend FastAPI. La tabla y alertas consumen reservas reales desde `GET /reservations/demo`; `POST /predict` devuelve predicción, probabilidad, riesgo y versión de modelo. | Validación manual final con capturas. |
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Repositorio GitHub ordenado | Flujo con `develop`, ramas por tipo, Pull Requests, plantilla de PR, changelog, tags y GitHub Actions. | Mantener el flujo hasta entrega final. |
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Informe técnico de rendimiento | `reports/model_report.md` incluye métricas, overfitting, matriz de confusión, ROC, importancia de variables y análisis de errores. | Revisión de redacción antes de presentación. |
 | ![En progreso](https://img.shields.io/badge/estado-en%20progreso-C79500) | Presentación de negocio y presentación técnica | Carpetas preparadas en `docs/business_presentation/` y `docs/technical_presentation/`; producto y narrativa ya documentados. | Crear entregables finales de presentación. |
@@ -200,10 +202,11 @@ El backend actual es una API FastAPI con endpoints:
 ```text
 GET /health
 GET /model/info
+GET /reservations/demo
 POST /predict
 ```
 
-`GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
+`GET /model/info` devuelve la versión y estado del modelo cargado. `GET /reservations/demo` sirve reservas candidatas desde el CSV real. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
 
 ---
 
@@ -221,9 +224,11 @@ Tecnologías:
 - Vite.
 - pnpm.
 - CSS custom.
-- Mock service de predicción.
+- Servicios conectados al backend FastAPI.
 
-Actualmente el frontend consulta el backend real por defecto. El mock editorial puede activarse solo para demos aisladas con `VITE_USE_MOCK_API=true`.
+Actualmente el frontend principal consulta el backend real. La tabla de reservas, las alertas, el modal de detalle, la predicción y el feedback ya no dependen de fixtures mock.
+
+Nota: la pantalla de login del frontend principal es una entrada visual sin autenticación real. No debe presentarse como sistema de seguridad implementado.
 
 ### Ejecutar frontend
 
@@ -360,6 +365,7 @@ Endpoints verificados:
 GET http://localhost:8000/health
 GET http://localhost:8000/model/info
 POST http://localhost:8000/predict
+GET http://localhost:8000/reservations/demo?limit=3
 POST http://localhost:8000/feedback
 GET http://localhost:8000/feedback/summary
 ```
@@ -543,6 +549,7 @@ Tags creados:
 v0.1.0-docs-foundation
 v0.2.0-frontend-mock
 v0.4.0-essential-mvp
+v0.5.0-operational-mvp
 ```
 
 Significado:
@@ -550,13 +557,11 @@ Significado:
 - `v0.1.0-docs-foundation`: base documental, SPEC, roadmap, flujo Git, README inicial, PR template y changelog.
 - `v0.2.0-frontend-mock`: frontend React + Vite con mock funcional de predicción.
 - `v0.4.0-essential-mvp`: Nivel Esencial cubierto con EDA, baseline, overfitting, API con inferencia real e informe técnico.
+- `v0.5.0-operational-mvp`: Champion Random Forest, Docker, feedback, ingesta para reentrenamiento, smoke test y frontend principal conectado a datos reales.
 
-Hitos previstos:
+Hito previsto:
 
 ```text
-v0.5.0-api
-v0.6.0-champion
-v0.7.0-operational
 v1.0.0-final
 ```
 
@@ -612,7 +617,7 @@ Leyenda:
 | [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener versionado si se promociona un nuevo modelo. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest optimizado gap F1 `0.0242`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
-| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y Champion Random Forest integrado. | Validación manual y despliegue posterior. |
+| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, endpoint `GET /reservations/demo`, Docker local y Champion Random Forest integrado. | Validación manual y despliegue posterior. |
 | [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
 ### Nivel Medio
@@ -622,7 +627,7 @@ Leyenda:
 | [x] | Modelo con técnicas de ensemble | Random Forest entrenado, comparado contra baseline y promocionado a Champion. | Mantener comparativa si aparece un nuevo Challenger. |
 | [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8082`. | Ampliar folds solo si el equipo lo considera necesario. |
 | [x] | Optimización de hiperparámetros | Configuración optimizada aplicada, artefacto regenerado, verificada por `tests/unit/test_challenger_training.py` y usada para el Champion. | Mantener trazabilidad si se reentrena. |
-| [x] | Recogida de feedback para monitorizar performance | `POST /feedback` persiste predicción, probabilidad, versión de modelo, input validado, feedback y estado real si se conoce. `GET /feedback/summary` permite monitorización básica. | Mejorar visualmente el flujo de feedback en frontend. |
+| [x] | Recogida de feedback para monitorizar performance | `POST /feedback` persiste predicción, probabilidad, versión de modelo, input validado, feedback y estado real si se conoce. El modal del frontend principal ya permite registrar feedback. `GET /feedback/summary` permite monitorización básica. | Evolucionar analítica visual si se despliega. |
 | [x] | Recogida de datos nuevos para futuros reentrenamientos | `data/feedback/prediction_feedback.csv` y `src/data/feedback_ingestion.py` permiten construir dataset de reentrenamiento con feedback etiquetado. | Evolucionar a SQLite/PostgreSQL si se despliega. |
 
 ### Nivel Avanzado
@@ -632,7 +637,7 @@ Leyenda:
 | [x] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx validados con Champion, feedback y frontend `HTTP 200`. | Optimizar imagen para despliegue si se aborda cloud. |
 | [x] | Guardado en base de datos de datos recogidos | Persistencia CSV local en `data/feedback/prediction_feedback.csv`, ignorada por Git para no subir datos operativos. | Evolucionar a SQLite/PostgreSQL si se despliega. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
-| [x] | Tests unitarios | 19 tests activos: API, preprocessing, baseline, challenger tuning, feedback ingestion y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 20 tests activos: API, reservas reales desde dataset, preprocessing, baseline, challenger tuning, feedback ingestion y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
@@ -670,7 +675,7 @@ Prioridades inmediatas:
 1. Validar manualmente frontend + backend + modelo real con capturas si se requieren evidencias visuales.
 2. Preparar presentación de negocio y presentación técnica.
 3. Decidir si se aborda despliegue cloud.
-4. Revisar frontend actual y, si procede, construir una beta alternativa con flujo de usuario claro.
+4. Validar visualmente el frontend principal ya conectado a datos reales.
 5. Evolucionar persistencia CSV a SQLite/PostgreSQL si el alcance lo requiere.
 6. Decidir siguiente capa experta: drift, A/B testing o auto-reemplazo condicionado.
 
@@ -699,9 +704,10 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 Queda para Sprint 2:
 
 - Validación manual de la demo completa.
-- Validación Docker con modelo real completada.
+- Frontend principal conectado a datos reales del backend.
+- Validación Docker con modelo real, feedback y reservas reales completada.
 - Champion Model seleccionado e integrado en API.
-- Consolidación de tuning reproducible si se mantiene en alcance.
+- Consolidación de tuning reproducible completada.
 - Tests de métricas mínimas y smoke test completo de demo.
 - Feedback y persistencia CSV implementados.
 - Preparación de despliegue.

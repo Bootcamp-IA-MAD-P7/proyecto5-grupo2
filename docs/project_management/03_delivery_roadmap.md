@@ -122,8 +122,10 @@ Estado actual:
 - Frontend React + Vite integrado en `app/frontend`.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
-- Endpoint `GET /health`, `GET /model/info` y `POST /predict` disponibles.
-- `POST /predict` usa el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`.
+- Endpoint `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary` disponibles.
+- `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
+- `GET /reservations/demo` sirve reservas candidatas desde el CSV real para alimentar el frontend principal.
+- El frontend principal consume reservas reales, predicciones reales y feedback real.
 - Informe tecnico inicial disponible en `reports/model_report.md` con metricas, overfitting, curva ROC, matriz de confusion, feature importance y analisis de errores.
 - Docker local inicial preparado para frontend y backend.
 - Nivel Esencial cubierto; queda validacion manual con capturas para cierre de demo.
@@ -162,8 +164,11 @@ Estado actual:
 
 - Random Forest challenger entrenado y comparado contra baseline.
 - Validacion cruzada estratificada de 3 folds documentada.
-- Tuning provisional documentado, pendiente de consolidar en script reproducible.
-- Pendiente: seleccion formal de Champion, feedback y recogida de datos nuevos.
+- Tuning optimizado consolidado y verificado.
+- Random Forest promocionado a Champion Model.
+- Feedback implementado con `POST /feedback` y `GET /feedback/summary`.
+- Recogida de datos nuevos para futuros reentrenamientos cubierta con CSV local e ingesta en `src/data/feedback_ingestion.py`.
+- Estado: Nivel Medio cubierto.
 
 ## 7. Fase 4 - Nivel avanzado operativo
 
@@ -196,6 +201,16 @@ Criterio de cierre:
 - La app puede arrancar con comandos documentados.
 - GitHub Actions verifica cambios básicos.
 - Docker queda funcional o documentado como limitación.
+
+Estado actual:
+
+- Tests de API, preprocessing, baseline, challenger tuning, feedback ingestion y smoke flow activos.
+- GitHub Actions valida backend y frontend.
+- Docker Compose levanta backend FastAPI y frontend nginx.
+- Docker incluye Champion Random Forest y dataset crudo necesario para `GET /reservations/demo`.
+- Almacenamiento persistente local cubierto con CSV de feedback ignorado por Git.
+- Smoke test completo cubierto por `tests/integration/test_prediction_feedback_smoke.py`.
+- Estado: Nivel Avanzado cubierto salvo despliegue web cloud.
 
 ## 8. Fase 5 - Nivel experto / MLOps
 
@@ -266,15 +281,13 @@ Criterio de cierre:
 Después de esta propuesta, se recomienda avanzar en PRs pequeños:
 
 ```text
-feature/backend-health-api
-feature/ml-baseline-pipeline
-feature/backend-predict-api
-feature/frontend-api-integration
-test/minimal-ci
-ci/frontend-build
-ci/python-tests
-docs/final-report-structure
-docs/ux-ui-visual-identity
+docs/final-report-polish
+docs/business-presentation
+docs/technical-presentation
+feature/frontend-ux-polish
+deploy/cloud-preparation
+mlops/drift-report
+mlops/champion-challenger-rules
 ```
 
 Cada PR debe tener una verificación clara y no mezclar responsabilidades.
