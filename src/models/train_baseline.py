@@ -225,7 +225,7 @@ def save_validation_figures(
     y_pred = model.predict(splits.X_validation)
     y_score = _positive_class_scores(model, splits.X_validation)
 
-    fig, ax = plt.subplots(figsize=(6, 5))
+    fig, ax = plt.subplots(figsize=(7, 5.5))
     ConfusionMatrixDisplay.from_predictions(
         splits.y_validation,
         y_pred,
@@ -237,7 +237,7 @@ def save_validation_figures(
     )
     ax.set_title("Baseline Logistic Regression - Matriz de confusion")
     fig.tight_layout()
-    fig.savefig(CONFUSION_MATRIX_PATH, dpi=160)
+    fig.savefig(CONFUSION_MATRIX_PATH, dpi=160, bbox_inches="tight", pad_inches=0.2)
     plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(6, 5))
