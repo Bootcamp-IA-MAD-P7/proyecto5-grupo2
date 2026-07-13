@@ -10,6 +10,8 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 COPY app/backend ./app/backend
+COPY src ./src
+COPY models/champion ./models/champion
 
 EXPOSE 8000
 
