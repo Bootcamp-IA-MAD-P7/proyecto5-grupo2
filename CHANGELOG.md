@@ -9,16 +9,19 @@ This project follows an incremental delivery approach. Versions and tags will be
 ### Added
 
 - Unit tests for the optimized Random Forest challenger tuning, including selected hyperparameters, minimum validation F1 and overfitting rule checks.
+- Champion Random Forest integration in the FastAPI backend.
+- Champion metadata loading from `models/champion/champion_metadata.json`.
 
 ### Changed
 
 - Updated SPEC tasks, technical SPEC and README to mark `T-3.3 Optimizar hiperparametros` as completed after the optimized challenger was integrated and verified.
+- Updated API contract, SPEC tasks, technical SPEC and README to reflect `random_forest_champion_v0.1.0` as the model served by the API.
 
 ### Pending
 
 - Manual app validation with screenshots.
-- Docker validation with the real baseline model.
-- Champion Model selection if the team promotes the Random Forest challenger.
+- Docker validation with the Champion Random Forest model.
+- Feedback and new-data persistence design.
 
 ## [v0.4.0-essential-mvp] - 2026-07-09
 
@@ -116,11 +119,9 @@ Next API/product increment:
 
 Champion model:
 
-- Ensemble or selected final model.
-- Cross-validation.
-- Hyperparameter tuning.
-- Champion metadata.
-- Model report update.
+- Champion validation evidence.
+- Docker validation with Champion inference.
+- Model report and README final alignment.
 
 ### v0.7.0-operational
 

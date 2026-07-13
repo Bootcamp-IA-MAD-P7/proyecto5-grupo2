@@ -19,7 +19,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con formulario conectado al contrato de prediccion.
-- Backend actual: existe API FastAPI inicial en `app/backend` con `GET /health`, `GET /model/info` y `POST /predict` usando el baseline Logistic Regression.
+- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info` y `POST /predict` usando el Champion Random Forest.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -251,8 +251,10 @@ Validacion cruzada:
 
 Decision actual:
 
-- Random Forest queda como challenger optimizado.
-- Todavia no se declara Champion porque falta validar la decision con los criterios de `T-3.4`.
+- Random Forest queda seleccionado como Champion Model.
+- El artefacto versionado se encuentra en `models/champion/random_forest_champion.pkl`.
+- La metadata del Champion se encuentra en `models/champion/champion_metadata.json`.
+- FastAPI carga el Champion desde la metadata y expone su version en `GET /model/info` y `POST /predict`.
 
 ## Estado del tuning inicial
 
@@ -379,11 +381,12 @@ Modelo seleccionado para productivizar.
 
 Estado actual:
 
-- Baseline productivizado temporalmente: `baseline_logistic_v0.1.0`.
-- Artefacto cargado por FastAPI: `models/baseline/logistic_regression_baseline.pkl`.
+- Champion productivizado: `random_forest_champion_v0.1.0`.
+- Artefacto cargado por FastAPI: `models/champion/random_forest_champion.pkl`.
+- Metadata del Champion: `models/champion/champion_metadata.json`.
 - Endpoint de inferencia: `POST /predict`.
 - Endpoint de metadata: `GET /model/info`.
-- Este baseline permite cerrar la productivizacion esencial, aunque puede ser reemplazado por un Champion posterior.
+- La API usa el Champion Random Forest y mantiene el contrato de entrada/salida definido para la app.
 
 Debe cumplir:
 
@@ -634,7 +637,7 @@ Tecnologia de app definida: frontend React + Vite y backend de inferencia con Fa
 Backend inicial disponible:
 
 - `GET /health`.
-- `POST /predict` con inferencia del baseline real.
+- `POST /predict` con inferencia del Champion Random Forest.
 - Contrato documentado en `docs/api_contract.md`.
 
 Docker inicial disponible:
@@ -645,7 +648,7 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 
-TODO: validar Docker con el baseline real integrado y actualizar la imagen si se promociona un Champion posterior.
+TODO: validar Docker con el Champion Random Forest integrado.
 
 ## Documentacion e informes
 
@@ -671,7 +674,7 @@ El nivel esta cerrado si:
 - Baseline entrenado.
 - Metricas obligatorias calculadas.
 - Overfitting inferior al 5%.
-- App funcional con prediccion.
+- App funcional con prediccion usando el Champion.
 - Informe tecnico inicial.
 - README con instalacion y ejecucion.
 

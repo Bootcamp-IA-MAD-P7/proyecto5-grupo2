@@ -14,7 +14,7 @@ Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 
 | Producto | Modelo | Entrega |
 | --- | --- | --- |
-| Web React + API FastAPI | Baseline Logistic Regression integrado | Nivel Esencial cubierto |
+| Web React + API FastAPI | Champion Random Forest integrado | Nivel Esencial cubierto |
 | Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | Tests, CI, Docker inicial y tag de hito |
 
 ---
@@ -98,8 +98,9 @@ Estado actual:
 - Contrato API inicial documentado en `docs/api_contract.md`.
 - Endpoint de salud disponible en `GET /health`.
 - Endpoint de información de modelo disponible en `GET /model/info`.
-- Endpoint de predicción real disponible en `POST /predict` usando el baseline Logistic Regression.
-- Baseline reproducible entrenado y guardado en `models/baseline/logistic_regression_baseline.pkl`.
+- Endpoint de predicción real disponible en `POST /predict` usando el Champion Random Forest.
+- Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
+- Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
 - Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
 - Workflows de GitHub Actions creados para tests backend y build frontend.
@@ -114,9 +115,8 @@ Estado actual:
 Pendiente principal:
 
 - Validar manualmente la app con entradas reales y capturas.
-- Seleccionar Champion Model si se decide promocionar el challenger.
 - Revisar el informe técnico final antes de la entrega.
-- Validar Docker con el baseline real integrado.
+- Validar Docker con el Champion Random Forest integrado.
 
 ---
 
@@ -201,7 +201,7 @@ GET /model/info
 POST /predict
 ```
 
-`GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`.
+`GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
 
 ---
 
@@ -342,7 +342,7 @@ Comprobar frontend:
 http://localhost:8080/
 ```
 
-Nota: el backend actual carga el baseline Logistic Regression. Cuando se seleccione un Champion posterior, el servicio de inferencia deberá apuntar al nuevo artefacto versionado.
+Nota: el backend actual carga el Champion Random Forest. Si se promociona un nuevo modelo, el servicio de inferencia deberá apuntar al nuevo artefacto versionado y actualizar `models/champion/champion_metadata.json`.
 
 ---
 
@@ -400,6 +400,7 @@ Estado actual destacado:
 [x] T-3.1 Entrenar modelo ensemble
 [x] T-3.2 Aplicar validacion cruzada
 [x] T-3.3 Optimizar hiperparametros
+[x] T-3.4 Seleccionar Champion Model
 [~] T-4.3 Dockerizar app
 [~] T-4.5 Documentar instalacion y ejecucion
 ```
@@ -582,19 +583,19 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado con Pipeline de Scikit-learn y guardado en `models/baseline/logistic_regression_baseline.pkl`. | Seleccionar Champion posterior si se decide avanzar a Nivel Medio. |
+| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener versionado si se promociona un nuevo modelo. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest optimizado gap F1 `0.0242`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
-| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y baseline real integrado. | Validación manual y despliegue posterior. |
+| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y Champion Random Forest integrado. | Validación manual y despliegue posterior. |
 | [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
 ### Nivel Medio
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [x] | Modelo con técnicas de ensemble | Random Forest challenger entrenado y comparado contra baseline en `reports/model_report.md`. | Decidir si se promociona a Champion. |
+| [x] | Modelo con técnicas de ensemble | Random Forest entrenado, comparado contra baseline y promocionado a Champion. | Mantener comparativa si aparece un nuevo Challenger. |
 | [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8082`. | Ampliar folds solo si el equipo lo considera necesario. |
-| [x] | Optimización de hiperparámetros | Configuración optimizada aplicada en `src/models/train_challengers.py`, artefacto regenerado y verificada por `tests/unit/test_challenger_training.py`. | Decidir si el challenger optimizado se promociona a Champion. |
+| [x] | Optimización de hiperparámetros | Configuración optimizada aplicada, artefacto regenerado, verificada por `tests/unit/test_challenger_training.py` y usada para el Champion. | Mantener trazabilidad si se reentrena. |
 | [ ] | Recogida de feedback para monitorizar performance | Previsto en contrato producto/MLOps. | Diseñar almacenamiento y métrica de feedback en la app. |
 | [ ] | Recogida de datos nuevos para futuros reentrenamientos | Previsto como mejora de producto. | Definir pipeline de ingestión y persistencia. |
 
@@ -602,7 +603,7 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Validar Docker con el baseline real integrado. |
+| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Validar Docker con el Champion Random Forest integrado. |
 | [ ] | Guardado en base de datos de datos recogidos | No implementado todavía. | Elegir base de datos y definir esquema mínimo. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
 | [~] | Tests unitarios | Tests de API, preprocessing, baseline y challenger tuning activos; workflows CI para backend y frontend. | Añadir smoke test completo cuando se cierre la demo. |
@@ -641,8 +642,8 @@ docs/project_management/03_delivery_roadmap.md
 Prioridades inmediatas:
 
 1. Validar manualmente frontend + backend + modelo real con capturas.
-2. Validar Docker con el baseline real integrado.
-3. Decidir si Random Forest se promociona a Champion Model.
+2. Validar Docker con el Champion Random Forest integrado.
+3. Validar manualmente la demo completa con capturas.
 4. Consolidar tuning de hiperparámetros en script reproducible si se mantiene en alcance.
 5. Preparar presentación de negocio y presentación técnica.
 6. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
@@ -673,7 +674,7 @@ Queda para Sprint 2:
 
 - Validación manual de la demo completa.
 - Validación Docker con modelo real.
-- Decisión de Champion Model.
+- Champion Model seleccionado e integrado en API.
 - Consolidación de tuning reproducible si se mantiene en alcance.
 - Tests de métricas mínimas y smoke test completo de demo.
 - Persistencia o feedback de predicciones si el alcance lo permite.
