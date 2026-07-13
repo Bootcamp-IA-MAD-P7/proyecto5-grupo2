@@ -31,26 +31,129 @@ from src.models.train_baseline import (
 
 RANDOM_STATE = 42
 REPORT_PATH = PROJECT_ROOT / "reports" / "model_report.md"
+TUNING_RESULTS_PATH = PROJECT_ROOT / "reports" / "random_forest_tuning_results.csv"
 CHALLENGER_MODEL_DIR = PROJECT_ROOT / "models" / "challengers"
 RANDOM_FOREST_MODEL_PATH = CHALLENGER_MODEL_DIR / "random_forest_challenger.pkl"
 CV_SPLITS = 3
 ENSEMBLE_REPORT_HEADER = "## Ensemble challenger - Random Forest"
+OPTIMIZED_RANDOM_FOREST_PARAMS = {
+    "n_estimators": 200,
+    "max_depth": 18,
+    "min_samples_leaf": 6,
+    "min_samples_split": 12,
+    "class_weight": "balanced_subsample",
+}
+TUNING_CANDIDATES = [
+    {
+        "candidate": "rf_depth12_leaf12_split24",
+        "n_estimators": 200,
+        "max_depth": 12,
+        "min_samples_leaf": 12,
+        "min_samples_split": 24,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth14_leaf12_split24",
+        "n_estimators": 200,
+        "max_depth": 14,
+        "min_samples_leaf": 12,
+        "min_samples_split": 24,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth16_leaf8_split16",
+        "n_estimators": 200,
+        "max_depth": 16,
+        "min_samples_leaf": 8,
+        "min_samples_split": 16,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth18_leaf8_split16",
+        "n_estimators": 200,
+        "max_depth": 18,
+        "min_samples_leaf": 8,
+        "min_samples_split": 16,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth16_leaf6_split12",
+        "n_estimators": 200,
+        "max_depth": 16,
+        "min_samples_leaf": 6,
+        "min_samples_split": 12,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth18_leaf6_split12",
+        "n_estimators": 200,
+        "max_depth": 18,
+        "min_samples_leaf": 6,
+        "min_samples_split": 12,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth14_leaf8_split16",
+        "n_estimators": 300,
+        "max_depth": 14,
+        "min_samples_leaf": 8,
+        "min_samples_split": 16,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth16_leaf8_split16_300",
+        "n_estimators": 300,
+        "max_depth": 16,
+        "min_samples_leaf": 8,
+        "min_samples_split": 16,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth16_leaf10_split20",
+        "n_estimators": 200,
+        "max_depth": 16,
+        "min_samples_leaf": 10,
+        "min_samples_split": 20,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth20_leaf8_split16",
+        "n_estimators": 200,
+        "max_depth": 20,
+        "min_samples_leaf": 8,
+        "min_samples_split": 16,
+        "class_weight": "balanced_subsample",
+    },
+    {
+        "candidate": "rf_depth16_leaf8_split16_balanced",
+        "n_estimators": 200,
+        "max_depth": 16,
+        "min_samples_leaf": 8,
+        "min_samples_split": 16,
+        "class_weight": "balanced",
+    },
+    {
+        "candidate": "rf_depth16_leaf8_split24",
+        "n_estimators": 200,
+        "max_depth": 16,
+        "min_samples_leaf": 8,
+        "min_samples_split": 24,
+        "class_weight": "balanced_subsample",
+    },
+]
 
 
-def build_random_forest_challenger() -> Pipeline:
+def build_random_forest_challenger(model_params: dict | None = None) -> Pipeline:
     """Build a regularized Random Forest challenger."""
 
+    params = dict(OPTIMIZED_RANDOM_FOREST_PARAMS if model_params is None else model_params)
     return Pipeline(
         steps=[
             ("preprocessor", build_preprocessor(scale_numeric=False)),
             (
                 "model",
                 RandomForestClassifier(
-                    n_estimators=200,
-                    max_depth=16,
-                    min_samples_leaf=8,
-                    min_samples_split=16,
-                    class_weight="balanced_subsample",
+                    **params,
                     random_state=RANDOM_STATE,
                     n_jobs=-1,
                 ),
@@ -141,6 +244,74 @@ def cross_validate_challenger(cv_splits: int = CV_SPLITS) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def tune_random_forest_challenger(
+    splits: DataSplits,
+    candidates: list[dict] = TUNING_CANDIDATES,
+) -> pd.DataFrame:
+    """Evaluate a controlled set of Random Forest hyperparameter candidates."""
+
+    rows = []
+    for candidate in candidates:
+        candidate_name = candidate["candidate"]
+        model_params = {
+            key: value for key, value in candidate.items() if key != "candidate"
+        }
+        model = build_random_forest_challenger(model_params)
+        model.fit(splits.X_train, splits.y_train)
+
+        train_pred = model.predict(splits.X_train)
+        train_score = _positive_class_scores(model, splits.X_train)
+        validation_pred = model.predict(splits.X_validation)
+        validation_score = _positive_class_scores(model, splits.X_validation)
+
+        train_metrics = evaluate_classification(
+            model_name=candidate_name,
+            split="train",
+            y_true=splits.y_train,
+            y_pred=train_pred,
+            y_score=train_score,
+        )
+        validation_metrics = evaluate_classification(
+            model_name=candidate_name,
+            split="validation",
+            y_true=splits.y_validation,
+            y_pred=validation_pred,
+            y_score=validation_score,
+        )
+        absolute_gap = abs(
+            train_metrics.f1_canceled - validation_metrics.f1_canceled
+        )
+        rows.append(
+            {
+                "candidate": candidate_name,
+                **model_params,
+                "train_f1_canceled": train_metrics.f1_canceled,
+                "validation_f1_canceled": validation_metrics.f1_canceled,
+                "absolute_gap": absolute_gap,
+                "passes_under_5_percent_rule": absolute_gap < 0.05,
+                "validation_precision_canceled": validation_metrics.precision_canceled,
+                "validation_recall_canceled": validation_metrics.recall_canceled,
+                "validation_roc_auc": validation_metrics.roc_auc,
+            }
+        )
+
+    tuning_df = pd.DataFrame(rows)
+    return tuning_df.sort_values(
+        by=["passes_under_5_percent_rule", "validation_f1_canceled"],
+        ascending=[False, False],
+    ).reset_index(drop=True)
+
+
+def save_tuning_results(
+    tuning_df: pd.DataFrame,
+    tuning_results_path: Path = TUNING_RESULTS_PATH,
+) -> None:
+    """Save the complete hyperparameter tuning table."""
+
+    tuning_results_path.parent.mkdir(parents=True, exist_ok=True)
+    tuning_df.to_csv(tuning_results_path, index=False)
+
+
 def save_challenger_model(
     model: Pipeline,
     model_path: Path = RANDOM_FOREST_MODEL_PATH,
@@ -155,6 +326,7 @@ def save_challenger_model(
 def write_challenger_report(
     metrics_df: pd.DataFrame,
     cv_df: pd.DataFrame,
+    tuning_df: pd.DataFrame,
     report_path: Path = REPORT_PATH,
 ) -> None:
     """Append or replace the Random Forest challenger section."""
@@ -179,11 +351,21 @@ def write_challenger_report(
 - `T-3.2 Aplicar validacion cruzada`.
 - `T-3.3 Optimizar hiperparametros`.
 
+### Busqueda de hiperparametros
+
+Se evaluaron {len(tuning_df)} configuraciones controladas de `RandomForestClassifier` usando el mismo split train/validacion. El criterio de seleccion fue maximizar el F1-score de la clase `Canceled` en validacion, manteniendo la regla de overfitting inferior a 0.05.
+
+Tabla completa exportada en `reports/random_forest_tuning_results.csv`.
+
+Top 5 de configuraciones:
+
+{_format_tuning_table(tuning_df.head(5))}
+
 ### Configuracion del challenger
 
 - Modelo: `RandomForestClassifier`.
 - Preprocessing: mismo contrato de features que el baseline, con One-Hot Encoding para categoricas y sin escalado numerico porque el modelo es de arboles.
-- Hiperparametros optimizados: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
+- Hiperparametros optimizados: {_format_params_inline(OPTIMIZED_RANDOM_FOREST_PARAMS)}.
 - Clase positiva: `Canceled`.
 - El test sigue reservado para evaluacion final.
 
@@ -249,6 +431,31 @@ def _format_cv_table(cv_df: pd.DataFrame) -> str:
     return _dataframe_to_markdown(display_df)
 
 
+def _format_tuning_table(tuning_df: pd.DataFrame) -> str:
+    display_columns = [
+        "candidate",
+        "n_estimators",
+        "max_depth",
+        "min_samples_leaf",
+        "min_samples_split",
+        "class_weight",
+        "validation_f1_canceled",
+        "absolute_gap",
+        "validation_roc_auc",
+    ]
+    display_df = tuning_df[display_columns].copy()
+    display_df[
+        ["validation_f1_canceled", "absolute_gap", "validation_roc_auc"]
+    ] = display_df[
+        ["validation_f1_canceled", "absolute_gap", "validation_roc_auc"]
+    ].round(4)
+    return _dataframe_to_markdown(display_df)
+
+
+def _format_params_inline(params: dict) -> str:
+    return ", ".join(f"`{key}={value!r}`" for key, value in params.items())
+
+
 def _dataframe_to_markdown(df: pd.DataFrame) -> str:
     headers = list(df.columns)
     rows = df.astype(object).where(pd.notna(df), "").values.tolist()
@@ -278,13 +485,16 @@ def _replace_or_append_section(
 
 
 def main() -> None:
-    metrics_df, challenger_model, _ = train_and_evaluate_models()
+    metrics_df, challenger_model, splits = train_and_evaluate_models()
+    tuning_df = tune_random_forest_challenger(splits)
     cv_df = cross_validate_challenger()
+    save_tuning_results(tuning_df)
     save_challenger_model(challenger_model)
-    write_challenger_report(metrics_df, cv_df)
+    write_challenger_report(metrics_df, cv_df, tuning_df)
 
     print("Challenger training complete.")
     print(f"Model saved to: {RANDOM_FOREST_MODEL_PATH}")
+    print(f"Tuning results written to: {TUNING_RESULTS_PATH}")
     print(_format_metrics_table(metrics_df))
     print(_format_cv_table(cv_df))
 
