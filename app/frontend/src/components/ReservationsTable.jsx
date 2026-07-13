@@ -8,6 +8,7 @@
    ============================================================================= */
 
 import React, { useState, Fragment  } from "react";
+import ReservationDetailModal from "./ReservationDetailModal";
 import "./ReservationsTable.css";
 
 /* =============================================================================
@@ -90,6 +91,7 @@ function ReservationsTable() {
   // ESTADO: Filtro activo ("all", "high", "medium", "low")
   // ---------------------------------------------------------------------------
   const [filter, setFilter] = useState("all");
+  const [selectedReservation, setSelectedReservation] = useState(null);
 
   // ---------------------------------------------------------------------------
   // FILTRAR RESERVAS según el botón pulsado
@@ -128,6 +130,12 @@ function ReservationsTable() {
   return (
   
     <Fragment>
+      {selectedReservation && (
+        <ReservationDetailModal
+          reservation={selectedReservation}
+          onClose={() => setSelectedReservation(null)}
+        />
+      )}
       <div className="reservations-bg" />
       <div className="reservations-bg-overlay" />
       <div className="reservations-page">
@@ -185,8 +193,8 @@ function ReservationsTable() {
             </tr>
           </thead>
           <tbody>
-            {filteredReservations.map((reservation) => (
-              <tr key={reservation.id}>
+                        {filteredReservations.map((reservation) => (
+              <tr key={reservation.id} onClick={() => setSelectedReservation(reservation)} style={{ cursor: "pointer" }}>
                 {/* Huésped */}
                 <td>
                   <div className="guest-info">
