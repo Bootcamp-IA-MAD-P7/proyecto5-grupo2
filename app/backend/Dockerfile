@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 COPY app/backend ./app/backend
 COPY src ./src
+COPY data/raw ./data/raw
 COPY models/champion ./models/champion
 
 EXPOSE 8000

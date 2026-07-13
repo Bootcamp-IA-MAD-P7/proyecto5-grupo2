@@ -8,12 +8,11 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY index.html vite.config.js ./
+COPY public ./public
 COPY src ./src
 
 ARG VITE_API_URL=http://localhost:8000
-ARG VITE_USE_MOCK_API=false
 ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_USE_MOCK_API=$VITE_USE_MOCK_API
 
 RUN pnpm build
 

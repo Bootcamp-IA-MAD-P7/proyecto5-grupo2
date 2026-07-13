@@ -51,6 +51,22 @@ class PredictionResponse(BaseModel):
     recommendation: str
 
 
+class DemoReservationResponse(BaseModel):
+    id: str
+    display_name: str
+    stay_label: str
+    status_label: str
+    image_key: str
+    input_data: PredictionRequest
+
+
+class DemoReservationsResponse(BaseModel):
+    total_available: int
+    returned: int
+    source: str
+    reservations: list[DemoReservationResponse]
+
+
 class FeedbackRequest(BaseModel):
     input_data: PredictionRequest
     prediction: Literal["Canceled", "Not_Canceled"]

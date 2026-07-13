@@ -1,13 +1,13 @@
 /* =============================================================================
    RESERVATIONS TABLE - HOTEL INSIGHTS
    =============================================================================
-   Tabla de reservas con riesgo de cancelación.
-   Ahora usa datos mock (ficticios), luego se conectará con el backend.
+   Tabla de reservas con riesgo de cancelacion.
+   Usa reservas reales servidas por el backend.
    ============================================================================= */
 
-import React, { useState, Fragment  } from "react";
+import React, { useEffect, useState, Fragment  } from "react";
 import ReservationDetailModal from "./ReservationDetailModal";
-import { mockReservations } from "../data/mockReservations";
+import { fetchPredictedReservations } from "../services/predictionService";
 import "./ReservationsTable.css";
 
 /* =============================================================================
@@ -19,11 +19,43 @@ function ReservationsTable() {
   // ---------------------------------------------------------------------------
   const [filter, setFilter] = useState("all");
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const [reservations, setReservations] = useState([]);
+  const [isLoadingReservations, setIsLoadingReservations] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadReservations() {
+      setIsLoadingReservations(true);
+      setError("");
+      try {
+        const realReservations = await fetchPredictedReservations(12);
+        if (isMounted) {
+          setReservations(realReservations);
+        }
+      } catch {
+        if (isMounted) {
+          setError("No se pudieron cargar las reservas reales del backend.");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingReservations(false);
+        }
+      }
+    }
+
+    loadReservations();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // ---------------------------------------------------------------------------
   // FILTRAR RESERVAS según el botón pulsado
   // ---------------------------------------------------------------------------
-  const filteredReservations = mockReservations.filter((reservation) => {
+  const filteredReservations = reservations.filter((reservation) => {
     if (filter === "all") return true;
     return reservation.riskLevel === filter;
   });
@@ -72,7 +104,12 @@ function ReservationsTable() {
       <div className="reservations-header">
         <div>
           <h2>Reservas Entrantes</h2>
-          <p>{filteredReservations.length} reservas · {mockReservations.filter(r => r.riskLevel === "high").length} requieren atención</p>
+          <p>
+            {isLoadingReservations
+              ? "Cargando reservas reales..."
+              : `${filteredReservations.length} reservas · ${reservations.filter(r => r.riskLevel === "high").length} requieren atención`}
+          </p>
+          {error && <p>{error}</p>}
         </div>
         
         {/* Botones de filtro */}

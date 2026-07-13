@@ -79,6 +79,23 @@ def test_predict_model_version_matches_model_info() -> None:
     assert prediction["model_version"] == model_info["model_version"]
 
 
+def test_demo_reservations_return_real_dataset_payloads() -> None:
+    response = client.get("/reservations/demo?limit=3")
+
+    assert response.status_code == 200
+    body = response.json()
+
+    assert body["total_available"] > 0
+    assert body["returned"] == 3
+    assert body["source"].endswith("Hotel Reservations.csv")
+    assert len(body["reservations"]) == 3
+
+    reservation = body["reservations"][0]
+    assert reservation["id"].startswith("INN")
+    assert reservation["display_name"].startswith("Reserva INN")
+    assert reservation["input_data"]["lead_time"] >= 0
+
+
 def test_predict_rejects_invalid_payload() -> None:
     payload = valid_prediction_payload()
     payload["lead_time"] = -1
