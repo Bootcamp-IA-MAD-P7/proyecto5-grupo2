@@ -2,7 +2,7 @@
 
 Este contrato define la comunicacion inicial entre la aplicacion web y el backend de prediccion.
 
-Estado: provisional hasta confirmar el Champion Model y el pipeline final de preprocesamiento.
+Estado: vigente para la API actual con Champion Random Forest. El contrato debe actualizarse si cambia el pipeline final de preprocesamiento o el formato de entrada/salida.
 
 ## 1. Objetivo
 
@@ -61,15 +61,16 @@ Este endpoint informa del modelo que usa la API para generar predicciones.
 ```json
 {
   "model_loaded": true,
-  "model_version": "baseline_logistic_v0.1.0",
+  "model_version": "random_forest_champion_v0.1.0",
   "model_status": "loaded",
-  "model_type": "logistic_regression_baseline",
-  "primary_metric": "f1_score_canceled",
+  "model_type": "RandomForestClassifier",
+  "primary_metric": "f1_canceled",
   "target": "booking_status",
   "positive_class": "Canceled",
   "notes": [
-    "Baseline Logistic Regression pipeline loaded from repository artifact.",
-    "The pipeline includes preprocessing and binary cancellation classification."
+    "Champion Random Forest pipeline loaded from repository artifact.",
+    "The pipeline includes preprocessing and binary cancellation classification.",
+    "Champion selection metadata is stored in models/champion/champion_metadata.json."
   ]
 }
 ```
@@ -80,7 +81,7 @@ Este endpoint informa del modelo que usa la API para generar predicciones.
 
 Calcula el riesgo de cancelacion de una reserva.
 
-El endpoint acepta un JSON con los campos del formulario y las features requeridas por el baseline Logistic Regression.
+El endpoint acepta un JSON con los campos del formulario y las features requeridas por el Champion Random Forest.
 
 ## 6. Request JSON
 
@@ -150,7 +151,7 @@ Valores pendientes de cerrar con ML Core:
   "probability": 0.72,
   "risk_level": "high",
   "risk_label": "Alto",
-  "model_version": "baseline_logistic_v0.1.0",
+  "model_version": "random_forest_champion_v0.1.0",
   "main_factors": [
     "Lead time elevado",
     "Sin solicitudes especiales",
@@ -201,8 +202,7 @@ Formato esperado:
 ## 13. Pendiente
 
 - Confirmar inputs definitivos con ML Core.
-- Confirmar pipeline de preprocesamiento.
-- Confirmar Champion Model definitivo.
-- Confirmar si el baseline se mantiene como modelo temporal o se sustituye por un Champion.
+- Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.
+- Mantener sincronizada la version del Champion si se promociona un nuevo modelo.
 - Confirmar estrategia de categorias no vistas.
 - Confirmar si la probabilidad corresponde siempre a la clase `Canceled`.
