@@ -1,4 +1,5 @@
 from functools import lru_cache
+import json
 import pickle
 from pathlib import Path
 
@@ -9,35 +10,48 @@ from src.features.preprocessing import FEATURE_COLUMNS
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-MODEL_PATH = PROJECT_ROOT / "models" / "baseline" / "logistic_regression_baseline.pkl"
-MODEL_VERSION = "baseline_logistic_v0.1.0"
+METADATA_PATH = PROJECT_ROOT / "models" / "champion" / "champion_metadata.json"
 MODEL_STATUS = "loaded"
 PRIMARY_METRIC = "f1_score_canceled"
-MODEL_TYPE = "logistic_regression_baseline"
 POSITIVE_CLASS = "Canceled"
 
 
 @lru_cache(maxsize=1)
+def load_model_metadata() -> dict:
+    with METADATA_PATH.open(encoding="utf-8") as file:
+        return json.load(file)
+
+
+def get_model_path() -> Path:
+    metadata = load_model_metadata()
+    return PROJECT_ROOT / metadata["champion_artifact"]
+
+
+@lru_cache(maxsize=1)
 def load_model():
-    with MODEL_PATH.open("rb") as file:
+    with get_model_path().open("rb") as file:
         return pickle.load(file)
 
 
 def get_model_info() -> ModelInfoResponse:
-    model_loaded = MODEL_PATH.exists()
+    metadata_exists = METADATA_PATH.exists()
+    model_path = get_model_path() if metadata_exists else None
+    model_loaded = bool(model_path and model_path.exists())
+    metadata = load_model_metadata() if metadata_exists else {}
     notes = [
-        "Baseline Logistic Regression pipeline loaded from repository artifact.",
+        "Champion Random Forest pipeline loaded from repository artifact.",
         "The pipeline includes preprocessing and binary cancellation classification.",
+        "Champion selection metadata is stored in models/champion/champion_metadata.json.",
     ]
 
     return ModelInfoResponse(
         model_loaded=model_loaded,
-        model_version=MODEL_VERSION,
+        model_version=metadata.get("model_version", "missing_champion_metadata"),
         model_status=MODEL_STATUS if model_loaded else "missing_model_artifact",
-        model_type=MODEL_TYPE,
-        primary_metric=PRIMARY_METRIC,
+        model_type=metadata.get("model_type", "unknown"),
+        primary_metric=metadata.get("primary_metric", PRIMARY_METRIC),
         target="booking_status",
-        positive_class=POSITIVE_CLASS,
+        positive_class=metadata.get("positive_class", POSITIVE_CLASS),
         notes=notes,
     )
 
@@ -55,7 +69,7 @@ def predict_cancellation(payload: PredictionRequest) -> PredictionResponse:
         probability=probability,
         risk_level=risk_level,
         risk_label=risk_label,
-        model_version=MODEL_VERSION,
+        model_version=load_model_metadata()["model_version"],
         main_factors=_explain_primary_factors(payload),
         recommendation=_recommendation_from_risk(risk_level),
     )

@@ -39,17 +39,17 @@ def test_health_returns_ok() -> None:
     }
 
 
-def test_model_info_returns_loaded_baseline_state() -> None:
+def test_model_info_returns_loaded_champion_state() -> None:
     response = client.get("/model/info")
 
     assert response.status_code == 200
     body = response.json()
 
     assert body["model_loaded"] is True
-    assert body["model_version"] == "baseline_logistic_v0.1.0"
+    assert body["model_version"] == "random_forest_champion_v0.1.0"
     assert body["model_status"] == "loaded"
-    assert body["model_type"] == "logistic_regression_baseline"
-    assert body["primary_metric"] == "f1_score_canceled"
+    assert body["model_type"] == "RandomForestClassifier"
+    assert body["primary_metric"] == "f1_canceled"
     assert body["target"] == "booking_status"
     assert body["positive_class"] == "Canceled"
     assert isinstance(body["notes"], list)
