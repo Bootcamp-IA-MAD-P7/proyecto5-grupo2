@@ -81,7 +81,7 @@ Estado actual:
 - Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
 - Notebooks iniciales disponibles en `notebooks/`.
 - EDA exploratorio disponible en `notebooks/02_eda_exploratory.ipynb` con distribucion del target, desbalance, histogramas, relaciones con target, matriz de correlacion y conclusiones.
-- Contrato de inputs alineado con el baseline productivizado.
+- Contrato de inputs alineado con el modelo productivizado.
 - Pendiente: reutilizar las visualizaciones clave en presentacion de negocio si el equipo lo necesita.
 
 ## 5. Fase 2 - MVP esencial
@@ -123,8 +123,8 @@ Estado actual:
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
 - Endpoint `GET /health`, `GET /model/info` y `POST /predict` disponibles.
-- `POST /predict` usa el baseline Logistic Regression guardado en `models/baseline/logistic_regression_baseline.pkl`.
-- Informe tecnico inicial disponible en `reports/model_report.md` con metricas, overfitting, curva ROC, matriz de confusion, feature importance y analisis de errores.
+- `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
+- Informe tecnico disponible en `reports/model_report.md` con metricas, overfitting, curva ROC, matriz de confusion, feature importance y analisis de errores del Champion.
 - Docker local inicial preparado para frontend y backend.
 - Nivel Esencial cubierto; queda validacion manual con capturas para cierre de demo.
 
@@ -160,10 +160,10 @@ Criterio de cierre:
 
 Estado actual:
 
-- Random Forest challenger entrenado y comparado contra baseline.
-- Validacion cruzada estratificada de 3 folds documentada.
-- Tuning provisional documentado, pendiente de consolidar en script reproducible.
-- Pendiente: seleccion formal de Champion, feedback y recogida de datos nuevos.
+- Random Forest optimizado, comparado contra baseline y seleccionado como Champion.
+- Validacion cruzada estratificada de 3 folds documentada con F1 medio `0.8160`.
+- Tuning de hiperparametros consolidado en script reproducible.
+- Pendiente: feedback y recogida de datos nuevos.
 
 ## 7. Fase 4 - Nivel avanzado operativo
 

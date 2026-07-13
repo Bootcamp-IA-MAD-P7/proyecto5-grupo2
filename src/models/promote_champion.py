@@ -116,8 +116,8 @@ def build_champion_metadata() -> dict:
         ),
         "limitations": [
             "The test split remains reserved for a final unbiased check.",
-            "FastAPI still loads the baseline until the app integration task updates it.",
-            "Tree-based feature importance should be documented if this Champion is used in the final presentation.",
+            "FastAPI loads this Champion through app/backend/services/model_service.py.",
+            "Tree-based feature importance is documented in model diagnostics and should be complemented with monitoring after deployment.",
         ],
     }
 
@@ -187,7 +187,7 @@ Se selecciona `random_forest_champion_v0.1.0` como Champion Model del proyecto.
 - El Champion mejora el F1-score de validacion de `Canceled` de {baseline["f1_canceled"]:.4f} a {champion["f1_canceled"]:.4f}.
 - El gap train-validacion del Champion es {metadata["champion_overfitting_gap"]:.4f}, por debajo del limite operativo de 0.05.
 - La validacion cruzada confirma estabilidad razonable: F1 medio {cv["f1_canceled"]["mean"]:.4f} con desviacion {cv["f1_canceled"]["std"]:.4f}.
-- La API todavia puede seguir cargando el baseline hasta que el equipo cierre la tarea de integracion de app; esta decision deja preparado el artefacto ML para ese cambio.
+- La API ya carga este Champion desde `models/champion/random_forest_champion.pkl` usando la metadata versionada.
 """
 
 

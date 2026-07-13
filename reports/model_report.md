@@ -112,7 +112,7 @@ Top 5 de configuraciones:
 - El Random Forest mejora el F1-score de validacion de `Canceled` de 0.6870 a 0.8105.
 - El gap train-validacion del challenger es 0.0345, por debajo del limite operativo de 0.05.
 - La validacion cruzada de 3 folds muestra F1 medio de 0.8160.
-- Este modelo queda como challenger optimizado y candidato principal para la seleccion formal de Champion en `T-3.4`.
+- Este modelo queda como challenger optimizado y base del Champion promocionado en `T-3.4`.
 
 ## Champion Model Selection
 
@@ -152,64 +152,71 @@ Se selecciona `random_forest_champion_v0.1.0` como Champion Model del proyecto.
 - El Champion mejora el F1-score de validacion de `Canceled` de 0.6870 a 0.8105.
 - El gap train-validacion del Champion es 0.0345, por debajo del limite operativo de 0.05.
 - La validacion cruzada confirma estabilidad razonable: F1 medio 0.8160 con desviacion 0.0071.
-- La API todavia puede seguir cargando el baseline hasta que el equipo cierre la tarea de integracion de app; esta decision deja preparado el artefacto ML para ese cambio.
+- La API ya carga este Champion desde `models/champion/random_forest_champion.pkl` usando la metadata versionada.
 
 ## Interpretabilidad y analisis de errores
 
 ### Modelo analizado
 
-Esta seccion analiza el baseline productivizado en la API:
+Esta seccion analiza el Champion productivizado en la API:
 
-- Modelo: `logistic_regression_balanced`.
-- Artefacto: `models/baseline/logistic_regression_baseline.pkl`.
+- Modelo: `RandomForestClassifier`.
+- Artefacto: `models/champion/random_forest_champion.pkl`.
+- Version: `random_forest_champion_v0.1.0`.
 - Clase positiva: `Canceled`.
 - Split analizado: validacion.
 
-### Feature importance equivalente
+### Figuras de validacion
 
-Para Logistic Regression se usa el valor absoluto de los coeficientes como aproximacion de importancia. Los coeficientes positivos empujan la prediccion hacia `Canceled`; los negativos empujan hacia `Not_Canceled`.
+- Matriz de confusion: `reports/figures/champion_random_forest_confusion_matrix.png`.
+- Curva ROC: `reports/figures/champion_random_forest_roc_curve.png`.
+- Feature importance: `reports/figures/champion_random_forest_feature_importance.png`.
 
-| feature | coefficient | absolute_coefficient | effect_on_canceled |
-| --- | --- | --- | --- |
-| repeated_guest | -2.1494 | 2.1494 | decreases_risk |
-| market_segment_type_Complementary | -1.7523 | 1.7523 | decreases_risk |
-| required_car_parking_space | -1.5491 | 1.5491 | decreases_risk |
-| lead_time | 1.3578 | 1.3578 | increases_risk |
-| no_of_special_requests | -1.1481 | 1.1481 | decreases_risk |
-| room_type_reserved_Room_Type 7 | -1.1301 | 1.1301 | decreases_risk |
-| market_segment_type_Aviation | 0.9868 | 0.9868 | increases_risk |
-| market_segment_type_Online | 0.9308 | 0.9308 | increases_risk |
-| market_segment_type_Offline | -0.8437 | 0.8437 | decreases_risk |
-| no_of_previous_bookings_not_canceled | -0.8244 | 0.8244 | decreases_risk |
-| avg_price_per_room | 0.6137 | 0.6137 | increases_risk |
-| room_type_reserved_Room_Type 1 | 0.5055 | 0.5055 | increases_risk |
+### Feature importance
+
+Para Random Forest se usa `feature_importances_`, que reparte importancia entre las variables usadas por los arboles. Es una lectura global del modelo: indica que variables ayudan mas a separar cancelaciones de no cancelaciones, pero no prueba causalidad.
+
+| feature | importance | share_percent |
+| --- | --- | --- |
+| lead_time | 0.3412 | 34.12 |
+| no_of_special_requests | 0.1669 | 16.69 |
+| avg_price_per_room | 0.1146 | 11.46 |
+| arrival_month | 0.0729 | 7.29 |
+| market_segment_type_Online | 0.0462 | 4.62 |
+| arrival_date | 0.044 | 4.4 |
+| arrival_year | 0.0402 | 4.02 |
+| no_of_week_nights | 0.0285 | 2.85 |
+| no_of_weekend_nights | 0.0264 | 2.64 |
+| market_segment_type_Offline | 0.0263 | 2.63 |
+| no_of_adults | 0.0178 | 1.78 |
+| type_of_meal_plan_Meal Plan 2 | 0.013 | 1.3 |
 
 Lectura:
 
-- `lead_time` aparece como una de las senales mas fuertes: reservas con mayor antelacion tienden a elevar el riesgo de cancelacion.
-- `no_of_special_requests` tiene coeficiente negativo: mas solicitudes especiales tienden a reducir el riesgo estimado.
-- Algunas categorias de `market_segment_type` y `room_type_reserved` aportan senal relevante, pero deben interpretarse como asociaciones historicas, no como causas directas.
+- `lead_time` mantiene una de las senales mas fuertes: reservas hechas con mucha antelacion suelen tener mayor riesgo de cancelacion.
+- `no_of_special_requests` aporta mucha senal: cuando hay pocas o ninguna solicitud especial, el riesgo historico de cancelacion tiende a subir.
+- `market_segment_type` y variables de historial de reserva tambien ayudan a diferenciar patrones de cancelacion.
 
 ### Analisis de errores
 
 | tipo_error | cantidad | lectura |
 | --- | --- | --- |
-| false_positive | 805 | Reservas que el modelo marca como riesgo de cancelacion, pero finalmente no se cancelan. |
-| false_negative | 429 | Reservas que el modelo no marca como riesgo, pero finalmente se cancelan. |
+| false_positive | 348 | Reservas que el modelo marca como riesgo de cancelacion, pero finalmente no se cancelan. |
+| false_negative | 331 | Reservas que el modelo no marca como riesgo, pero finalmente se cancelan. |
 
 Tasas sobre validacion:
 
-- False positive rate sobre `Not_Canceled`: 0.2200.
-- False negative rate sobre `Canceled`: 0.2406.
+- False positive rate sobre `Not_Canceled`: 0.0951.
+- False negative rate sobre `Canceled`: 0.1856.
 
 Interpretacion de negocio:
 
 - Los falsos positivos pueden generar acciones comerciales innecesarias, pero suelen ser menos costosos que perder una cancelacion real no anticipada.
 - Los falsos negativos son mas sensibles para negocio porque representan cancelaciones que no se detectaron a tiempo.
-- Como siguiente mejora, el equipo puede ajustar el umbral de decision si quiere priorizar mas recall de `Canceled` o mas precision de las alertas.
+- El Champion reduce errores frente al baseline y mantiene el gap de overfitting bajo el limite operativo de 0.05.
 
 ### Limitaciones y siguientes mejoras
 
-- El baseline es funcional y cumple el Nivel Esencial, pero no es necesariamente el mejor modelo final.
-- Random Forest ya muestra mejor F1 de validacion como challenger, por lo que puede evaluarse como Champion en el Nivel Medio.
-- La interpretabilidad de coeficientes aplica al baseline lineal; si se promueve un modelo de arboles, conviene reportar importancias del modelo final.
+- El test split sigue reservado para una comprobacion final imparcial antes de defender el resultado como definitivo.
+- La importancia de variables es global; para explicar casos individuales convendria anadir explicabilidad local en una fase posterior.
+- Como siguiente mejora, el equipo puede ajustar el umbral de decision si quiere priorizar mas recall de `Canceled` o mas precision de las alertas.

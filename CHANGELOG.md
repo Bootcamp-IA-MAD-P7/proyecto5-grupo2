@@ -11,6 +11,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Unit tests for the optimized Random Forest challenger tuning, including selected hyperparameters, minimum validation F1 and overfitting rule checks.
 - Champion Random Forest integration in the FastAPI backend.
 - Champion metadata loading from `models/champion/champion_metadata.json`.
+- Champion Random Forest diagnostic figures for confusion matrix, ROC curve and feature importance.
+- Technical presentation support note for the final metrics and overfitting review.
 - Feedback logging endpoint `POST /feedback`.
 - Feedback summary endpoint `GET /feedback/summary`.
 - CSV feedback persistence under `data/feedback/prediction_feedback.csv`.
@@ -23,6 +25,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Updated SPEC tasks, technical SPEC and README to mark `T-3.3 Optimizar hiperparametros` as completed after the optimized challenger was integrated and verified.
 - Updated API contract, SPEC tasks, technical SPEC and README to reflect `random_forest_champion_v0.1.0` as the model served by the API.
 - Updated SPEC tasks, technical SPEC and README to mark feedback, new-data collection, Docker validation and smoke flow as completed.
+- Updated README, roadmap and model report to reflect the Champion Random Forest as the model loaded by the API.
+- Updated Champion metadata and diagnostics text with final validation metrics, cross-validation and overfitting evidence.
 
 ### Pending
 

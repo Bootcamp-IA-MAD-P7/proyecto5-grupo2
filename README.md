@@ -99,6 +99,7 @@ Estado actual:
 - Endpoint de salud disponible en `GET /health`.
 - Endpoint de información de modelo disponible en `GET /model/info`.
 - Endpoint de predicción real disponible en `POST /predict` usando el Champion Random Forest.
+- Baseline reproducible guardado en `models/baseline/logistic_regression_baseline.pkl`.
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
@@ -131,7 +132,7 @@ Pendiente principal:
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Informe técnico de rendimiento | `reports/model_report.md` incluye métricas, overfitting, matriz de confusión, ROC, importancia de variables y análisis de errores. | Revisión de redacción antes de presentación. |
 | ![En progreso](https://img.shields.io/badge/estado-en%20progreso-C79500) | Presentación de negocio y presentación técnica | Carpetas preparadas en `docs/business_presentation/` y `docs/technical_presentation/`; producto y narrativa ya documentados. | Crear entregables finales de presentación. |
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Herramienta organizativa | Jira definido como herramienta oficial del equipo. | Mantener historias alineadas con SPEC y roadmap. |
-| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Overfitting inferior al 5% | Gap F1 baseline `0.0079`; gap F1 Random Forest optimizado `0.0242`, ambos por debajo de `0.05`. | Revalidar si se cambia el Champion Model. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Overfitting inferior al 5% | Gap F1 baseline `0.0079`; gap F1 Champion Random Forest `0.0345`, ambos por debajo de `0.05`. | Revalidar si se cambia el Champion Model. |
 
 ### Tecnologías principales
 
@@ -429,6 +430,7 @@ Estado actual destacado:
 [x] T-4.4 Conectar almacenamiento persistente
 [~] T-4.5 Documentar instalacion y ejecucion
 [x] T-6.1 Smoke test completo
+[x] T-6.2 Revisar metricas finales y overfitting
 ```
 
 ---
@@ -609,19 +611,19 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener versionado si se promociona un nuevo modelo. |
+| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con Pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener test reservado para una revisión final imparcial. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
-| [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest optimizado gap F1 `0.0242`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
-| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y Champion Random Forest integrado. | Validación manual y despliegue posterior. |
+| [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Champion Random Forest gap F1 `0.0345`, ambos bajo el límite `0.05`. | Mantener control si se reentrena el Champion. |
+| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker validado y Champion real integrado. | Validación manual y despliegue posterior. |
 | [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
 ### Nivel Medio
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [x] | Modelo con técnicas de ensemble | Random Forest entrenado, comparado contra baseline y promocionado a Champion. | Mantener comparativa si aparece un nuevo Challenger. |
-| [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8082`. | Ampliar folds solo si el equipo lo considera necesario. |
-| [x] | Optimización de hiperparámetros | Configuración optimizada aplicada, artefacto regenerado, verificada por `tests/unit/test_challenger_training.py` y usada para el Champion. | Mantener trazabilidad si se reentrena. |
+| [x] | Modelo con técnicas de ensemble | Random Forest entrenado, comparado contra baseline y promocionado a Champion en `reports/model_report.md`. | Mantener comparativa si aparece un nuevo Challenger. |
+| [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8160`. | Ampliar folds solo si el equipo lo considera necesario. |
+| [x] | Optimización de hiperparámetros | Configuración optimizada aplicada en `src/models/train_challengers.py`, artefacto regenerado, verificado por `tests/unit/test_challenger_training.py` y promocionado a Champion. | Revalidar solo si cambia el dataset o los hiperparámetros. |
 | [x] | Recogida de feedback para monitorizar performance | `POST /feedback` persiste predicción, probabilidad, versión de modelo, input validado, feedback y estado real si se conoce. `GET /feedback/summary` permite monitorización básica. | Mejorar visualmente el flujo de feedback en frontend. |
 | [x] | Recogida de datos nuevos para futuros reentrenamientos | `data/feedback/prediction_feedback.csv` y `src/data/feedback_ingestion.py` permiten construir dataset de reentrenamiento con feedback etiquetado. | Evolucionar a SQLite/PostgreSQL si se despliega. |
 

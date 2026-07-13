@@ -94,7 +94,7 @@
   "decision": "Random Forest is selected as Champion because it improves the Canceled-class F1-score versus the Logistic Regression baseline, keeps the overfitting gap below 0.05 and remains reproducible in stratified cross-validation.",
   "limitations": [
     "The test split remains reserved for a final unbiased check.",
-    "FastAPI still loads the baseline until the app integration task updates it.",
-    "Tree-based feature importance should be documented if this Champion is used in the final presentation."
+    "FastAPI loads this Champion through app/backend/services/model_service.py.",
+    "Tree-based feature importance is documented in model diagnostics and should be complemented with monitoring after deployment."
   ]
 }
