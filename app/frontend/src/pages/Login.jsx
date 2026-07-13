@@ -2,7 +2,6 @@
    LOGIN PAGE - HOTEL INSIGHTS
    =============================================================================
    Pantalla de inicio de sesion. Primera pantalla que ve el usuario.
-   RAMA: feature/frontend-login-page
    ============================================================================= */
 
 import React, { useState } from "react";

@@ -3,85 +3,12 @@
    =============================================================================
    Tabla de reservas con riesgo de cancelación.
    Ahora usa datos mock (ficticios), luego se conectará con el backend.
-   
-   RAMA: feature/frontend-reservations-table
    ============================================================================= */
 
 import React, { useState, Fragment  } from "react";
 import ReservationDetailModal from "./ReservationDetailModal";
+import { mockReservations } from "../data/mockReservations";
 import "./ReservationsTable.css";
-
-/* =============================================================================
-   DATOS MOCK (ficticios) - Estos vendrán del backend luego
-   =============================================================================
-   Cada reserva tiene:
-   - id: identificador único
-   - guest: nombre del huésped
-   - email: correo electrónico
-   - arrival: fecha de llegada
-   - nights: noches de estancia
-   - price: precio total
-   - riskLevel: "high" | "medium" | "low"
-   - riskPercent: número del 0 al 100
-   - status: estado de la reserva
-   ============================================================================= */
-const mockReservations = [
-  {
-    id: "RES-2026-0847",
-    guest: "María García",
-    email: "m.garcia@email.com",
-    arrival: "2026-07-15",
-    nights: 3,
-    price: 450,
-    riskLevel: "high",
-    riskPercent: 82,
-    status: "confirmed"
-  },
-  {
-    id: "RES-2026-0848",
-    guest: "Juan López",
-    email: "j.lopez@email.com",
-    arrival: "2026-07-18",
-    nights: 2,
-    price: 280,
-    riskLevel: "low",
-    riskPercent: 15,
-    status: "confirmed"
-  },
-  {
-    id: "RES-2026-0849",
-    guest: "Anna Smith",
-    email: "a.smith@email.com",
-    arrival: "2026-07-20",
-    nights: 5,
-    price: 890,
-    riskLevel: "medium",
-    riskPercent: 45,
-    status: "confirmed"
-  },
-  {
-    id: "RES-2026-0850",
-    guest: "Carlos Martínez",
-    email: "c.martinez@email.com",
-    arrival: "2026-07-22",
-    nights: 1,
-    price: 120,
-    riskLevel: "high",
-    riskPercent: 76,
-    status: "confirmed"
-  },
-  {
-    id: "RES-2026-0851",
-    guest: "Laura Fernández",
-    email: "l.fernandez@email.com",
-    arrival: "2026-07-25",
-    nights: 4,
-    price: 560,
-    riskLevel: "low",
-    riskPercent: 22,
-    status: "confirmed"
-  }
-];
 
 /* =============================================================================
    COMPONENTE RESERVATIONS TABLE
@@ -194,7 +121,11 @@ function ReservationsTable() {
           </thead>
           <tbody>
                         {filteredReservations.map((reservation) => (
-              <tr key={reservation.id} onClick={() => setSelectedReservation(reservation)} style={{ cursor: "pointer" }}>
+              <tr
+                key={reservation.id}
+                className="reservation-row-clickable"
+                onClick={() => setSelectedReservation(reservation)}
+              >
                 {/* Huésped */}
                 <td>
                   <div className="guest-info">

@@ -1,29 +1,7 @@
 import React, { useState, Fragment } from "react";
 import ReservationDetailModal from "./ReservationDetailModal";
+import { mockAlerts } from "../data/mockReservations";
 import "./AlertsPanel.css";
-
-const mockAlerts = [
-  {
-    id: "RES-2026-0847",
-    guest: "María García",
-    email: "m.garcia@email.com",
-    arrival: "2026-07-15",
-    nights: 3,
-    price: 450,
-    riskPercent: 82,
-    daysLeft: 3
-  },
-  {
-    id: "RES-2026-0850",
-    guest: "Carlos Martínez",
-    email: "c.martinez@email.com",
-    arrival: "2026-07-22",
-    nights: 1,
-    price: 120,
-    riskPercent: 76,
-    daysLeft: 8
-  }
-];
 
 function AlertsPanel() {
   const [selectedReservation, setSelectedReservation] = useState(null);
@@ -57,7 +35,11 @@ function AlertsPanel() {
 
       <div className="alerts-list">
         {mockAlerts.map((alert) => (
-          <div key={alert.id} className="alert-card" onClick={() => setSelectedReservation(alert)} style={{ cursor: "pointer" }}>
+          <div
+            key={alert.id}
+            className="alert-card alert-card-clickable"
+            onClick={() => setSelectedReservation(alert)}
+          >
             <div className="alert-card-header">
               <div className="alert-guest">
                 <div className="alert-avatar">

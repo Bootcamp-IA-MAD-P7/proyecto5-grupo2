@@ -61,7 +61,7 @@ function ReservationDetailModal({ reservation, onClose }) {
           </div>
           <div className="modal-info-item risk">
             <div className="modal-info-label">Riesgo</div>
-            <div className="modal-info-value" style={{ color: "#FF6F7D" }}>
+            <div className="modal-info-value modal-info-value-risk">
               {reservation.riskPercent}% ALTO
             </div>
           </div>
@@ -112,10 +112,13 @@ function ReservationDetailModal({ reservation, onClose }) {
 
         {/* Feedback */}
         <div className="modal-section">
-          <div className="modal-section-title">¿LA PREDICCIÓN FUE CORRECTA?</div>
+          <div className="modal-section-title">FEEDBACK DE PREDICCIÓN</div>
+          <div className="modal-feedback-note">
+            Pendiente de conectar con backend para registrar si la predicción fue correcta.
+          </div>
           <div className="modal-feedback">
-            <button className="modal-btn-yes">Sí, se canceló</button>
-            <button className="modal-btn-no">No, llegó bien</button>
+            <button className="modal-btn-yes" disabled>Sí, se canceló</button>
+            <button className="modal-btn-no" disabled>No, llegó bien</button>
           </div>
         </div>
       </div>
