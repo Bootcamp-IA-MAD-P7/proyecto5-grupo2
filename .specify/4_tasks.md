@@ -225,7 +225,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.1, T-2.3.
 - Criterio de verificacion: ensemble comparado contra baseline.
 - Evidencia: `src/models/train_challengers.py` entrena `random_forest_challenger` y lo compara contra `dummy_most_frequent` y `logistic_regression_balanced`; el artefacto queda en `models/challengers/random_forest_challenger.pkl`.
-- Resultado clave: F1 validacion clase `Canceled` mejora de 0,6870 en Logistic Regression a 0,7952 en Random Forest.
+- Resultado clave: F1 validacion clase `Canceled` mejora de 0,6870 en Logistic Regression a 0,8042 en Random Forest optimizado.
 - Comando de verificacion: `python -m src.models.train_challengers`.
 
 ### [x] T-3.2 Aplicar validacion cruzada
@@ -238,10 +238,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-3.1.
 - Criterio de verificacion: resultados de CV documentados.
 - Evidencia: `reports/model_report.md` incluye validacion cruzada estratificada de 3 folds para `random_forest_challenger`.
-- Resultado clave: F1 CV medio 0,7990 con desviacion 0,0034; ROC-AUC CV medio 0,9332 con desviacion 0,0020.
+- Resultado clave: F1 CV medio 0,8082 con desviacion 0,0053; ROC-AUC CV medio 0,9391 con desviacion 0,0015.
 - Comando de verificacion: `python -m src.models.train_challengers`.
 
-### [~] T-3.3 Optimizar hiperparametros
+### [x] T-3.3 Optimizar hiperparametros
 
 - Archivos afectados: `src/models/`, `reports/model_report.md`.
 - Accion: usar GridSearch, RandomSearch u Optuna si se justifica.
@@ -250,11 +250,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.2.
 - Criterio de verificacion: mejores parametros y comparacion documentados.
-- Avance: busqueda controlada de 12 configuraciones de `RandomForestClassifier` ejecutada con el mismo split train/validacion.
-- Mejor configuracion provisional: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
-- Resultado provisional: F1 validacion 0,8042, gap train-validacion 0,0242 y ROC-AUC validacion 0,9347.
-- Pendiente: aplicar la configuracion ganadora en `src/models/train_challengers.py`, regenerar artefacto e informe, y ejecutar verificacion final.
-- Comando de verificacion: pendiente de consolidar en script reproducible.
+- Evidencia: la configuracion optimizada esta aplicada en `src/models/train_challengers.py`, el artefacto fue regenerado en `models/challengers/random_forest_challenger.pkl` y el resultado esta documentado en `reports/model_report.md`.
+- Mejor configuracion: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
+- Resultado: F1 validacion 0,8042, gap train-validacion 0,0242 y ROC-AUC validacion 0,9347.
+- Verificacion automatizada: `tests/unit/test_challenger_training.py` comprueba hiperparametros, F1 minimo y regla de overfitting.
+- Comando de verificacion: `python -m pytest tests/unit/test_challenger_training.py`.
 
 ### [ ] T-3.4 Seleccionar Champion Model
 

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import Login from "./pages/Login";
 import ReservationsTable from "./components/ReservationsTable";
+import AlertsPanel from "./components/AlertsPanel";
 import {
   ArrowUpRight,
   BellRing,
@@ -524,18 +525,12 @@ function App() {
       )}
 
       {/* SECCIÓN ALERTAS */}
-      {activeSection === "alertas" && (
-        <div style={{ padding: "120px 24px 40px", maxWidth: "1200px", margin: "0 auto" }}>
-          <h2 style={{ fontFamily: "Poppins, sans-serif", color: "#0D3B3B", marginBottom: "24px" }}>
-            Alertas Urgentes
-          </h2>
-          <p style={{ color: "#6d756f" }}>
-            Aquí se mostrarán solo las reservas con riesgo alto que requieren acción inmediata.
-          </p>
-        </div>
-      )}
+      {activeSection === "alertas" && <AlertsPanel />}
     </main>
   );
 }
+
+     
+
 
 export default App;
