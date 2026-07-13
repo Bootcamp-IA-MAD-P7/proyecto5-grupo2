@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from app.backend.main import app
+from app.backend.services import feedback_service
 
 
 client = TestClient(app)
@@ -83,5 +84,49 @@ def test_predict_rejects_invalid_payload() -> None:
     payload["lead_time"] = -1
 
     response = client.post("/predict", json=payload)
+
+    assert response.status_code == 422
+
+
+def valid_feedback_payload() -> dict:
+    prediction = client.post("/predict", json=valid_prediction_payload()).json()
+
+    return {
+        "input_data": valid_prediction_payload(),
+        "prediction": prediction["prediction"],
+        "probability": prediction["probability"],
+        "risk_level": prediction["risk_level"],
+        "model_version": prediction["model_version"],
+        "user_feedback": "correct",
+        "actual_status": prediction["prediction"],
+        "comments": "Smoke feedback from API test.",
+        "source": "api_test",
+    }
+
+
+def test_feedback_is_stored_and_counted(tmp_path, monkeypatch) -> None:
+    feedback_file = tmp_path / "prediction_feedback.csv"
+    monkeypatch.setattr(feedback_service, "FEEDBACK_FILE", feedback_file)
+
+    response = client.post("/feedback", json=valid_feedback_payload())
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "stored"
+    assert body["stored"] is True
+    assert isinstance(body["record_id"], str)
+
+    summary = client.get("/feedback/summary")
+
+    assert summary.status_code == 200
+    assert summary.json()["total_records"] == 1
+    assert feedback_file.exists()
+
+
+def test_feedback_rejects_invalid_payload() -> None:
+    payload = valid_feedback_payload()
+    payload["user_feedback"] = "maybe"
+
+    response = client.post("/feedback", json=payload)
 
     assert response.status_code == 422

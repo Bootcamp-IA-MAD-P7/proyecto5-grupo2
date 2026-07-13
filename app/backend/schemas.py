@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -47,3 +49,26 @@ class PredictionResponse(BaseModel):
     model_version: str
     main_factors: list[str]
     recommendation: str
+
+
+class FeedbackRequest(BaseModel):
+    input_data: PredictionRequest
+    prediction: Literal["Canceled", "Not_Canceled"]
+    probability: float = Field(..., ge=0, le=1)
+    risk_level: Literal["low", "medium", "high"]
+    model_version: str
+    user_feedback: Literal["correct", "incorrect", "unknown"]
+    actual_status: Literal["Canceled", "Not_Canceled"] | None = None
+    comments: str | None = Field(default=None, max_length=500)
+    source: str = Field(default="web_app", max_length=80)
+
+
+class FeedbackResponse(BaseModel):
+    status: str
+    record_id: str
+    stored: bool
+
+
+class FeedbackSummaryResponse(BaseModel):
+    total_records: int
+    storage: str
