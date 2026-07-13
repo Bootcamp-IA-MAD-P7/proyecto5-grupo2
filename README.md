@@ -8,14 +8,14 @@ Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)
 ![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB)
 ![Scikit-learn](https://img.shields.io/badge/ML-Scikit--learn-F7931E)
-![Docker](https://img.shields.io/badge/Docker-ready%20to%20validate-2496ED)
+![Docker](https://img.shields.io/badge/Docker-validated%20with%20Champion-2496ED)
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF)
 ![Milestone](https://img.shields.io/badge/tag-v0.4.0--essential--mvp-2E7D32)
 
 | Producto | Modelo | Entrega |
 | --- | --- | --- |
 | Web React + API FastAPI | Champion Random Forest integrado | Nivel Esencial cubierto |
-| Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | Tests, CI, Docker inicial y tag de hito |
+| Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | Tests, CI, Docker, feedback y smoke test |
 
 ---
 
@@ -104,7 +104,9 @@ Estado actual:
 - Métricas y overfitting documentados en `reports/model_report.md`.
 - Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
 - Workflows de GitHub Actions creados para tests backend y build frontend.
-- Configuración Docker inicial disponible para frontend y backend.
+- Configuración Docker validada para frontend, backend y Champion Random Forest.
+- Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
+- Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
 - Metodología SPEC creada en `.specify/`.
 - Documentos de organización creados en `docs/project_management/`.
 - Jira definido como herramienta oficial de gestión.
@@ -116,7 +118,7 @@ Pendiente principal:
 
 - Validar manualmente la app con entradas reales y capturas.
 - Revisar el informe técnico final antes de la entrega.
-- Validar Docker con el Champion Random Forest integrado.
+- Validar manualmente la demo completa con capturas si se requiere evidencia visual.
 
 ---
 
@@ -138,7 +140,7 @@ Pendiente principal:
 | Machine Learning | Scikit-learn, Pandas | Preprocesamiento, baseline, challenger, métricas y análisis. |
 | Aplicación web | React, Vite, FastAPI | Interfaz de predicción y API de inferencia. |
 | Calidad | Pytest, GitHub Actions | Tests backend, preprocessing, baseline y checks de PR. |
-| Operación | Docker, Docker Compose | Contenedores iniciales para frontend y backend. |
+| Operación | Docker, Docker Compose | Contenedores validados para frontend, backend y Champion. |
 | Gestión | Git, GitHub, Jira | Ramas, PRs, changelog, tags, issues/historias y seguimiento. |
 
 ---
@@ -305,6 +307,7 @@ Servicios:
 
 - Backend FastAPI en `http://localhost:8000`.
 - Frontend servido por nginx en `http://localhost:8080`.
+- Backend validado con el Champion Random Forest `random_forest_champion_v0.1.0`.
 
 Construir imágenes:
 
@@ -340,6 +343,25 @@ Comprobar frontend:
 
 ```text
 http://localhost:8080/
+```
+
+Validacion realizada:
+
+```bash
+docker compose build
+docker compose up -d
+curl.exe -I http://localhost:8080/
+docker compose down
+```
+
+Endpoints verificados:
+
+```text
+GET http://localhost:8000/health
+GET http://localhost:8000/model/info
+POST http://localhost:8000/predict
+POST http://localhost:8000/feedback
+GET http://localhost:8000/feedback/summary
 ```
 
 Nota: el backend actual carga el Champion Random Forest. Si se promociona un nuevo modelo, el servicio de inferencia deberá apuntar al nuevo artefacto versionado y actualizar `models/champion/champion_metadata.json`.
@@ -401,8 +423,12 @@ Estado actual destacado:
 [x] T-3.2 Aplicar validacion cruzada
 [x] T-3.3 Optimizar hiperparametros
 [x] T-3.4 Seleccionar Champion Model
-[~] T-4.3 Dockerizar app
+[x] T-3.6 Implementar feedback
+[x] T-4.2 Crear tests minimos de metricas
+[x] T-4.3 Dockerizar app
+[x] T-4.4 Conectar almacenamiento persistente
 [~] T-4.5 Documentar instalacion y ejecucion
+[x] T-6.1 Smoke test completo
 ```
 
 ---
@@ -596,17 +622,17 @@ Leyenda:
 | [x] | Modelo con técnicas de ensemble | Random Forest entrenado, comparado contra baseline y promocionado a Champion. | Mantener comparativa si aparece un nuevo Challenger. |
 | [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8082`. | Ampliar folds solo si el equipo lo considera necesario. |
 | [x] | Optimización de hiperparámetros | Configuración optimizada aplicada, artefacto regenerado, verificada por `tests/unit/test_challenger_training.py` y usada para el Champion. | Mantener trazabilidad si se reentrena. |
-| [ ] | Recogida de feedback para monitorizar performance | Previsto en contrato producto/MLOps. | Diseñar almacenamiento y métrica de feedback en la app. |
-| [ ] | Recogida de datos nuevos para futuros reentrenamientos | Previsto como mejora de producto. | Definir pipeline de ingestión y persistencia. |
+| [x] | Recogida de feedback para monitorizar performance | `POST /feedback` persiste predicción, probabilidad, versión de modelo, input validado, feedback y estado real si se conoce. `GET /feedback/summary` permite monitorización básica. | Mejorar visualmente el flujo de feedback en frontend. |
+| [x] | Recogida de datos nuevos para futuros reentrenamientos | `data/feedback/prediction_feedback.csv` y `src/data/feedback_ingestion.py` permiten construir dataset de reentrenamiento con feedback etiquetado. | Evolucionar a SQLite/PostgreSQL si se despliega. |
 
 ### Nivel Avanzado
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Validar Docker con el Champion Random Forest integrado. |
-| [ ] | Guardado en base de datos de datos recogidos | No implementado todavía. | Elegir base de datos y definir esquema mínimo. |
+| [x] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx validados con Champion, feedback y frontend `HTTP 200`. | Optimizar imagen para despliegue si se aborda cloud. |
+| [x] | Guardado en base de datos de datos recogidos | Persistencia CSV local en `data/feedback/prediction_feedback.csv`, ignorada por Git para no subir datos operativos. | Evolucionar a SQLite/PostgreSQL si se despliega. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
-| [~] | Tests unitarios | Tests de API, preprocessing, baseline y challenger tuning activos; workflows CI para backend y frontend. | Añadir smoke test completo cuando se cierre la demo. |
+| [x] | Tests unitarios | 19 tests activos: API, preprocessing, baseline, challenger tuning, feedback ingestion y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
@@ -641,12 +667,12 @@ docs/project_management/03_delivery_roadmap.md
 
 Prioridades inmediatas:
 
-1. Validar manualmente frontend + backend + modelo real con capturas.
-2. Validar Docker con el Champion Random Forest integrado.
-3. Validar manualmente la demo completa con capturas.
-4. Consolidar tuning de hiperparámetros en script reproducible si se mantiene en alcance.
-5. Preparar presentación de negocio y presentación técnica.
-6. Decidir siguiente capa avanzada: persistencia, despliegue o monitorización.
+1. Validar manualmente frontend + backend + modelo real con capturas si se requieren evidencias visuales.
+2. Preparar presentación de negocio y presentación técnica.
+3. Decidir si se aborda despliegue cloud.
+4. Revisar frontend actual y, si procede, construir una beta alternativa con flujo de usuario claro.
+5. Evolucionar persistencia CSV a SQLite/PostgreSQL si el alcance lo requiere.
+6. Decidir siguiente capa experta: drift, A/B testing o auto-reemplazo condicionado.
 
 ---
 
@@ -665,7 +691,7 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 - Endpoints `GET /health`, `GET /model/info` y `POST /predict` creados.
 - Tests iniciales de API backend creados.
 - CI inicial para backend y frontend creado.
-- Docker local inicial para frontend y backend creado.
+- Docker local validado para frontend, backend, Champion y feedback.
 - Flujo Git definido.
 - Plantilla de PR creada.
 - Changelog y tags iniciales creados.
@@ -673,11 +699,11 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 Queda para Sprint 2:
 
 - Validación manual de la demo completa.
-- Validación Docker con modelo real.
+- Validación Docker con modelo real completada.
 - Champion Model seleccionado e integrado en API.
 - Consolidación de tuning reproducible si se mantiene en alcance.
 - Tests de métricas mínimas y smoke test completo de demo.
-- Persistencia o feedback de predicciones si el alcance lo permite.
+- Feedback y persistencia CSV implementados.
 - Preparación de despliegue.
 
 ---
