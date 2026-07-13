@@ -73,3 +73,37 @@ export async function predictReservation(payload) {
     recommendation: copy.recommendation
   };
 }
+
+export async function submitPredictionFeedback(payload) {
+  const response = await fetch(`${API_URL}/feedback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudo guardar el feedback de la prediccion.");
+  }
+
+  return response.json();
+}
+
+export async function fetchFeedbackSummary() {
+  const response = await fetch(`${API_URL}/feedback/summary`);
+
+  if (!response.ok) {
+    throw new Error("No se pudo obtener el resumen de feedback.");
+  }
+
+  return response.json();
+}
+
+export async function fetchModelInfo() {
+  const response = await fetch(`${API_URL}/model/info`);
+
+  if (!response.ok) {
+    throw new Error("No se pudo obtener la informacion del modelo.");
+  }
+
+  return response.json();
+}
