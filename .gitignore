@@ -23,6 +23,9 @@ Thumbs.db
 # KaggleHub local download metadata
 data/raw/**/.complete/
 
+# Runtime feedback data
+data/feedback/*.csv
+
 # Frontend
 node_modules/
 dist/

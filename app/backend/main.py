@@ -1,7 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .schemas import HealthResponse, ModelInfoResponse, PredictionRequest, PredictionResponse
+from .schemas import (
+    FeedbackRequest,
+    FeedbackResponse,
+    FeedbackSummaryResponse,
+    HealthResponse,
+    ModelInfoResponse,
+    PredictionRequest,
+    PredictionResponse,
+)
+from .services.feedback_service import get_feedback_summary, save_feedback
 from .services.model_service import get_model_info, predict_cancellation
 
 
@@ -38,3 +47,13 @@ def model_info() -> ModelInfoResponse:
 @app.post("/predict", response_model=PredictionResponse)
 def predict(payload: PredictionRequest) -> PredictionResponse:
     return predict_cancellation(payload)
+
+
+@app.post("/feedback", response_model=FeedbackResponse)
+def feedback(payload: FeedbackRequest) -> FeedbackResponse:
+    return save_feedback(payload)
+
+
+@app.get("/feedback/summary", response_model=FeedbackSummaryResponse)
+def feedback_summary() -> FeedbackSummaryResponse:
+    return get_feedback_summary()
