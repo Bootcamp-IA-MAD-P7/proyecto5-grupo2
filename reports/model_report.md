@@ -112,7 +112,47 @@ Top 5 de configuraciones:
 - El Random Forest mejora el F1-score de validacion de `Canceled` de 0.6870 a 0.8105.
 - El gap train-validacion del challenger es 0.0345, por debajo del limite operativo de 0.05.
 - La validacion cruzada de 3 folds muestra F1 medio de 0.8160.
-- Este modelo queda como challenger optimizado, pero no se selecciona Champion todavia porque falta revision final contra los criterios de `T-3.4`.
+- Este modelo queda como challenger optimizado y candidato principal para la seleccion formal de Champion en `T-3.4`.
+
+## Champion Model Selection
+
+### Decision
+
+Se selecciona `random_forest_champion_v0.1.0` como Champion Model del proyecto.
+
+### Evidencia de seleccion
+
+| criterio | baseline Logistic Regression | Champion Random Forest |
+| --- | --- | --- |
+| F1 validacion clase `Canceled` | 0.6870 | 0.8105 |
+| Precision validacion clase `Canceled` | 0.6271 | 0.8067 |
+| Recall validacion clase `Canceled` | 0.7594 | 0.8144 |
+| ROC-AUC validacion | 0.8604 | 0.9391 |
+| Gap F1 train-validacion | 0.0079 | 0.0345 |
+| Regla overfitting < 0.05 | cumple baseline | True |
+
+### Validacion cruzada del Champion
+
+| metrica | media | desviacion | folds |
+| --- | --- | --- | --- |
+| F1 `Canceled` | 0.8160 | 0.0071 | 3 |
+| Precision `Canceled` | 0.8101 | 0.0083 | 3 |
+| Recall `Canceled` | 0.8220 | 0.0079 | 3 |
+| ROC-AUC | 0.9426 | 0.0017 | 3 |
+
+### Artefactos versionados
+
+- Modelo Champion: `models/champion/random_forest_champion.pkl`.
+- Metadata Champion: `models/champion/champion_metadata.json`.
+- Version: `random_forest_champion_v0.1.0`.
+- Hiperparametros: `n_estimators=200`, `max_depth=18`, `min_samples_leaf=6`, `min_samples_split=12`, `class_weight='balanced_subsample'`.
+
+### Lectura tecnica
+
+- El Champion mejora el F1-score de validacion de `Canceled` de 0.6870 a 0.8105.
+- El gap train-validacion del Champion es 0.0345, por debajo del limite operativo de 0.05.
+- La validacion cruzada confirma estabilidad razonable: F1 medio 0.8160 con desviacion 0.0071.
+- La API todavia puede seguir cargando el baseline hasta que el equipo cierre la tarea de integracion de app; esta decision deja preparado el artefacto ML para ese cambio.
 
 ## Interpretabilidad y analisis de errores
 

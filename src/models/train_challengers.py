@@ -386,7 +386,7 @@ Top 5 de configuraciones:
 - El Random Forest mejora el F1-score de validacion de `Canceled` de {logistic_validation["f1_canceled"]:.4f} a {forest_validation["f1_canceled"]:.4f}.
 - El gap train-validacion del challenger es {forest_overfitting["absolute_gap"]:.4f}, por debajo del limite operativo de 0.05.
 - La validacion cruzada de {CV_SPLITS} folds muestra F1 medio de {cv_df.loc[cv_df["metric"] == "f1_canceled", "cv_mean"].iloc[0]:.4f}.
-- Este modelo queda como challenger optimizado, pero no se selecciona Champion todavia porque falta revision final contra los criterios de `T-3.4`.
+- Este modelo queda como challenger optimizado y candidato principal para la seleccion formal de Champion en `T-3.4`.
 """
 
     current_report = report_path.read_text(encoding="utf-8") if report_path.exists() else ""
