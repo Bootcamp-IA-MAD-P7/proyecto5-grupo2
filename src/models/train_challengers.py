@@ -47,9 +47,9 @@ def build_random_forest_challenger() -> Pipeline:
                 "model",
                 RandomForestClassifier(
                     n_estimators=200,
-                    max_depth=14,
-                    min_samples_leaf=12,
-                    min_samples_split=24,
+                    max_depth=16,
+                    min_samples_leaf=8,
+                    min_samples_split=16,
                     class_weight="balanced_subsample",
                     random_state=RANDOM_STATE,
                     n_jobs=-1,
@@ -177,12 +177,13 @@ def write_challenger_report(
 
 - `T-3.1 Entrenar modelo ensemble`.
 - `T-3.2 Aplicar validacion cruzada`.
+- `T-3.3 Optimizar hiperparametros`.
 
 ### Configuracion del challenger
 
 - Modelo: `RandomForestClassifier`.
 - Preprocessing: mismo contrato de features que el baseline, con One-Hot Encoding para categoricas y sin escalado numerico porque el modelo es de arboles.
-- Hiperparametros iniciales: `n_estimators=200`, `max_depth=14`, `min_samples_leaf=12`, `min_samples_split=24`, `class_weight="balanced_subsample"`.
+- Hiperparametros optimizados: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
 - Clase positiva: `Canceled`.
 - El test sigue reservado para evaluacion final.
 
@@ -203,7 +204,7 @@ def write_challenger_report(
 - El Random Forest mejora el F1-score de validacion de `Canceled` de {logistic_validation["f1_canceled"]:.4f} a {forest_validation["f1_canceled"]:.4f}.
 - El gap train-validacion del challenger es {forest_overfitting["absolute_gap"]:.4f}, por debajo del limite operativo de 0.05.
 - La validacion cruzada de {CV_SPLITS} folds muestra F1 medio de {cv_df.loc[cv_df["metric"] == "f1_canceled", "cv_mean"].iloc[0]:.4f}.
-- Este modelo queda como challenger fuerte, pero no se selecciona Champion todavia porque falta tuning controlado y revision final contra los criterios de `T-3.4`.
+- Este modelo queda como challenger optimizado, pero no se selecciona Champion todavia porque falta revision final contra los criterios de `T-3.4`.
 """
 
     current_report = report_path.read_text(encoding="utf-8") if report_path.exists() else ""
