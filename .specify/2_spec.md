@@ -237,28 +237,28 @@ Modelo evaluado:
 Resultados de validacion frente al baseline:
 
 - Logistic Regression: F1-score clase `Canceled` = 0,6870; ROC-AUC = 0,8604.
-- Random Forest inicial: F1-score clase `Canceled` = 0,7952; ROC-AUC = 0,9287.
-- Gap train-validacion en F1 de Random Forest inicial: 0,0186.
+- Random Forest optimizado: F1-score clase `Canceled` = 0,8042; ROC-AUC = 0,9347.
+- Gap train-validacion en F1 de Random Forest optimizado: 0,0242.
 - Resultado de overfitting: cumple la regla de diferencia inferior a 0,05.
 
 Validacion cruzada:
 
 - Estrategia: Stratified K-Fold de 3 folds.
-- F1 medio clase `Canceled`: 0,7990.
-- Desviacion F1: 0,0034.
-- ROC-AUC medio: 0,9332.
-- Desviacion ROC-AUC: 0,0020.
+- F1 medio clase `Canceled`: 0,8082.
+- Desviacion F1: 0,0053.
+- ROC-AUC medio: 0,9391.
+- Desviacion ROC-AUC: 0,0015.
 
 Decision actual:
 
-- Random Forest queda como challenger fuerte.
-- Todavia no se declara Champion porque falta cerrar tuning y validar la decision con los criterios de `T-3.4`.
+- Random Forest queda como challenger optimizado.
+- Todavia no se declara Champion porque falta validar la decision con los criterios de `T-3.4`.
 
 ## Estado del tuning inicial
 
 Busqueda controlada ejecutada para `RandomForestClassifier`.
 
-Configuracion provisional ganadora:
+Configuracion ganadora aplicada:
 
 - `n_estimators=200`.
 - `max_depth=16`.
@@ -269,12 +269,12 @@ Configuracion provisional ganadora:
 Comparacion de validacion:
 
 - Random Forest inicial (`max_depth=14`, `min_samples_leaf=12`): F1 = 0,7952; gap = 0,0186; ROC-AUC = 0,9287.
-- Random Forest tuning provisional (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
+- Random Forest optimizado (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
 
 Decision actual:
 
-- La configuracion tuning provisional mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
-- Pendiente: aplicar esta configuracion al script reproducible, regenerar artefacto y actualizar el informe tecnico antes de cerrar `T-3.3`.
+- La configuracion optimizada mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
+- La configuracion esta aplicada en `src/models/train_challengers.py`, el artefacto esta regenerado en `models/challengers/random_forest_challenger.pkl` y la verificacion queda cubierta por `tests/unit/test_challenger_training.py`.
 
 ## Metricas obligatorias
 

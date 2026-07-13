@@ -129,7 +129,7 @@ Pendiente principal:
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Informe técnico de rendimiento | `reports/model_report.md` incluye métricas, overfitting, matriz de confusión, ROC, importancia de variables y análisis de errores. | Revisión de redacción antes de presentación. |
 | ![En progreso](https://img.shields.io/badge/estado-en%20progreso-C79500) | Presentación de negocio y presentación técnica | Carpetas preparadas en `docs/business_presentation/` y `docs/technical_presentation/`; producto y narrativa ya documentados. | Crear entregables finales de presentación. |
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Herramienta organizativa | Jira definido como herramienta oficial del equipo. | Mantener historias alineadas con SPEC y roadmap. |
-| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Overfitting inferior al 5% | Gap F1 baseline `0.0079`; gap F1 Random Forest `0.0186`, ambos por debajo de `0.05`. | Revalidar si se cambia el Champion Model. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Overfitting inferior al 5% | Gap F1 baseline `0.0079`; gap F1 Random Forest optimizado `0.0242`, ambos por debajo de `0.05`. | Revalidar si se cambia el Champion Model. |
 
 ### Tecnologías principales
 
@@ -399,7 +399,7 @@ Estado actual destacado:
 [x] T-2.5 Crear app minima de prediccion
 [x] T-3.1 Entrenar modelo ensemble
 [x] T-3.2 Aplicar validacion cruzada
-[~] T-3.3 Optimizar hiperparametros
+[x] T-3.3 Optimizar hiperparametros
 [~] T-4.3 Dockerizar app
 [~] T-4.5 Documentar instalacion y ejecucion
 ```
@@ -584,7 +584,7 @@ Leyenda:
 | --- | --- | --- | --- |
 | [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado con Pipeline de Scikit-learn y guardado en `models/baseline/logistic_regression_baseline.pkl`. | Seleccionar Champion posterior si se decide avanzar a Nivel Medio. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
-| [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest gap F1 `0.0186`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
+| [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Random Forest optimizado gap F1 `0.0242`, ambos bajo el límite `0.05`. | Mantener control al elegir Champion final. |
 | [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker local y baseline real integrado. | Validación manual y despliegue posterior. |
 | [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
@@ -593,8 +593,8 @@ Leyenda:
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
 | [x] | Modelo con técnicas de ensemble | Random Forest challenger entrenado y comparado contra baseline en `reports/model_report.md`. | Decidir si se promociona a Champion. |
-| [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.7990`. | Ampliar folds solo si el equipo lo considera necesario. |
-| [~] | Optimización de hiperparámetros | Existe tuning provisional documentado en SPEC con mejora de F1 hasta `0.8042`. | Consolidar configuración ganadora en script reproducible y regenerar artefacto. |
+| [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8082`. | Ampliar folds solo si el equipo lo considera necesario. |
+| [x] | Optimización de hiperparámetros | Configuración optimizada aplicada en `src/models/train_challengers.py`, artefacto regenerado y verificada por `tests/unit/test_challenger_training.py`. | Decidir si el challenger optimizado se promociona a Champion. |
 | [ ] | Recogida de feedback para monitorizar performance | Previsto en contrato producto/MLOps. | Diseñar almacenamiento y métrica de feedback en la app. |
 | [ ] | Recogida de datos nuevos para futuros reentrenamientos | Previsto como mejora de producto. | Definir pipeline de ingestión y persistencia. |
 
@@ -605,7 +605,7 @@ Leyenda:
 | [~] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx configurados. | Validar Docker con el baseline real integrado. |
 | [ ] | Guardado en base de datos de datos recogidos | No implementado todavía. | Elegir base de datos y definir esquema mínimo. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
-| [~] | Tests unitarios | Tests de API, preprocessing y baseline activos; workflows CI para backend y frontend. | Añadir tests de métricas mínimas y smoke test completo cuando se cierre la demo. |
+| [~] | Tests unitarios | Tests de API, preprocessing, baseline y challenger tuning activos; workflows CI para backend y frontend. | Añadir smoke test completo cuando se cierre la demo. |
 
 ### Nivel Experto
 
