@@ -200,9 +200,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
 - Evidencia: `POST /predict` carga el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`; `GET /model/info` devuelve `random_forest_champion_v0.1.0`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
-- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el Champion. Queda validacion manual con capturas en T-2.6.
+- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el Champion. La validacion manual funcional queda cerrada en T-2.6 y documentada en `reports/manual_app_validation.md`.
 
-### [ ] T-2.6 Validacion manual de app
+### [x] T-2.6 Validacion manual de app
 
 - Archivos afectados: `docs/`, `reports/`, `README.md`.
 - Accion: probar 5 entradas manuales, tomar capturas y registrar resultados.
@@ -211,6 +211,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-2.5.
 - Criterio de verificacion: capturas y checklist de validacion completos.
+- Evidencia: validacion funcional documentada en `reports/manual_app_validation.md`.
 - Comando de verificacion: no aplica.
 
 ## Fase 3 - Nivel Medio

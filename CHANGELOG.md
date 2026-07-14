@@ -19,6 +19,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Feedback ingestion utility for future retraining datasets.
 - End-to-end smoke test covering health, model info, prediction, feedback and feedback summary.
 - Docker validation with backend, frontend, Champion inference and feedback endpoints.
+- Manual app validation report in `reports/manual_app_validation.md`.
 
 ### Changed
 
@@ -30,7 +31,6 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ### Pending
 
-- Manual app validation with screenshots.
 - Cloud deployment decision.
 - Frontend UX review or alternative beta flow.
 

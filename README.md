@@ -117,9 +117,9 @@ Estado actual:
 
 Pendiente principal:
 
-- Validar manualmente la app con entradas reales y capturas.
+- Revisar capturas finales de la app si se incorporan a la presentacion.
 - Revisar el informe técnico final antes de la entrega.
-- Validar manualmente la demo completa con capturas si se requiere evidencia visual.
+- Mantener evidencia visual de la demo si se requiere para la presentacion.
 
 ---
 
@@ -127,7 +127,7 @@ Pendiente principal:
 
 | Estado | Condición | Cómo se cubre en Hotel Insights | Pendiente |
 | --- | --- | --- | --- |
-| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Aplicación que recibe datos y devuelve una predicción | Frontend React + Vite conectado a backend FastAPI. `POST /predict` devuelve predicción, probabilidad, riesgo y versión de modelo. | Validación manual final con capturas. |
+| ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Aplicación que recibe datos y devuelve una predicción | Frontend React + Vite conectado a backend FastAPI. `POST /predict` devuelve predicción, probabilidad, riesgo y versión de modelo. Validacion funcional documentada en `reports/manual_app_validation.md`. | Capturas finales solo si se incorporan a presentacion. |
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Repositorio GitHub ordenado | Flujo con `develop`, ramas por tipo, Pull Requests, plantilla de PR, changelog, tags y GitHub Actions. | Mantener el flujo hasta entrega final. |
 | ![Listo](https://img.shields.io/badge/estado-listo-2E7D32) | Informe técnico de rendimiento | `reports/model_report.md` incluye métricas, overfitting, matriz de confusión, ROC, importancia de variables y análisis de errores. | Revisión de redacción antes de presentación. |
 | ![En progreso](https://img.shields.io/badge/estado-en%20progreso-C79500) | Presentación de negocio y presentación técnica | Carpetas preparadas en `docs/business_presentation/` y `docs/technical_presentation/`; producto y narrativa ya documentados. | Crear entregables finales de presentación. |
@@ -614,7 +614,7 @@ Leyenda:
 | [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con Pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener test reservado para una revisión final imparcial. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Champion Random Forest gap F1 `0.0345`, ambos bajo el límite `0.05`. | Mantener control si se reentrena el Champion. |
-| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker validado y Champion real integrado. | Validación manual y despliegue posterior. |
+| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, Docker validado, Champion real integrado y validacion funcional documentada. | Despliegue posterior si se aborda cloud. |
 | [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
 ### Nivel Medio
@@ -669,10 +669,10 @@ docs/project_management/03_delivery_roadmap.md
 
 Prioridades inmediatas:
 
-1. Validar manualmente frontend + backend + modelo real con capturas si se requieren evidencias visuales.
-2. Preparar presentación de negocio y presentación técnica.
-3. Decidir si se aborda despliegue cloud.
-4. Revisar frontend actual y, si procede, construir una beta alternativa con flujo de usuario claro.
+1. Preparar presentación de negocio y presentación técnica.
+2. Decidir si se aborda despliegue cloud.
+3. Revisar frontend actual y, si procede, construir una beta alternativa con flujo de usuario claro.
+4. Mantener capturas finales de la demo si se requieren evidencias visuales.
 5. Evolucionar persistencia CSV a SQLite/PostgreSQL si el alcance lo requiere.
 6. Decidir siguiente capa experta: drift, A/B testing o auto-reemplazo condicionado.
 
