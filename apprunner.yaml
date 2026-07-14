@@ -1,0 +1,16 @@
+version: 1.0
+runtime: python311
+
+build:
+  commands:
+    build:
+      - python3 -m compileall app/backend src -q
+
+run:
+  runtime-version: 3.11
+  pre-run:
+    - pip3 install -r requirements-backend.txt
+  command: uvicorn app.backend.main:app --host 0.0.0.0 --port 8000
+  network:
+    port: 8000
+    env: PORT
