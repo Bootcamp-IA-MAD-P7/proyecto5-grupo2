@@ -415,6 +415,7 @@ Estado actual destacado:
 [x] T-1.2 Definir target y clases
 [x] T-1.3 Crear diccionario de datos
 [x] T-1.4 Realizar EDA inicial
+[x] T-1.5 Interpretar graficos para negocio
 [x] T-2.1 Crear pipeline de preprocesamiento
 [x] T-2.2 Entrenar baseline
 [x] T-2.3 Calcular metricas obligatorias

@@ -126,7 +126,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia: `notebooks/02_eda_exploratory.ipynb` incluye revision de nulos, duplicados, target, distribuciones numericas, variables categoricas, relacion con target, correlaciones, interpretaciones y conclusiones finales.
 - Comando de verificacion: `rg -n "TODO|a completar" notebooks/02_eda_exploratory.ipynb`.
 
-### [~] T-1.5 Interpretar graficos para negocio
+### [x] T-1.5 Interpretar graficos para negocio
 
 - Archivos afectados: `reports/model_report.md`, `docs/business_presentation/`.
 - Accion: escribir interpretaciones simples de los graficos principales.
@@ -136,7 +136,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-1.4.
 - Criterio de verificacion: cada grafico usado en presentacion tiene una lectura clara.
 - Avance: interpretaciones tecnicas agregadas en `notebooks/02_eda_exploratory.ipynb`.
-- Pendiente: trasladar las lecturas principales a informe o presentacion de negocio cuando se definan esos entregables.
+- Evidencia: lecturas principales trasladadas a `docs/business_presentation/eda_business_insights.md`.
 - Comando de verificacion: no aplica.
 
 ## Fase 2 - Nivel Esencial MVP
