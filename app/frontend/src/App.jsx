@@ -1,536 +1,366 @@
-import React, { useMemo, useState } from "react";
-import Login from "./pages/Login";
-import ReservationsTable from "./components/ReservationsTable";
-import AlertsPanel from "./components/AlertsPanel";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ArrowUpRight,
-  BellRing,
-  CalendarDays,
-  Check,
-  ChevronDown,
-  CircleDollarSign,
-  Leaf,
-  Menu,
-  MessageSquareHeart,
-  Moon,
-  Palette,
-  Play,
-  Send,
+  Activity,
+  AlertTriangle,
+  ClipboardCheck,
+  Database,
+  House,
+  LayoutList,
+  RefreshCw,
   ShieldCheck,
-  Sparkles,
-  Waves
+  Sparkles
 } from "lucide-react";
-import { predictReservation } from "./services/predictionService";
-
-const initialForm = {
-  lead_time: 120,
-  arrival_year: 2018,
-  arrival_month: 7,
-  arrival_date: 15,
-  no_of_special_requests: 0,
-  avg_price_per_room: 156,
-  market_segment_type: "Online",
-  no_of_weekend_nights: 1,
-  no_of_week_nights: 2,
-  type_of_meal_plan: "Meal Plan 1",
-  room_type_reserved: "Room_Type 1",
-  no_of_adults: 2,
-  no_of_children: 0,
-  required_car_parking_space: 0,
-  repeated_guest: 0,
-  no_of_previous_cancellations: 0,
-  no_of_previous_bookings_not_canceled: 0
-};
-
-const scenarios = [
-  {
-    title: "Escapada urbana",
-    description: "Reserva corta, canal online y precio alto.",
-    meta: "2 noches · Online · 210 EUR",
-    palette: ["#7d3941", "#c9a35d", "#fff7e9"],
-    image:
-      "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=900&q=82",
-    values: {
-      lead_time: 42,
-      arrival_year: 2018,
-      arrival_month: 8,
-      arrival_date: 12,
-      avg_price_per_room: 210,
-      market_segment_type: "Online",
-      no_of_weekend_nights: 1,
-      no_of_week_nights: 1,
-      no_of_special_requests: 0,
-      repeated_guest: 0
-    }
-  },
-  {
-    title: "Retiro wellness",
-    description: "Más noches, solicitudes especiales y menor fricción.",
-    meta: "5 noches · Offline · 148 EUR",
-    palette: ["#0d6b5f", "#6f8d62", "#d9b56f"],
-    image:
-      "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=900&q=82",
-    values: {
-      lead_time: 28,
-      arrival_year: 2018,
-      arrival_month: 9,
-      arrival_date: 6,
-      avg_price_per_room: 148,
-      market_segment_type: "Offline",
-      no_of_weekend_nights: 2,
-      no_of_week_nights: 3,
-      no_of_special_requests: 2,
-      repeated_guest: 1
-    }
-  },
-  {
-    title: "Suite flexible",
-    description: "Lead time alto y señales a confirmar.",
-    meta: "5 noches · Online · 186 EUR",
-    palette: ["#b65f3f", "#415844", "#f4ead8"],
-    image:
-      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=900&q=82",
-    values: {
-      lead_time: 168,
-      arrival_year: 2018,
-      arrival_month: 12,
-      arrival_date: 22,
-      avg_price_per_room: 186,
-      market_segment_type: "Online",
-      no_of_weekend_nights: 1,
-      no_of_week_nights: 4,
-      no_of_special_requests: 0,
-      repeated_guest: 0
-    }
-  }
-];
-
-const inputGroups = [
-  {
-    title: "Estancia",
-    icon: CalendarDays,
-    fields: [
-      { name: "lead_time", label: "Antelación", type: "number", suffix: "días" },
-      { name: "arrival_month", label: "Mes de llegada", type: "number" },
-      { name: "arrival_date", label: "Día de llegada", type: "number" },
-      { name: "no_of_weekend_nights", label: "Noches fin de semana", type: "number" },
-      { name: "no_of_week_nights", label: "Noches entre semana", type: "number" }
-    ]
-  },
-  {
-    title: "Huésped",
-    icon: MessageSquareHeart,
-    fields: [
-      { name: "no_of_adults", label: "Adultos", type: "number" },
-      { name: "no_of_children", label: "Niños", type: "number" },
-      { name: "no_of_special_requests", label: "Solicitudes especiales", type: "number" }
-    ]
-  },
-  {
-    title: "Reserva",
-    icon: CircleDollarSign,
-    fields: [
-      { name: "avg_price_per_room", label: "Precio medio", type: "number", suffix: "EUR" },
-      {
-        name: "market_segment_type",
-        label: "Canal",
-        type: "select",
-        options: ["Online", "Offline", "Corporate", "Complementary", "Aviation"]
-      },
-      {
-        name: "room_type_reserved",
-        label: "Habitación",
-        type: "select",
-        options: ["Room_Type 1", "Room_Type 2", "Room_Type 3", "Room_Type 4", "Room_Type 5"]
-      }
-    ]
-  }
-];
+import AlertsPanel from "./components/AlertsPanel";
+import GuidedReservationFlow from "./components/GuidedReservationFlow";
+import HomePage from "./components/HomePage";
+import ReservationDetailModal from "./components/ReservationDetailModal";
+import ReservationEvaluation from "./components/ReservationEvaluation";
+import ReservationsTable from "./components/ReservationsTable";
+import WorkflowSteps from "./components/WorkflowSteps";
+import {
+  applyPredictionToReservation,
+  fetchFeedbackSummary,
+  fetchModelInfo,
+  fetchPredictedReservations
+} from "./services/predictionService";
 
 function App() {
-  // Estado para controlar si mostrar login o la app
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [operationsView, setOperationsView] = useState("guided");
+  const [reservations, setReservations] = useState([]);
+  const [datasetMeta, setDatasetMeta] = useState(null);
+  const [modelInfo, setModelInfo] = useState(null);
+  const [feedbackSummary, setFeedbackSummary] = useState(null);
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [evaluationReservation, setEvaluationReservation] = useState(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [workspaceError, setWorkspaceError] = useState("");
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
+  const loadWorkspace = useCallback(async () => {
+    setIsLoading(true);
+    setWorkspaceError("");
 
-  // Estado para controlar qué sección está activa
-  const [activeSection, setActiveSection] = useState("reservas");
+    const [reservationsResult, modelResult, feedbackResult] = await Promise.allSettled([
+      fetchPredictedReservations(16),
+      fetchModelInfo(),
+      fetchFeedbackSummary()
+    ]);
 
-  const [form, setForm] = useState(initialForm);
-  const [result, setResult] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const errors = [];
 
-  const stayNights = useMemo(
-    () => Number(form.no_of_weekend_nights) + Number(form.no_of_week_nights),
-    [form.no_of_weekend_nights, form.no_of_week_nights]
+    if (reservationsResult.status === "fulfilled") {
+      const data = reservationsResult.value;
+      const orderedByRisk = [...data.reservations].sort((a, b) => b.riskPercent - a.riskPercent);
+      const firstPriority = orderedByRisk[0] || null;
+      setReservations(data.reservations);
+      setDatasetMeta(data);
+      setSelectedReservation((current) =>
+        data.reservations.find((item) => item.id === current?.id) || firstPriority
+      );
+      setEvaluationReservation((current) =>
+        data.reservations.find((item) => item.id === current?.id) || firstPriority
+      );
+    } else {
+      errors.push("No se pudieron cargar y evaluar las reservas del backend.");
+    }
+
+    if (modelResult.status === "fulfilled") {
+      setModelInfo(modelResult.value);
+    } else {
+      errors.push("No se pudo consultar el estado del Champion.");
+    }
+
+    if (feedbackResult.status === "fulfilled") {
+      setFeedbackSummary(feedbackResult.value);
+    } else {
+      errors.push("No se pudo consultar el resumen de feedback.");
+    }
+
+    setWorkspaceError(errors.join(" "));
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    loadWorkspace();
+  }, [loadWorkspace]);
+
+  const riskCounts = useMemo(
+    () =>
+      reservations.reduce(
+        (counts, reservation) => ({
+          ...counts,
+          [reservation.riskLevel]: counts[reservation.riskLevel] + 1
+        }),
+        { high: 0, medium: 0, low: 0 }
+      ),
+    [reservations]
   );
 
-  const probability = result ? Math.round(result.probability * 100) : 0;
+  const priorityOrder = useMemo(
+    () => [...reservations].sort((a, b) => b.riskPercent - a.riskPercent),
+    [reservations]
+  );
 
-  const operationalMetrics = useMemo(() => {
-    const baseRisk = result ? probability : Math.round(Math.min(Number(form.lead_time) / 2.6, 78));
-    const reviews = Math.max(6, Math.round(baseRisk / 3));
-    const protectedRevenue = Math.round((Number(form.avg_price_per_room) * stayNights * reviews) / 100) / 10;
-    const actions = result ? Math.max(1, Math.round(probability / 14)) : 3;
+  const nextPriorityReservation = useMemo(() => {
+    if (!evaluationReservation || priorityOrder.length < 2) return null;
+    const currentIndex = priorityOrder.findIndex((item) => item.id === evaluationReservation.id);
+    return priorityOrder[currentIndex + 1] || priorityOrder[0] || null;
+  }, [evaluationReservation, priorityOrder]);
 
-    return {
-      reviews,
-      protectedRevenue: `${protectedRevenue.toFixed(1)}k`,
-      actions
-    };
-  }, [form.avg_price_per_room, form.lead_time, probability, result, stayNights]);
-
-  function updateField(name, value) {
-    setForm((current) => ({ ...current, [name]: value }));
+  function openReservation(reservation) {
+    setSelectedReservation(reservation);
+    setIsDetailOpen(true);
   }
 
-  function applyScenario(values) {
-    setForm((current) => ({ ...current, ...values }));
-    setResult(null);
-    document.getElementById("predictor")?.scrollIntoView({ behavior: "smooth" });
+  function showSection(section) {
+    setActiveSection(section);
+    window.scrollTo({ top: 0, left: 0 });
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setIsLoading(true);
+  function evaluateReservation(reservation) {
+    setSelectedReservation(reservation);
+    setEvaluationReservation(reservation);
+    setIsDetailOpen(false);
+    showSection("evaluation");
+  }
+
+  function handlePredictionComplete(inputData, prediction) {
+    if (!evaluationReservation) return;
+
+    const updatedReservation = applyPredictionToReservation(
+      evaluationReservation,
+      inputData,
+      prediction
+    );
+
+    setReservations((current) =>
+      current.map((reservation) =>
+        reservation.id === updatedReservation.id ? updatedReservation : reservation
+      )
+    );
+    setSelectedReservation(updatedReservation);
+    setEvaluationReservation(updatedReservation);
+  }
+
+  async function refreshFeedbackSummary() {
     try {
-      const prediction = await predictReservation(form);
-      setResult(prediction);
-    } finally {
-      setIsLoading(false);
+      setFeedbackSummary(await fetchFeedbackSummary());
+    } catch {
+      setWorkspaceError("El feedback se guardó, pero no se pudo actualizar su contador.");
     }
   }
 
-  // Si NO está logueado, muestra el Login
-  if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
-  }
+  const modelReady = Boolean(modelInfo?.model_loaded);
 
-  // Si está logueado, muestra la app con navegación por secciones
   return (
-    <main className="app-shell">
-      <nav className={`topbar ${isMenuOpen ? "is-open" : ""}`} aria-label="Navegación principal">
-                <a className="brand" href="#top" aria-label="Hotel Insights" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <img src="/logo.png" alt="Hotel Insights" style={{ width: "40px", height: "40px", borderRadius: "8px", objectFit: "contain", background: "#fff", padding: "4px" }} />
-          <span className="brand-copy">
-            <strong>Hotel Insights</strong>
-            <small>Guest risk studio</small>
-          </span>
-        </a>
-        <div className="nav-links">
-          <button 
-            className={activeSection === "reservas" ? "active" : ""}
-            onClick={() => setActiveSection("reservas")}
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="header-inner">
+          <button
+            className="brand-button"
+            type="button"
+            onClick={() => showSection("home")}
+            aria-label="Ir al inicio"
           >
-            Reservas
+            <img src="/logo.png" alt="" />
+            <span>
+              <strong>Hotel Insights</strong>
+              <small>Control de cancelaciones</small>
+            </span>
           </button>
-          <button 
-            className={activeSection === "analisis" ? "active" : ""}
-            onClick={() => setActiveSection("analisis")}
-          >
-            Análisis
-          </button>
-          <button 
-            className={activeSection === "alertas" ? "active" : ""}
-            onClick={() => setActiveSection("alertas")}
-          >
-            Alertas
-          </button>
-        </div>
-        <button
-          className="icon-button"
-          aria-label="Abrir menú"
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((current) => !current)}
-        >
-          <Menu size={23} />
-        </button>
-      </nav>
 
-      {/* SECCIÓN RESERVAS */}
-      {activeSection === "reservas" && <ReservationsTable />}
-
-      {/* SECCIÓN ANÁLISIS - Tu app actual exactamente igual */}
-      {activeSection === "analisis" && (
-        <>
-          <section id="top" className="hero">
-            <video
-              className="hero-video"
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1800&q=84"
+          <nav className="primary-navigation" aria-label="Secciones principales">
+            <button
+              type="button"
+              className={activeSection === "home" ? "active" : ""}
+              onClick={() => showSection("home")}
             >
-              <source
-                src="https://videos.pexels.com/video-files/3115406/3115406-uhd_2560_1440_25fps.mp4"
-                type="video/mp4"
-              />
-            </video>
-            <div className="hero-overlay" />
-            <div className="hero-inner">
-              <div className="hero-content">
-                <div className="hero-kicker">
-                  <Sparkles size={16} />
-                  Boutique revenue desk
-                </div>
-                <h1>Reservas más claras antes de cada llegada.</h1>
+              <House size={18} />
+              Inicio
+            </button>
+            <button
+              type="button"
+              className={activeSection === "operations" ? "active" : ""}
+              onClick={() => showSection("operations")}
+            >
+              <LayoutList size={18} />
+              Operación
+            </button>
+            <button
+              type="button"
+              className={activeSection === "evaluation" ? "active" : ""}
+              onClick={() => showSection("evaluation")}
+              disabled={!evaluationReservation}
+            >
+              <Sparkles size={18} />
+              Evaluar reserva
+            </button>
+          </nav>
+
+          <div className="system-status" aria-label="Estado del sistema">
+            <span className={`status-badge ${modelReady ? "ready" : "unavailable"}`}>
+              <ShieldCheck size={16} />
+              {modelReady ? "Champion activo" : "Champion no disponible"}
+            </span>
+            <span className="status-badge" title={modelInfo?.model_version || "Versión no disponible"}>
+              <Activity size={16} />
+              {modelInfo?.model_version || "Sin versión"}
+            </span>
+            <span className="status-badge">
+              <ClipboardCheck size={16} />
+              {feedbackSummary?.total_records ?? 0} feedbacks
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <main className={`workspace-main ${activeSection === "home" ? "home-main" : ""}`}>
+        {workspaceError && (
+          <div className="workspace-alert" role="alert">
+            <AlertTriangle size={18} />
+            <span>{workspaceError}</span>
+          </div>
+        )}
+
+        {activeSection === "home" ? (
+          <HomePage
+            canEvaluate={Boolean(evaluationReservation)}
+            datasetMeta={datasetMeta}
+            feedbackSummary={feedbackSummary}
+            isLoading={isLoading}
+            modelInfo={modelInfo}
+            reservationsCount={reservations.length}
+            onOpenOperations={() => showSection("operations")}
+            onOpenEvaluation={() => showSection("evaluation")}
+          />
+        ) : activeSection === "operations" ? (
+          <section className="operations-section" aria-labelledby="operations-title">
+            <WorkflowSteps activeStep={1} completedThrough={0} />
+            <div className="section-toolbar">
+              <div>
+                <span className="section-kicker">Operación diaria</span>
+                <h1 id="operations-title">Reservas evaluadas por prioridad</h1>
                 <p>
-                  Hotel Insights reúne señales de reserva, riesgo y próxima acción
-                  en una pantalla pensada para equipos de hotel que necesitan
-                  decidir con calma, criterio y rapidez.
+                  Muestra histórica evaluada con el modelo Champion activo.
                 </p>
-                <div className="hero-actions">
-                  <a className="primary-action" href="#predictor">
-                    Probar reserva
-                    <ArrowUpRight size={18} />
-                  </a>
-                  <a className="secondary-action" href="#portfolio">
-                    Elegir escenario
-                  </a>
-                </div>
               </div>
-
-              <aside className="hero-panel" aria-label="Resumen de hoy">
-                <div className="hero-panel-head">
-                  <span className="panel-label">Todas</span>
-                  <strong>{operationalMetrics.reviews}</strong>
-                </div>
-                <p>reservas necesitan revisión antes del cierre.</p>
-                <div className="panel-grid">
-                  <span>Ingresos en juego</span>
-                  <strong>{operationalMetrics.protectedRevenue}</strong>
-                  <span>Contactos sugeridos</span>
-                  <strong>{operationalMetrics.actions}</strong>
-                </div>
-              </aside>
-            </div>
-          </section>
-
-          <section id="portfolio" className="experience-band">
-            <div className="section-heading">
-              <span>Escenarios</span>
-              <h2>Prueba el riesgo desde estancias reales.</h2>
-            </div>
-            <div className="experience-grid">
-              <article className="film-card">
-                <video autoPlay muted loop playsInline>
-                  <source
-                    src="https://videos.pexels.com/video-files/853874/853874-hd_1920_1080_25fps.mp4"
-                    type="video/mp4"
-                  />
-                </video>
-                <div>
-                  <span>
-                    <Play size={16} />
-                    Pulso de estancia
-                  </span>
-                  <p>
-                    Usa los escenarios de la derecha para cambiar el formulario y
-                    comprobar cómo se mueve el riesgo.
-                  </p>
-                </div>
-              </article>
-
-              <div className="scenario-list" aria-label="Escenarios de reserva">
-                {scenarios.map((item) => (
+              <div className="toolbar-actions">
+                <div className="segmented-control" aria-label="Vista de reservas">
                   <button
-                    className="scenario-card"
-                    key={item.title}
                     type="button"
-                    onClick={() => applyScenario(item.values)}
+                    className={operationsView === "guided" ? "active" : ""}
+                    onClick={() => setOperationsView("guided")}
                   >
-                    <img src={item.image} alt="" />
-                    <span className="scenario-copy">
-                      <strong>{item.title}</strong>
-                      <small>{item.description}</small>
-                      <em>{item.meta}</em>
-                    </span>
-                    <span className="swatches" aria-label="Paleta visual">
-                      {item.palette.map((color) => (
-                        <i key={color} style={{ background: color }} />
-                      ))}
-                    </span>
-                    <ArrowUpRight size={18} />
+                    Flujo guiado
                   </button>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section id="predictor" className="predictor-layout">
-            <div className="predictor-copy">
-              <span className="eyebrow">Live prediction</span>
-              <h2>Comprueba una reserva en menos de un minuto.</h2>
-              <p>
-                Ajusta los datos principales y obtén una lectura accionable: nivel
-                de riesgo, señales principales y recomendación operativa.
-              </p>
-              <div className="signal-list">
-                <span>
-                  <Leaf size={18} />
-                  Contexto de canal
-                </span>
-                <span>
-                  <Moon size={18} />
-                  Duración de estancia
-                </span>
-                <span>
-                  <ShieldCheck size={18} />
-                  Historial del huésped
-                </span>
-                <span>
-                  <Palette size={18} />
-                  Escenarios aplicables
-                </span>
+                  <button
+                    type="button"
+                    className={operationsView === "all" ? "active" : ""}
+                    onClick={() => setOperationsView("all")}
+                  >
+                    Todas
+                  </button>
+                  <button
+                    type="button"
+                    className={operationsView === "priority" ? "active" : ""}
+                    onClick={() => setOperationsView("priority")}
+                  >
+                    Prioritarias
+                  </button>
+                </div>
+                <button
+                  className="icon-button"
+                  type="button"
+                  onClick={loadWorkspace}
+                  disabled={isLoading}
+                  aria-label="Actualizar datos"
+                  title="Actualizar datos"
+                >
+                  <RefreshCw size={19} className={isLoading ? "spin" : ""} />
+                </button>
               </div>
             </div>
 
-            <form className="reservation-form" onSubmit={handleSubmit}>
-              {inputGroups.map((group) => {
-                const Icon = group.icon;
-                return (
-                  <fieldset key={group.title}>
-                    <legend>
-                      <Icon size={18} />
-                      {group.title}
-                    </legend>
-                    <div className="field-grid">
-                      {group.fields.map((field) => (
-                        <label key={field.name} className="field">
-                          <span>{field.label}</span>
-                          {field.type === "select" ? (
-                            <span className="select-wrap">
-                              <select
-                                value={form[field.name]}
-                                onChange={(event) => updateField(field.name, event.target.value)}
-                              >
-                                {field.options.map((option) => (
-                                  <option key={option} value={option}>
-                                    {option}
-                                  </option>
-                                ))}
-                              </select>
-                              <ChevronDown size={16} />
-                            </span>
-                          ) : (
-                            <span className="input-wrap">
-                              <input
-                                min="0"
-                                type={field.type}
-                                value={form[field.name]}
-                                onChange={(event) => updateField(field.name, event.target.value)}
-                              />
-                              {field.suffix && <em>{field.suffix}</em>}
-                            </span>
-                          )}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                );
-              })}
-
-              <div className="toggle-row">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={Boolean(Number(form.repeated_guest))}
-                    onChange={(event) => updateField("repeated_guest", event.target.checked ? 1 : 0)}
-                  />
-                  Huésped repetidor
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={Boolean(Number(form.required_car_parking_space))}
-                    onChange={(event) =>
-                      updateField("required_car_parking_space", event.target.checked ? 1 : 0)
-                    }
-                  />
-                  Parking requerido
-                </label>
-              </div>
-
-              <button className="submit-button" type="submit" disabled={isLoading}>
-                {isLoading ? "Analizando reserva..." : "Calcular riesgo"}
-                <Send size={18} />
-              </button>
-            </form>
-
-            <aside className={`result-card ${result?.risk_level || "empty"}`}>
-              <div className="result-top">
-                <span>Riesgo estimado</span>
-                <BellRing size={20} />
-              </div>
-              <div className="probability-ring" style={{ "--value": `${probability}%` }}>
-                <strong>{result ? `${probability}%` : "--"}</strong>
-                <span>{result ? result.risk_label : "Pendiente"}</span>
-              </div>
-              <div className="result-summary">
-                <p>
-                  {result
-                    ? result.prediction === "Canceled"
-                      ? "La reserva muestra señales de posible cancelación."
-                      : "La reserva parece estable, con baja fricción operativa."
-                    : `Configura una estancia de ${stayNights} noches y calcula el riesgo.`}
-                </p>
-              </div>
-              {result && (
-                <>
-                  <ul className="factor-list">
-                    {result.main_factors.map((factor) => (
-                      <li key={factor}>
-                        <Check size={16} />
-                        {factor}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="recommendation">
-                    <Waves size={18} />
-                    <p>{result.recommendation}</p>
-                  </div>
-                </>
-              )}
-            </aside>
-          </section>
-
-          <section id="signals" className="signals-section">
-            <div>
-              <span className="eyebrow">Operational signals</span>
-              <h2>Un plan sencillo después de cada predicción.</h2>
-            </div>
-            <div className="metric-row">
+            <div className="metric-grid" aria-label="Resumen de reservas cargadas">
               <article>
-                <span>Reservas a revisar</span>
-                <strong>{operationalMetrics.reviews}</strong>
-                <small>Prioridad de hoy</small>
+                <Database size={20} />
+                <span>Analizadas</span>
+                <strong>{isLoading ? "--" : reservations.length}</strong>
+                <small>de {datasetMeta?.totalAvailable?.toLocaleString("es-ES") || "--"} disponibles</small>
               </article>
-              <article>
-                <span>Ingresos protegidos</span>
-                <strong>{operationalMetrics.protectedRevenue}</strong>
-                <small>Estimación semanal</small>
+              <article className="metric-high">
+                <AlertTriangle size={20} />
+                <span>Riesgo alto</span>
+                <strong>{isLoading ? "--" : riskCounts.high}</strong>
+                <small>revisión prioritaria</small>
               </article>
-              <article>
-                <span>Acciones sugeridas</span>
-                <strong>{operationalMetrics.actions}</strong>
-                <small>Contactos proactivos</small>
+              <article className="metric-medium">
+                <Activity size={20} />
+                <span>Riesgo medio</span>
+                <strong>{isLoading ? "--" : riskCounts.medium}</strong>
+                <small>seguimiento recomendado</small>
+              </article>
+              <article className="metric-low">
+                <ShieldCheck size={20} />
+                <span>Riesgo bajo</span>
+                <strong>{isLoading ? "--" : riskCounts.low}</strong>
+                <small>observación normal</small>
               </article>
             </div>
+
+            {operationsView === "guided" ? (
+              <GuidedReservationFlow
+                reservations={reservations}
+                selectedReservation={selectedReservation}
+                isLoading={isLoading}
+                onSelect={setSelectedReservation}
+                onOpenDetail={openReservation}
+                onEvaluate={evaluateReservation}
+              />
+            ) : operationsView === "all" ? (
+              <ReservationsTable
+                reservations={reservations}
+                isLoading={isLoading}
+                onSelect={openReservation}
+                onEvaluate={evaluateReservation}
+              />
+            ) : (
+              <AlertsPanel
+                reservations={reservations}
+                isLoading={isLoading}
+                onSelect={openReservation}
+                onEvaluate={evaluateReservation}
+              />
+            )}
+
+            {datasetMeta?.source && (
+              <p className="data-source">Fuente de datos: {datasetMeta.source}</p>
+            )}
           </section>
-        </>
+        ) : (
+          <ReservationEvaluation
+            reservation={evaluationReservation}
+            modelInfo={modelInfo}
+            onBack={() => showSection("operations")}
+            onPredictionComplete={handlePredictionComplete}
+            onFeedbackSaved={refreshFeedbackSummary}
+            onNextReservation={
+              nextPriorityReservation ? () => evaluateReservation(nextPriorityReservation) : null
+            }
+          />
+        )}
+      </main>
+
+      {isDetailOpen && selectedReservation && (
+        <ReservationDetailModal
+          reservation={selectedReservation}
+          onClose={() => setIsDetailOpen(false)}
+          onEvaluate={() => evaluateReservation(selectedReservation)}
+        />
       )}
-
-      {/* SECCIÓN ALERTAS */}
-      {activeSection === "alertas" && <AlertsPanel />}
-    </main>
+    </div>
   );
 }
-
-     
-
 
 export default App;

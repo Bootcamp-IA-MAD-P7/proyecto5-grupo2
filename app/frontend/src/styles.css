@@ -1,1178 +1,560 @@
-/* =============================================================================
-   HOTEL INSIGHTS — ESTILOS GLOBALES
-   =============================================================================
-   Este archivo es como un "cajón de pinturas" donde guardamos todos los colores
-   y estilos de la página. Si quieres cambiar un color, solo lo cambias aquí
-   y se actualiza en TODA la página automáticamente.
-   ============================================================================= */
-
-/* =============================================================================
-   FUENTES DE GOOGLE
-   =============================================================================
-   Importamos dos fuentes:
-   - Poppins: para títulos grandes (la fuente moderna del diseño)
-   - Inter: para textos normales (la fuente del cuerpo)
-   ============================================================================= */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap");
-
-/* =============================================================================
-   VARIABLES GLOBALES (:root)
-   =============================================================================
-   Aquí definimos los "nombres" de los colores. Es como poner etiquetas a los
-   botes de pintura. Luego usamos esas etiquetas en cualquier parte del código.
-   
-   PALETA NUEVA (del diseño de la imagen):
-   - Principal oscuro:   #0D3B3B  (fondos oscuros, navbar, hero)
-   - Secundario:         #157A6E  (barras, iconos, títulos de grupo)
-   - Acento:             #3FB4A7  (enlaces, highlights, subtítulos)
-   - Fondos suaves:      #A7D9CF  (secciones, tarjetas, recomendaciones)
-   - Éxito/Positivo:     #C6E7C0  (riesgo bajo, "no cancelada")
-   - Alerta/Cancelación: #FF6F7D  (riesgo alto, "cancelada", botón)
-   - Texto principal:    #111111  (texto normal, alta legibilidad)
-   
-   CAMBIO 1: El fondo general ahora es blanco neutro en vez de crema amarillento.
-   Esto hace que la página se vea más limpia y profesional, acorde al diseño.
-   ============================================================================= */
 :root {
-    /* ... mantén todos los colores ... */
-  
-  /* COMENTA ESTAS DOS LÍNEAS TEMPORALMENTE: */
-  /* font-family: Inter, system-ui, ...; */
-  /* background: var(--paper); */
-  /* color: var(--ink); */
-
   color-scheme: light;
-
-  /* --- COLORES NUEVOS DE LA PALETA --- */
-  --principal: #0D3B3B;
-  --secundario: #157A6E;
-  --acento: #3FB4A7;
-  --fondo-suave: #A7D9CF;
-  --exito: #C6E7C0;
-  --alerta: #FF6F7D;
-  --texto-principal: #111111;
-
-  /* --- COLORES ANTIGUOS (mantenemos nombres para no romper el código) --- */
-  --ink: #111111;              /* Texto principal (antes #17201b) */
-  --muted: #6d756f;            /* Texto gris/secundario */
-  /* CAMBIO 1: --paper ahora es blanco neutro en vez de crema amarillento */
-  --paper: #f8f9fa;            /* Antes #fbf7ef, ahora blanco neutro */
-  --cream: #f4ead8;            /* Se mantiene para elementos que lo necesiten */
-  --moss: #157A6E;             /* Antes #415844, ahora Secundario */
-  --jade: #0D3B3B;             /* Antes #0d6b5f, ahora Principal oscuro */
-  --olive: #6f8d62;            /* Se mantiene similar */
-  --clay: #FF6F7D;             /* Antes #b65f3f, ahora Alerta/Coral */
-  --rose: #FF6F7D;             /* Antes #7d3941, ahora Alerta/Coral */
-  --gold: #157A6E;             /* Antes #c9a35d (dorado), ahora Secundario */
-  --sand: #3FB4A7;             /* Antes #d9b56f (arena), ahora Acento */
-  --sky: #A7D9CF;              /* Antes #9bb7b1, ahora Fondo suave */
-
-  /* --- UTILIDADES --- */
-  --line: rgba(17, 17, 17, 0.14);   /* Líneas divisorias */
-  --shadow: 0 24px 70px rgba(25, 21, 14, 0.18);  /* Sombra de tarjetas */
-
-  /* --- FUENTE BASE --- */
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: var(--paper);
-  color: var(--ink);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-synthesis: none;
+  --teal-950: #0d3b3b;
+  --teal-700: #157a6e;
+  --mint-500: #3fb4a7;
+  --mint-100: #e3f3ef;
+  --coral: #ff6f7d;
+  --coral-dark: #b93648;
+  --coral-soft: #fff0f2;
+  --amber: #d79a32;
+  --amber-dark: #875b12;
+  --amber-soft: #fff5df;
+  --green: #4b8f65;
+  --green-dark: #28613d;
+  --green-soft: #e8f5ec;
+  --text: #172321;
+  --text-muted: #64716e;
+  --surface: #ffffff;
+  --surface-subtle: #f4f7f6;
+  --page: #eef3f1;
+  --border: #dce6e3;
+  --border-strong: #bdccc8;
+  background: var(--page);
+  color: var(--text);
 }
 
-/* =============================================================================
-   RESETEO BÁSICO
-   =============================================================================
-   Estas reglas "resetean" estilos por defecto del navegador para que todo
-   se vea igual en Chrome, Firefox, Safari, etc.
-   ============================================================================= */
 * {
   box-sizing: border-box;
 }
 
 html {
-  scroll-behavior: smooth;
+  min-width: 320px;
+  overflow-x: clip;
 }
 
-/* =============================================================================
-   BODY (el cuerpo de la página)
-   =============================================================================
-   El fondo tiene un degradado suave. El color del centro es el Acento
-   (#3FB4A7) en vez del dorado antiguo.
-   
-   CAMBIO 1: El fondo base ahora es blanco neutro, no crema amarillento.
-   ============================================================================= */
 body {
   margin: 0;
   min-width: 320px;
-  /* background: linear-gradient(...); */
-  background:
-    linear-gradient(180deg, rgba(248, 249, 250, 0) 0%, var(--paper) 42%),
-    radial-gradient(circle at 18% 22%, rgba(63, 180, 167, 0.16), transparent 32%),
-    var(--paper);
+  min-height: 100vh;
+  background: var(--page);
+  overflow-x: clip;
 }
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(63, 180, 167, 0.32);
+  outline-offset: 2px;
 }
 
-/* =============================================================================
-   SHELL PRINCIPAL
-   ============================================================================= */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .app-shell {
-  overflow: hidden;
+  min-height: 100vh;
 }
 
-/* =============================================================================
-   BARRA DE NAVEGACIÓN (TOPBAR)
-   =============================================================================
-   Barra fija arriba con efecto "vidrio esmerilado" (backdrop-filter).
-   El fondo ahora es el Principal oscuro (#0D3B3B) en vez del negro.
-   ============================================================================= */
-.topbar {
-  position: fixed;
-  top: 22px;
-  left: 50%;
-  z-index: 20;
-  display: flex;
-  width: min(1260px, calc(100% - 48px));
-  min-height: 82px;
-  transform: translateX(-50%);
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-inner {
   align-items: center;
-  justify-content: flex-start;
-  gap: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  border-radius: 999px;
-  padding: 12px 14px 12px 18px;
-  background: rgba(13, 59, 59, 0.85);
-  color: #fffaf2;
-  backdrop-filter: blur(18px);
-}
-
-/* =============================================================================
-   HELPERS DE FLEX
-   ============================================================================= */
-.brand,
-.nav-links,
-.hero-kicker,
-.signal-list span,
-.result-top,
-.recommendation,
-legend,
-.factor-list li {
-  display: flex;
-  align-items: center;
-}
-
-/* =============================================================================
-   MARCA / LOGO
-   ============================================================================= */
-.brand {
-  gap: 14px;
-  font-weight: 700;
-  margin-right: auto;
-}
-
-.brand-copy {
   display: grid;
-  line-height: 1.04;
+  gap: 22px;
+  grid-template-columns: auto auto 1fr;
+  margin: 0 auto;
+  max-width: 1480px;
+  min-height: 76px;
+  padding: 10px 24px;
 }
 
-.brand-copy strong {
-  font-size: 1.05rem;
-}
-
-.brand-copy small {
-  color: rgba(255, 250, 242, 0.68);
-  font-size: 0.68rem;
-  font-weight: 700;
-}
-
-/* =============================================================================
-   BOTONES Y MARCAS
-   ============================================================================= */
-.brand-mark,
-.icon-button,
-.primary-action,
-.secondary-action,
-.submit-button {
-  display: inline-flex;
+.brand-button {
   align-items: center;
-  justify-content: center;
-}
-
-/* =============================================================================
-   LOGO CIRCULAR (BRAND MARK)
-   =============================================================================
-   El círculo del logo con las letras "HI". Ahora usa el Acento (#3FB4A7) y el
-   Secundario (#157A6E) en su degradado, y la fuente Poppins.
-   ============================================================================= */
-.brand-mark {
-  width: 54px;
-  height: 54px;
-  border: 1px solid rgba(255, 250, 242, 0.72);
-  border-radius: 50%;
-  background:
-    linear-gradient(135deg, rgba(63, 180, 167, 0.94), rgba(21, 122, 110, 0.86)),
-    var(--cream);
-  color: #111111;
-  font-family: "Poppins", sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-/* =============================================================================
-   ENLACES DE NAVEGACIÓN
-   ============================================================================= */
-.nav-links {
-  gap: 10px;
-  color: rgba(255, 250, 242, 0.82);
-  font-size: 0.98rem;
-  font-weight: 700;
-  margin-left: auto;
-}
-
-.nav-links a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 46px;
-  border-radius: 999px;
-  padding: 0 18px;
-}
-
-.nav-links a:hover {
-  background: rgba(255, 250, 242, 0.1);
-  color: #fffaf2;
-}
-
-/* =============================================================================
-   BOTÓN DE MENÚ MÓVIL
-   ============================================================================= */
-.icon-button {
-  width: 56px;
-  height: 56px;
+  background: transparent;
   border: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  color: inherit;
-  margin-left: 18px;
+  color: var(--teal-950);
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 0;
+  text-align: left;
+  transition: color 150ms ease, transform 150ms ease;
 }
 
-/* =============================================================================
-   SECCIÓN HERO (la parte de arriba con el video)
-   =============================================================================
-   El fondo oscuro del hero ahora usa el Principal oscuro (#0D3B3B) en vez
-   del negro puro.
-   ============================================================================= */
-.hero {
-  position: relative;
-  display: grid;
-  min-height: 88svh;
-  place-items: center;
-  padding: 128px clamp(24px, 5vw, 72px) 54px;
-  color: #fffaf2;
+.brand-button:hover {
+  color: var(--teal-700);
+  transform: translateY(-1px);
 }
 
-.hero-video,
-.hero-overlay {
-  position: absolute;
-  inset: 0;
+.brand-button img {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  height: 44px;
+  object-fit: contain;
+  padding: 4px;
+  width: 44px;
+  transition: border-color 150ms ease, transform 180ms ease;
 }
 
-.hero-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 62%;
+.brand-button:hover img {
+  border-color: var(--mint-500);
+  transform: scale(1.035);
 }
 
-.hero-overlay {
-  background:
-    linear-gradient(90deg, rgba(13, 59, 59, 0.88), rgba(13, 59, 59, 0.40) 58%, rgba(13, 59, 59, 0.82)),
-    linear-gradient(0deg, rgba(13, 59, 59, 0.78), transparent 48%);
+.brand-button strong,
+.brand-button small {
+  display: block;
 }
 
-.hero-inner {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  width: min(1260px, 100%);
-  grid-template-columns: minmax(0, 0.74fr) minmax(280px, 0.26fr);
-  gap: clamp(28px, 5vw, 76px);
-  align-items: end;
+.brand-button strong {
+  font-size: 0.98rem;
 }
 
-.hero-content {
-  position: relative;
-  width: min(800px, 100%);
+.brand-button small {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  margin-top: 2px;
 }
 
-/* =============================================================================
-   ETIQUETAS Y SUBTÍTULOS (KICKER, EYEBROW)
-   =============================================================================
-   CAMBIO 2: El color del kicker/eyebrow ahora es el Acento (#3FB4A7) en vez
-   del Secundario (#157A6E). Esto hace que "BOUTIQUE REVENUE DESK" se lea mucho
-   mejor sobre el fondo oscuro del hero.
-   ============================================================================= */
-.hero-kicker,
-.eyebrow,
-.section-heading span,
-.panel-label {
-  /* CAMBIO 2: --gold era #157A6E (verde oscuro), ahora es --acento #3FB4A7 */
-  color: var(--acento);
-  font-size: 0.76rem;
+.primary-navigation {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  display: flex;
+  padding: 3px;
+}
+
+.primary-navigation button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 12px;
+  white-space: nowrap;
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
 }
 
-.hero-kicker {
+.primary-navigation button:not(.active):hover {
+  background: var(--mint-100);
+  color: var(--teal-950);
+  transform: translateY(-1px);
+}
+
+.primary-navigation button.active {
+  background: var(--teal-950);
+  color: #fff;
+}
+
+.system-status {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.status-badge {
+  align-items: center;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  display: inline-flex;
+  font-size: 0.72rem;
+  gap: 6px;
+  min-height: 34px;
+  max-width: 210px;
+  overflow: hidden;
+  padding: 0 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.status-badge:hover {
+  border-color: var(--mint-500);
+}
+
+.status-badge.ready {
+  background: var(--green-soft);
+  border-color: #c9e2d1;
+  color: var(--green-dark);
+  font-weight: 750;
+}
+
+.status-badge.unavailable {
+  background: var(--coral-soft);
+  border-color: #ffd0d6;
+  color: var(--coral-dark);
+}
+
+.workspace-main {
+  margin: 0 auto;
+  max-width: 1480px;
+  padding: 26px 24px 42px;
+}
+
+.workspace-main.home-main {
+  max-width: none;
+  padding: 0;
+}
+
+.home-main > .workspace-alert {
+  margin: 16px auto;
+  max-width: min(1432px, calc(100% - 32px));
+}
+
+.workspace-alert {
+  align-items: flex-start;
+  background: var(--coral-soft);
+  border: 1px solid #ffd0d6;
+  border-radius: 7px;
+  color: var(--coral-dark);
+  display: flex;
   gap: 9px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+}
+
+.workspace-alert svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.section-toolbar {
+  align-items: flex-end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 
-/* =============================================================================
-   TÍTULOS (H1, H2)
-   =============================================================================
-   CAMBIO IMPORTANTE: La fuente de títulos cambia de "Playfair Display"
-   (que parece de periódico antiguo) a "Poppins" (moderna y limpia).
-   ============================================================================= */
-h1,
-h2 {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  letter-spacing: 0;
-}
-
-h1 {
-  max-width: 820px;
-  font-size: clamp(3.1rem, 7.1vw, 7rem);
-  line-height: 0.92;
-  text-wrap: balance;
-  overflow-wrap: normal;
-  word-break: normal;
-  hyphens: none;
-}
-
-h2 {
-  font-size: clamp(2rem, 4.2vw, 4.8rem);
-  line-height: 0.98;
-  text-wrap: balance;
-  hyphens: none;
-}
-
-.hero p,
-.predictor-copy p {
-  max-width: 650px;
-  color: rgba(255, 250, 242, 0.82);
-  font-size: clamp(1rem, 1.4vw, 1.18rem);
-  line-height: 1.7;
-}
-
-/* =============================================================================
-   BOTONES DE ACCIÓN EN HERO
-   =============================================================================
-   CAMBIO 3: El botón secundario ahora tiene borde del color Acento (#3FB4A7)
-   en vez de borde blanco semitransparente. Esto le da más identidad visual.
-   ============================================================================= */
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 30px;
-}
-
-.primary-action,
-.secondary-action,
-.submit-button {
-  min-height: 50px;
-  border-radius: 999px;
-  padding: 0 20px;
-  gap: 10px;
-  font-weight: 800;
-}
-
-.primary-action {
-  background: #fff7e9;
-  color: var(--ink);
-}
-
-.secondary-action {
-  /* CAMBIO 3: Borde ahora es Acento (#3FB4A7) en vez de blanco semitransparente */
-  border: 1px solid var(--acento);
-  color: #fffaf2;
-}
-
-/* =============================================================================
-   PANEL LATERAL DEL HERO
-   =============================================================================
-   El fondo ahora es el Principal oscuro (#0D3B3B) en vez del negro.
-   ============================================================================= */
-.hero-panel {
-  position: relative;
-  width: 100%;
-  border: 1px solid rgba(255, 250, 242, 0.3);
-  border-radius: 8px;
-  padding: 22px;
-  background: rgba(13, 59, 59, 0.72);
-  backdrop-filter: blur(18px);
-}
-
-.hero-panel-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.hero-panel-head strong {
-  display: block;
-  font-family: "Poppins", sans-serif;
-  font-size: clamp(3rem, 5vw, 5rem);
-  line-height: 0.84;
-}
-
-.hero-panel p {
-  margin: 10px 0 20px;
-  color: rgba(255, 250, 242, 0.82);
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.panel-grid {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  margin-top: 24px;
-  color: rgba(255, 250, 242, 0.78);
-}
-
-.panel-grid strong {
-  margin: 0;
-  color: #fffaf2;
-}
-
-/* =============================================================================
-   SECCIONES GENERALES
-   ============================================================================= */
-.experience-band,
-.predictor-layout,
-.signals-section {
-  padding: clamp(60px, 8vw, 110px) clamp(20px, 5vw, 72px);
-}
-
-.section-heading {
-  display: grid;
-  grid-template-columns: minmax(150px, 0.25fr) minmax(280px, 0.75fr);
-  gap: 34px;
-  align-items: end;
-  margin-bottom: 42px;
-}
-
-.section-heading h2 {
-  max-width: 760px;
-}
-
-/* =============================================================================
-   GRID DE EXPERIENCIAS (ESCENARIOS)
-   ============================================================================= */
-.experience-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
-  gap: 24px;
-  align-items: stretch;
-}
-
-.scenario-list {
-  display: grid;
-  gap: 14px;
-}
-
-/* =============================================================================
-   TARJETA DE ESCENARIO
-   ============================================================================= */
-.scenario-card {
-  display: grid;
-  grid-template-columns: 148px minmax(0, 1fr) auto auto;
-  gap: 18px;
-  align-items: center;
-  min-height: 148px;
-  border: 1px solid rgba(23, 32, 27, 0.12);
-  border-radius: 8px;
-  padding: 14px;
-  background: rgba(255, 250, 242, 0.82);
-  color: var(--ink);
-  cursor: pointer;
-  text-align: left;
-  transition:
-    transform 220ms ease,
-    border-color 220ms ease,
-    box-shadow 220ms ease;
-}
-
-.scenario-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(23, 32, 27, 0.24);
-  box-shadow: 0 18px 48px rgba(25, 21, 14, 0.12);
-}
-
-.scenario-card img {
-  width: 100%;
-  height: 118px;
-  border-radius: 6px;
-  object-fit: cover;
-}
-
-.scenario-copy {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-
-.scenario-copy strong {
-  font-size: 1.08rem;
-}
-
-.scenario-copy small,
-.scenario-copy em {
-  color: var(--muted);
-  font-style: normal;
-  line-height: 1.35;
-}
-
-/* El metadato (precio, noches) ahora usa el color Alerta/Coral */
-.scenario-copy em {
-  color: var(--clay);
-  font-size: 0.82rem;
-  font-weight: 900;
-}
-
-/* =============================================================================
-   TARJETA DE IMAGEN
-   ============================================================================= */
-.image-card {
-  position: relative;
-  min-height: clamp(280px, 42vw, 560px);
-  overflow: hidden;
-  border: 0;
-  border-radius: 8px;
-  background: var(--cream);
-  color: inherit;
-  cursor: pointer;
-  padding: 0;
-  text-align: left;
-}
-
-.image-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.02);
-  transition: transform 500ms ease;
-}
-
-.image-card:hover img {
-  transform: scale(1.07);
-}
-
-.image-card div {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  left: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 50px;
-  border-radius: 999px;
-  padding: 8px 10px 8px 18px;
-  background: rgba(255, 250, 242, 0.88);
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.image-card div > span:first-child {
-  display: grid;
-  gap: 2px;
-}
-
-.image-card small {
-  color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-/* =============================================================================
-   PALETA DE COLORES (SWATCHES)
-   ============================================================================= */
-.swatches {
-  display: inline-flex;
-  flex-shrink: 0;
-  gap: 4px;
-}
-
-.swatches i {
-  display: block;
-  width: 18px;
-  height: 18px;
-  border: 1px solid rgba(23, 32, 27, 0.12);
-  border-radius: 50%;
-}
-
-/* =============================================================================
-   TARJETA DE VIDEO (FILM CARD)
-   =============================================================================
-   El fondo oscuro ahora es el Principal (#0D3B3B).
-   ============================================================================= */
-.film-card {
-  position: relative;
-  min-height: clamp(460px, 42vw, 640px);
-  overflow: hidden;
-  border-radius: 8px;
-  background: var(--principal);
-  color: #fffaf2;
-}
-
-.film-card video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.84;
-}
-
-.film-card::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  background: linear-gradient(180deg, transparent 38%, rgba(13, 59, 59, 0.82));
-}
-
-.film-card div {
-  position: absolute;
-  right: 30px;
-  bottom: 30px;
-  left: 30px;
-  z-index: 1;
-  max-width: 520px;
-}
-
-/* El subtítulo del video ahora usa el Acento (#3FB4A7) */
-.film-card span {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--sand);
-  font-size: 0.78rem;
-  font-weight: 900;
+.section-kicker {
+  color: var(--teal-700);
+  font-size: 0.72rem;
+  font-weight: 850;
   text-transform: uppercase;
 }
 
-.film-card p {
-  margin: 10px 0 0;
-  color: rgba(255, 250, 242, 0.82);
-  font-size: clamp(1rem, 1.4vw, 1.2rem);
-  line-height: 1.55;
+.section-toolbar h1 {
+  color: var(--teal-950);
+  font-size: 2rem;
+  margin: 4px 0 6px;
 }
 
-/* =============================================================================
-   LAYOUT DEL PREDICTOR (formulario + resultado)
-   =============================================================================
-   El fondo oscuro ahora es el Principal (#0D3B3B).
-   ============================================================================= */
-.predictor-layout {
-  display: grid;
-  grid-template-columns: minmax(240px, 0.78fr) minmax(320px, 1fr) minmax(280px, 0.72fr);
-  gap: 22px;
-  align-items: start;
-  background: var(--principal);
-  color: #fffaf2;
+.section-toolbar p {
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 720px;
 }
 
-.predictor-copy {
-  position: sticky;
-  top: 110px;
-}
-
-.predictor-copy p {
-  color: rgba(255, 250, 242, 0.7);
-}
-
-.signal-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 26px;
-}
-
-.signal-list span {
-  gap: 8px;
-  border: 1px solid rgba(255, 250, 242, 0.16);
-  border-radius: 999px;
-  padding: 10px 13px;
-  color: rgba(255, 250, 242, 0.82);
-}
-
-/* =============================================================================
-   FORMULARIO DE RESERVA
-   ============================================================================= */
-.reservation-form,
-.result-card,
-.metric-row article {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(255, 250, 242, 0.94);
-  color: var(--ink);
-  box-shadow: var(--shadow);
-}
-
-.reservation-form {
-  padding: clamp(18px, 3vw, 30px);
-}
-
-fieldset {
-  margin: 0 0 22px;
-  border: 0;
-  border-top: 1px solid var(--line);
-  padding: 20px 0 0;
-}
-
-fieldset:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-/* El título de cada grupo de campos ahora usa el Secundario (#157A6E) */
-legend {
-  gap: 8px;
-  margin-bottom: 14px;
-  color: var(--moss);
-  font-weight: 900;
-}
-
-.field-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.field {
-  display: grid;
-  gap: 7px;
-  min-width: 0;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.input-wrap,
-.select-wrap {
-  position: relative;
-  display: flex;
+.toolbar-actions {
   align-items: center;
-  min-height: 48px;
-  border: 1px solid rgba(23, 32, 27, 0.16);
-  border-radius: 6px;
-  background: #fffaf2;
+  display: flex;
+  gap: 9px;
 }
 
-input,
-select {
-  width: 100%;
-  min-width: 0;
-  border: 0;
+.segmented-control {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  display: flex;
+  padding: 3px;
+}
+
+.segmented-control button {
   background: transparent;
-  color: var(--ink);
-  outline: 0;
-}
-
-input {
-  padding: 0 12px;
-}
-
-select {
-  appearance: none;
-  min-height: 48px;
-  padding: 0 34px 0 12px;
-}
-
-.select-wrap svg {
-  position: absolute;
-  right: 12px;
-  pointer-events: none;
-}
-
-.input-wrap em {
-  padding-right: 12px;
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-style: normal;
-}
-
-.toggle-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 10px 0 22px;
-}
-
-.toggle-row label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 10px 12px;
-  color: var(--ink);
-  font-weight: 800;
-}
-
-/* El checkbox ahora usa el Principal oscuro (#0D3B3B) */
-.toggle-row input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--jade);
-}
-
-/* =============================================================================
-   BOTÓN DE ENVIAR
-   =============================================================================
-   El botón ahora es Alerta/Coral (#FF6F7D) para que destaque mucho.
-   ============================================================================= */
-.submit-button {
-  width: 100%;
   border: 0;
-  background: var(--clay);
-  color: #fffaf2;
+  border-radius: 5px;
+  color: var(--text-muted);
   cursor: pointer;
+  min-height: 36px;
+  padding: 0 13px;
+  transition: background 150ms ease, color 150ms ease;
 }
 
-.submit-button:disabled {
-  cursor: wait;
-  opacity: 0.72;
+.segmented-control button:not(.active):hover {
+  background: var(--mint-100);
+  color: var(--teal-950);
 }
 
-/* =============================================================================
-   TARJETA DE RESULTADO
-   =============================================================================
-   Los colores de riesgo ahora usan la nueva paleta:
-   - Alto:   Alerta/Coral (#FF6F7D)
-   - Medio:  Acento (#3FB4A7)
-   - Bajo:   Éxito/Verde claro (#C6E7C0)
-   ============================================================================= */
-.result-card {
-  position: sticky;
-  top: 110px;
-  padding: 24px;
+.segmented-control button.active {
+  background: var(--teal-950);
+  color: #fff;
+  font-weight: 750;
 }
 
-.result-card.high {
-  --risk: var(--alerta);
+.icon-button {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  color: var(--teal-700);
+  cursor: pointer;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease,
+    transform 150ms ease;
 }
 
-.result-card.medium {
-  --risk: var(--acento);
+.icon-button:hover {
+  border-color: var(--mint-500);
+  transform: translateY(-1px);
 }
 
-.result-card.low,
-.result-card.empty {
-  --risk: var(--exito);
-}
-
-.result-top {
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-/* =============================================================================
-   ANILLO DE PROBABILIDAD
-   =============================================================================
-   El círculo que muestra el porcentaje. La fuente ahora es Poppins.
-   ============================================================================= */
-.probability-ring {
+.metric-grid {
   display: grid;
-  width: min(220px, 70vw);
-  aspect-ratio: 1;
-  place-items: center;
-  margin: 26px auto;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, #fffaf2 58%, transparent 59%),
-    conic-gradient(var(--risk) var(--value), rgba(23, 32, 27, 0.12) 0);
-}
-
-.probability-ring strong,
-.probability-ring span {
-  grid-area: 1 / 1;
-}
-
-.probability-ring strong {
-  margin-top: -18px;
-  font-family: "Poppins", sans-serif;
-  font-size: clamp(2.7rem, 7vw, 4.3rem);
-}
-
-.probability-ring span {
-  margin-top: 62px;
-  color: var(--risk);
-  font-weight: 900;
-}
-
-.result-summary p,
-.recommendation p {
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-.factor-list {
-  display: grid;
-  gap: 10px;
-  padding: 0;
-  margin: 22px 0;
-  list-style: none;
-}
-
-.factor-list li {
-  gap: 10px;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 10px;
-  font-weight: 800;
-}
-
-/* =============================================================================
-   CAJA DE RECOMENDACIÓN
-   =============================================================================
-   El fondo ahora es Fondo suave (#A7D9CF) en vez del crema antiguo.
-   ============================================================================= */
-.recommendation {
   gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+
+.metric-grid article {
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 14px;
-  background: var(--fondo-suave);
-}
-
-.recommendation p {
-  margin: 0;
-}
-
-/* =============================================================================
-   SECCIÓN DE SEÑALES (signals-section)
-   ============================================================================= */
-.signals-section {
   display: grid;
-  grid-template-columns: minmax(240px, 0.8fr) minmax(320px, 1.2fr);
-  gap: 30px;
-  align-items: end;
+  gap: 3px 10px;
+  grid-template-columns: auto 1fr;
+  padding: 15px 16px;
+  transition: border-color 160ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
-.signals-section .eyebrow {
-  display: block;
-  margin-bottom: 12px;
+.metric-grid article:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 9px 22px rgba(13, 59, 59, 0.09);
+  transform: translateY(-2px);
 }
 
-.metric-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+.metric-grid svg {
+  color: var(--teal-700);
+  grid-row: 1 / 4;
+  margin-top: 2px;
 }
 
-.metric-row article {
-  box-shadow: none;
-  padding: 22px;
+.metric-grid span {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
-.metric-row span,
-.metric-row small {
-  color: var(--muted);
+.metric-grid strong {
+  color: var(--teal-950);
+  font-size: 1.55rem;
 }
 
-.metric-row strong {
-  display: block;
-  margin: 12px 0 6px;
-  font-family: "Poppins", sans-serif;
-  font-size: 2.8rem;
+.metric-grid small {
+  color: var(--text-muted);
 }
 
-/* =============================================================================
-   RESPONSIVE (MÓVIL)
-   =============================================================================
-   Estas reglas solo se aplican cuando la pantalla es estrecha.
-   ============================================================================= */
-@media (max-width: 1060px) {
-  .hero {
-    min-height: 820px;
+.metric-grid .metric-high {
+  background: #fff8f9;
+  border-top: 3px solid var(--coral);
+}
+
+.metric-grid .metric-high svg {
+  color: var(--coral-dark);
+}
+
+.metric-grid .metric-medium {
+  background: #fffbf2;
+  border-top: 3px solid var(--amber);
+}
+
+.metric-grid .metric-medium svg {
+  color: var(--amber-dark);
+}
+
+.metric-grid .metric-low {
+  background: #f5fbf7;
+  border-top: 3px solid var(--green);
+}
+
+.metric-grid .metric-low svg {
+  color: var(--green-dark);
+}
+
+.primary-button,
+.secondary-button {
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 750;
+  gap: 7px;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease,
+    transform 150ms ease;
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button {
+  background: var(--teal-950);
+  border: 1px solid var(--teal-950);
+  color: #fff;
+}
+
+.secondary-button {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--teal-700);
+}
+
+.primary-button:hover,
+.evaluate-button:hover,
+.feedback-submit:hover {
+  background: var(--teal-700);
+  border-color: var(--teal-700);
+}
+
+.secondary-button:hover,
+.row-icon-button:hover,
+.icon-button:hover,
+.back-button:hover {
+  background: var(--mint-100);
+}
+
+.data-source {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  margin: 11px 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.spin {
+  animation: spin 850ms linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 
-  .hero-inner {
-    grid-template-columns: 1fr;
-    align-items: end;
-    padding-top: 30px;
-  }
-
-  .hero-panel {
-    width: min(420px, 100%);
-  }
-
-  .predictor-layout,
-  .signals-section,
-  .experience-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .predictor-copy,
-  .result-card {
-    position: static;
+  .spin {
+    animation: none;
   }
 }
 
-@media (max-width: 760px) {
-  .topbar {
-    top: 12px;
-    width: calc(100% - 24px);
-    min-height: 74px;
-    padding: 10px 10px 10px 12px;
+@media (max-width: 1180px) {
+  .header-inner {
+    grid-template-columns: auto 1fr;
   }
 
-  .brand {
+  .system-status {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 820px) {
+  .header-inner {
     gap: 10px;
+    padding: 10px 16px;
   }
 
-  .brand-mark {
-    width: 48px;
-    height: 48px;
+  .primary-navigation {
+    justify-self: end;
   }
 
-  .brand-copy strong {
-    font-size: 0.98rem;
-  }
-
-  .brand-copy small {
-    font-size: 0.64rem;
-  }
-
-  .icon-button {
-    width: 50px;
-    height: 50px;
-  }
-
-  .nav-links {
+  .system-status .status-badge:nth-child(2) {
     display: none;
   }
 
-  .topbar.is-open {
-    border-radius: 24px;
+  .workspace-main {
+    padding: 20px 16px 34px;
+  }
+
+  .section-toolbar {
     align-items: flex-start;
+    flex-direction: column;
   }
 
-  .topbar.is-open .nav-links {
-    position: absolute;
-    top: 74px;
-    right: 12px;
-    left: 12px;
-    display: grid;
-    gap: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 18px;
-    padding: 10px;
-    background: rgba(13, 59, 59, 0.94);
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .brand-button small,
+  .system-status {
+    display: none;
   }
 
-  .topbar.is-open .nav-links a {
-    padding: 12px 14px;
+  .primary-navigation button {
+    font-size: 0;
+    padding: 0 11px;
   }
 
-  .hero {
-    min-height: 760px;
-    padding: 120px 20px 42px;
+  .primary-navigation button svg {
+    height: 20px;
+    width: 20px;
   }
 
-  .hero-video {
-    object-position: center 64%;
+  .section-toolbar h1 {
+    font-size: 1.55rem;
   }
 
-  .hero-inner {
-    gap: 24px;
+  .toolbar-actions {
+    justify-content: space-between;
+    width: 100%;
   }
 
-  h1 {
-    max-width: 100%;
-    font-size: clamp(2.45rem, 11vw, 3.8rem);
-    line-height: 0.96;
-  }
-
-  .section-heading,
-  .experience-grid,
-  .field-grid,
-  .metric-row {
+  .metric-grid {
     grid-template-columns: 1fr;
   }
-
-  .section-heading {
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  .scenario-card {
-    grid-template-columns: 96px minmax(0, 1fr);
-    min-height: 124px;
-    gap: 14px;
-  }
-
-  .scenario-card img {
-    height: 96px;
-  }
-
-  .scenario-card .swatches,
-  .scenario-card > svg {
-    grid-column: 2;
-  }
-
-  .film-card {
-    min-height: 420px;
-  }
-
-  .film-card div {
-    right: 18px;
-    bottom: 18px;
-    left: 18px;
-  }
-
-  .experience-band,
-  .predictor-layout,
-  .signals-section {
-    padding-inline: 18px;
-  }
-  }
-
-  /* =============================================================================
-   NAVBAR SECTION BUTTONS
-   ============================================================================= */
-.nav-links button {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: all 0.2s;
 }
-
-.nav-links button:hover {
-  color: #fff;
-}
-
-.nav-links button.active {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-}
-  

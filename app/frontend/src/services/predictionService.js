@@ -1,61 +1,51 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-export async function predictReservation(payload) {
-  const response = await fetch(`${API_URL}/predict`, {
+async function requestJson(path, options) {
+  const response = await fetch(`${API_URL}${path}`, options);
+
+  if (!response.ok) {
+    let detail = "";
+    try {
+      const body = await response.json();
+      detail = Array.isArray(body.detail)
+        ? body.detail.map((item) => item.msg).join(". ")
+        : body.detail || "";
+    } catch {
+      detail = "";
+    }
+
+    throw new Error(detail || `El backend respondió con el estado ${response.status}.`);
+  }
+
+  return response.json();
+}
+
+export function predictReservation(payload) {
+  return requestJson("/predict", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
-
-  if (!response.ok) {
-    throw new Error("No se pudo obtener la predicción del backend.");
-  }
-
-  return response.json();
 }
 
-export async function submitPredictionFeedback(payload) {
-  const response = await fetch(`${API_URL}/feedback`, {
+export function submitPredictionFeedback(payload) {
+  return requestJson("/feedback", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
-
-  if (!response.ok) {
-    throw new Error("No se pudo guardar el feedback de la predicción.");
-  }
-
-  return response.json();
 }
 
-export async function fetchFeedbackSummary() {
-  const response = await fetch(`${API_URL}/feedback/summary`);
-
-  if (!response.ok) {
-    throw new Error("No se pudo obtener el resumen de feedback.");
-  }
-
-  return response.json();
+export function fetchFeedbackSummary() {
+  return requestJson("/feedback/summary");
 }
 
-export async function fetchModelInfo() {
-  const response = await fetch(`${API_URL}/model/info`);
-
-  if (!response.ok) {
-    throw new Error("No se pudo obtener la información del modelo.");
-  }
-
-  return response.json();
+export function fetchModelInfo() {
+  return requestJson("/model/info");
 }
 
-export async function fetchDemoReservations(limit = 8) {
-  const response = await fetch(`${API_URL}/reservations/demo?limit=${limit}`);
-
-  if (!response.ok) {
-    throw new Error("No se pudieron obtener reservas del backend.");
-  }
-
-  return response.json();
+export function fetchDemoReservations(limit = 16) {
+  return requestJson(`/reservations/demo?limit=${limit}`);
 }
 
 function toDateString(inputData) {
@@ -64,29 +54,16 @@ function toDateString(inputData) {
   return `${inputData.arrival_year}-${month}-${day}`;
 }
 
-function daysUntilArrival(dateString) {
-  const arrival = new Date(dateString);
-  const today = new Date();
-  const diffTime = arrival - today;
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-}
-
-function toFrontendReservation(reservation, prediction) {
-  const inputData = reservation.input_data;
+export function applyPredictionToReservation(reservation, inputData, prediction) {
   const nights = Number(inputData.no_of_weekend_nights) + Number(inputData.no_of_week_nights);
-  const arrival = toDateString(inputData);
 
   return {
-    id: reservation.id,
-    guest: reservation.display_name,
-    email: `${inputData.market_segment_type} · ${reservation.stay_label}`,
-    arrival,
+    ...reservation,
+    arrival: toDateString(inputData),
     nights,
-    price: Math.round(Number(inputData.avg_price_per_room) * Math.max(nights, 1)),
+    estimatedStayValue: Math.round(Number(inputData.avg_price_per_room) * Math.max(nights, 1)),
     riskLevel: prediction.risk_level,
     riskPercent: Math.round(Number(prediction.probability) * 100),
-    daysLeft: daysUntilArrival(arrival),
-    status: reservation.status_label,
     inputData,
     prediction,
     mainFactors: prediction.main_factors,
@@ -94,7 +71,19 @@ function toFrontendReservation(reservation, prediction) {
   };
 }
 
-export async function fetchPredictedReservations(limit = 8) {
+function toFrontendReservation(reservation, prediction) {
+  const inputData = reservation.input_data;
+  const baseReservation = {
+    id: reservation.id,
+    guest: reservation.display_name,
+    secondaryLabel: `${inputData.market_segment_type} · ${reservation.stay_label}`,
+    status: reservation.status_label
+  };
+
+  return applyPredictionToReservation(baseReservation, inputData, prediction);
+}
+
+export async function fetchPredictedReservations(limit = 16) {
   const response = await fetchDemoReservations(limit);
   const reservations = await Promise.all(
     response.reservations.map(async (reservation) => {
@@ -103,5 +92,10 @@ export async function fetchPredictedReservations(limit = 8) {
     })
   );
 
-  return reservations;
+  return {
+    reservations,
+    returned: response.returned,
+    totalAvailable: response.total_available,
+    source: response.source
+  };
 }

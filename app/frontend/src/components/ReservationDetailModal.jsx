@@ -1,149 +1,107 @@
-import React, { Fragment, useState } from "react";
-import { submitPredictionFeedback } from "../services/predictionService";
+import React, { useEffect } from "react";
+import { ArrowRight, CalendarDays, CircleDollarSign, Clock3, X } from "lucide-react";
 import "./ReservationDetailModal.css";
 
-function ReservationDetailModal({ reservation, onClose }) {
-  const [feedbackState, setFeedbackState] = useState("idle");
+function formatDate(dateString) {
+  return new Date(`${dateString}T00:00:00`).toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0
+  }).format(value);
+}
+
+function riskLabel(level) {
+  if (level === "high") return "Riesgo alto";
+  if (level === "medium") return "Riesgo medio";
+  return "Riesgo bajo";
+}
+
+function ReservationDetailModal({ reservation, onClose, onEvaluate }) {
+  useEffect(() => {
+    function handleEscape(event) {
+      if (event.key === "Escape") onClose();
+    }
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
 
   if (!reservation) return null;
 
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    });
-  }
-
-  async function sendFeedback(userFeedback, actualStatus) {
-    if (!reservation.inputData || !reservation.prediction) return;
-
-    setFeedbackState("saving");
-    try {
-      await submitPredictionFeedback({
-        input_data: reservation.inputData,
-        prediction: reservation.prediction.prediction,
-        probability: reservation.prediction.probability,
-        risk_level: reservation.prediction.risk_level,
-        model_version: reservation.prediction.model_version,
-        user_feedback: userFeedback,
-        actual_status: actualStatus,
-        comments: `Feedback desde modal para ${reservation.id}`,
-        source: "develop_frontend"
-      });
-      setFeedbackState("saved");
-    } catch {
-      setFeedbackState("error");
-    }
-  }
-
-  const riskLabel = reservation.riskLevel === "high" ? "ALTO" : reservation.riskLevel === "medium" ? "MEDIO" : "BAJO";
-  const factors = reservation.mainFactors?.length ? reservation.mainFactors : ["Patrón de reserva evaluado por el modelo"];
-
   return (
-    <Fragment>
-      <div className="modal-overlay" onClick={onClose} />
+    <div className="detail-layer" role="presentation">
+      <button className="detail-overlay" type="button" onClick={onClose} aria-label="Cerrar detalle" />
+      <aside className="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+        <header className="detail-header">
+          <div>
+            <span className="detail-kicker">{reservation.id}</span>
+            <h2 id="detail-title">{reservation.guest}</h2>
+            <p>{reservation.secondaryLabel}</p>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} aria-label="Cerrar" title="Cerrar">
+            <X size={20} />
+          </button>
+        </header>
 
-      <div className="modal-panel">
-        <div className="modal-header">
-          <h3>Detalle de Reserva</h3>
-          <button className="modal-close" onClick={onClose}>×</button>
+        <div className={`detail-risk ${reservation.riskLevel}`}>
+          <span>{riskLabel(reservation.riskLevel)}</span>
+          <strong>{reservation.riskPercent}%</strong>
+          <small>{reservation.prediction.prediction === "Canceled" ? "Cancelación estimada" : "Permanencia estimada"}</small>
         </div>
 
-        <div className="modal-guest">
-          <div className="modal-avatar">
-            {reservation.guest.split(" ").map((n) => n[0]).join("")}
+        <dl className="detail-facts">
+          <div>
+            <dt><CalendarDays size={16} /> Llegada histórica</dt>
+            <dd>{formatDate(reservation.arrival)}</dd>
           </div>
           <div>
-            <div className="modal-name">{reservation.guest}</div>
-            <div className="modal-email">{reservation.email}</div>
+            <dt><Clock3 size={16} /> Estancia</dt>
+            <dd>{reservation.nights} {reservation.nights === 1 ? "noche" : "noches"}</dd>
           </div>
+          <div>
+            <dt><CircleDollarSign size={16} /> Valor estimado</dt>
+            <dd>{formatCurrency(reservation.estimatedStayValue)}</dd>
+          </div>
+          <div>
+            <dt>Estado de revisión</dt>
+            <dd>{reservation.status}</dd>
+          </div>
+        </dl>
+
+        <section className="detail-section">
+          <h3>Factores principales</h3>
+          <ul>
+            {reservation.mainFactors.map((factor) => <li key={factor}>{factor}</li>)}
+          </ul>
+        </section>
+
+        <section className="detail-section recommendation-section">
+          <h3>Recomendación operativa</h3>
+          <p>{reservation.recommendation}</p>
+        </section>
+
+        <div className="detail-model">
+          <span>Modelo utilizado</span>
+          <strong>{reservation.prediction.model_version}</strong>
         </div>
 
-        <div className="modal-info-grid">
-          <div className="modal-info-item">
-            <div className="modal-info-label">Llegada</div>
-            <div className="modal-info-value">{formatDate(reservation.arrival)}</div>
-          </div>
-          <div className="modal-info-item">
-            <div className="modal-info-label">Noches</div>
-            <div className="modal-info-value">{reservation.nights} {reservation.nights === 1 ? "noche" : "noches"}</div>
-          </div>
-          <div className="modal-info-item">
-            <div className="modal-info-label">Precio</div>
-            <div className="modal-info-value">{reservation.price} EUR</div>
-          </div>
-          <div className="modal-info-item risk">
-            <div className="modal-info-label">Riesgo</div>
-            <div className="modal-info-value modal-info-value-risk">
-              {reservation.riskPercent}% {riskLabel}
-            </div>
-          </div>
-        </div>
-
-        <div className="modal-section">
-          <div className="modal-section-title">FACTORES DE RIESGO</div>
-          <div className="modal-factors">
-            {factors.map((factor) => (
-              <div className="modal-factor" key={factor}>
-                <span className="modal-factor-dot" />
-                {factor}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="modal-section">
-          <div className="modal-section-title">RECOMENDACIÓN</div>
-          <div className="modal-recommendation">
-            {reservation.recommendation}
-          </div>
-        </div>
-
-        <div className="modal-actions">
-          <button
-            className="modal-btn-email"
-            onClick={() => window.open(`mailto:?subject=Confirmación de reserva - Hotel Insights&body=Hola,%0D%0A%0D%0AQueremos confirmar la reserva ${reservation.id} para el ${formatDate(reservation.arrival)}.%0D%0A%0D%0ASaludos cordiales,%0D%0AHotel Insights`)}
-          >
-            Enviar email
+        <footer className="detail-footer">
+          <button className="secondary-button" type="button" onClick={onClose}>Cerrar</button>
+          <button className="primary-button" type="button" onClick={onEvaluate}>
+            Editar y recalcular
+            <ArrowRight size={17} />
           </button>
-          <button
-            className="modal-btn-call"
-            onClick={() => window.open("tel:+34123456789")}
-          >
-            Llamar
-          </button>
-        </div>
-
-        <div className="modal-section">
-          <div className="modal-section-title">FEEDBACK DE PREDICCIÓN</div>
-          <div className="modal-feedback-note">
-            {feedbackState === "saved"
-              ? "Feedback guardado correctamente."
-              : feedbackState === "error"
-                ? "No se pudo guardar el feedback."
-                : "Registra si la predicción fue correcta para mejorar el seguimiento."}
-          </div>
-          <div className="modal-feedback">
-            <button
-              className="modal-btn-yes"
-              disabled={feedbackState === "saving"}
-              onClick={() => sendFeedback("correct", "Canceled")}
-            >
-              Sí, se canceló
-            </button>
-            <button
-              className="modal-btn-no"
-              disabled={feedbackState === "saving"}
-              onClick={() => sendFeedback("correct", "Not_Canceled")}
-            >
-              No, llegó bien
-            </button>
-          </div>
-        </div>
-      </div>
-    </Fragment>
+        </footer>
+      </aside>
+    </div>
   );
 }
 

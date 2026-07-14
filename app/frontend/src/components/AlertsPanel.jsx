@@ -1,114 +1,95 @@
-import React, { useEffect, useState, Fragment } from "react";
-import ReservationDetailModal from "./ReservationDetailModal";
-import { fetchPredictedReservations } from "../services/predictionService";
+import React, { useMemo } from "react";
+import { AlertTriangle, ArrowRight, CalendarDays, CircleDollarSign, Eye } from "lucide-react";
 import "./AlertsPanel.css";
 
-function AlertsPanel() {
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [alerts, setAlerts] = useState([]);
-  const [isLoadingAlerts, setIsLoadingAlerts] = useState(true);
-  const [error, setError] = useState("");
+const hotelImages = ["/hotel-room.jpg", "/hotel-suite.jpg", "/hotel-resort.jpg"];
 
-  useEffect(() => {
-    let isMounted = true;
+function formatDate(dateString) {
+  return new Date(`${dateString}T00:00:00`).toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
+}
 
-    async function loadAlerts() {
-      setIsLoadingAlerts(true);
-      setError("");
-      try {
-        const reservations = await fetchPredictedReservations(12);
-        const highRiskReservations = reservations.filter((reservation) => reservation.riskLevel === "high");
-        if (isMounted) {
-          setAlerts(highRiskReservations);
-        }
-      } catch {
-        if (isMounted) {
-          setError("No se pudieron cargar las alertas reales del backend.");
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoadingAlerts(false);
-        }
-      }
-    }
+function formatCurrency(value) {
+  return new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0
+  }).format(value);
+}
 
-    loadAlerts();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    });
-  }
+function AlertsPanel({ reservations, isLoading, onSelect, onEvaluate }) {
+  const priorityReservations = useMemo(
+    () =>
+      reservations
+        .filter((reservation) => reservation.riskLevel === "high")
+        .sort((a, b) => b.riskPercent - a.riskPercent),
+    [reservations]
+  );
 
   return (
-    <Fragment>
-       {selectedReservation && (
-        <ReservationDetailModal
-          reservation={selectedReservation}
-          onClose={() => setSelectedReservation(null)}
-        />
-      )}
-      <div className="alerts-bg" />
-      <div className="alerts-bg-overlay" />
-      <div className="alerts-page">
-      <div className="alerts-header">
-        <h2>
-          <span className="alert-dot" />
-          Alertas Urgentes
-        </h2>
-        <p>
-          {isLoadingAlerts
-            ? "Cargando alertas reales..."
-            : `${alerts.length} reservas requieren acción inmediata`}
-        </p>
-        {error && <p>{error}</p>}
+    <section className="priority-section" aria-labelledby="priority-title">
+      <div className="priority-heading">
+        <div>
+          <span className="priority-label"><AlertTriangle size={16} /> Riesgo alto</span>
+          <h2 id="priority-title">Reservas prioritarias</h2>
+        </div>
+        <p>{isLoading ? "Evaluando reservas..." : `${priorityReservations.length} requieren revisión`}</p>
       </div>
 
-      <div className="alerts-list">
-        {alerts.map((alert) => (
-          <div
-            key={alert.id}
-            className="alert-card alert-card-clickable"
-            onClick={() => setSelectedReservation(alert)}
-          >
-            <div className="alert-card-header">
-              <div className="alert-guest">
-                <div className="alert-avatar">
-                  {alert.guest.split(" ").map((n) => n[0]).join("")}
+      {isLoading ? (
+        <div className="priority-empty">Calculando prioridades con el Champion...</div>
+      ) : priorityReservations.length === 0 ? (
+        <div className="priority-empty">No hay reservas de riesgo alto en la muestra cargada.</div>
+      ) : (
+        <div className="priority-grid">
+          {priorityReservations.map((reservation, index) => (
+            <article className="priority-card" key={reservation.id}>
+              <div className="priority-card-media" aria-hidden="true">
+                <img src={hotelImages[index % hotelImages.length]} alt="" />
+              </div>
+              <div className="priority-card-header">
+                <div>
+                  <small>{reservation.id}</small>
+                  <h3>{reservation.guest}</h3>
+                  <p>{reservation.secondaryLabel}</p>
+                </div>
+                <span>{reservation.riskPercent}%</span>
+              </div>
+
+              <dl className="priority-facts">
+                <div>
+                  <dt><CalendarDays size={16} /> Llegada histórica</dt>
+                  <dd>{formatDate(reservation.arrival)}</dd>
                 </div>
                 <div>
-                  <div className="alert-name">{alert.guest}</div>
-                  <div className="alert-email">{alert.email}</div>
-                  <div className="alert-arrival">
-                    {formatDate(alert.arrival)} · {alert.nights} {alert.nights === 1 ? "noche" : "noches"}
-                  </div>
-                  <div className="alert-urgency">Llega en {alert.daysLeft} {alert.daysLeft === 1 ? "día" : "días"}</div>
+                  <dt><CircleDollarSign size={16} /> Valor estimado</dt>
+                  <dd>{formatCurrency(reservation.estimatedStayValue)}</dd>
                 </div>
-              </div>
-              <div className="alert-risk">
-                <div className="alert-risk-percent">{alert.riskPercent}%</div>
-                <div className="alert-risk-label">RIESGO ALTO</div>
-              </div>
-            </div>
+              </dl>
 
-            <div className="alert-actions">
-              <button className="btn-email">Enviar email</button>
-              <button className="btn-call">Llamar</button>
-              <button className="btn-detail">Ver detalle</button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-    </Fragment>
+              <div className="priority-recommendation">
+                <strong>Siguiente acción</strong>
+                <p>{reservation.recommendation}</p>
+              </div>
+
+              <div className="priority-actions">
+                <button type="button" className="secondary-button" onClick={() => onSelect(reservation)}>
+                  <Eye size={17} />
+                  Ver detalle
+                </button>
+                <button type="button" className="primary-button" onClick={() => onEvaluate(reservation)}>
+                  Evaluar
+                  <ArrowRight size={17} />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
