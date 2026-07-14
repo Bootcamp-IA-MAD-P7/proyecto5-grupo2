@@ -11,6 +11,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Unit tests for the optimized Random Forest challenger tuning, including selected hyperparameters, minimum validation F1 and overfitting rule checks.
 - Champion Random Forest integration in the FastAPI backend.
 - Champion metadata loading from `models/champion/champion_metadata.json`.
+- Champion Random Forest diagnostic figures for confusion matrix, ROC curve and feature importance.
+- Technical presentation support note for the final metrics and overfitting review.
 - Feedback logging endpoint `POST /feedback`.
 - Feedback summary endpoint `GET /feedback/summary`.
 - CSV feedback persistence under `data/feedback/prediction_feedback.csv`.
@@ -21,18 +23,22 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Frontend main reservation table and alerts connected to real backend data.
 - Frontend detail modal connected to real prediction factors, recommendations and feedback persistence.
 - Backend test coverage for the real reservation endpoint contract.
+- Manual app validation report in `reports/manual_app_validation.md`.
+- Business-oriented EDA interpretation in `docs/business_presentation/eda_business_insights.md`.
 
 ### Changed
 
 - Updated SPEC tasks, technical SPEC and README to mark `T-3.3 Optimizar hiperparametros` as completed after the optimized challenger was integrated and verified.
 - Updated API contract, SPEC tasks, technical SPEC and README to reflect `random_forest_champion_v0.1.0` as the model served by the API.
 - Updated SPEC tasks, technical SPEC and README to mark feedback, new-data collection, Docker validation and smoke flow as completed.
+- Updated README, roadmap and model report to reflect the Champion Random Forest as the model loaded by the API.
+- Updated Champion metadata and diagnostics text with final validation metrics, cross-validation and overfitting evidence.
+- Updated SPEC tasks to close `T-1.5 Interpretar graficos para negocio`.
 - Removed frontend fixture-based reservation data from the main app flow; prediction data now comes from the backend.
 - Removed the frontend mock prediction mode from production service configuration.
 
 ### Pending
 
-- Manual app validation with screenshots using the frontend connected to real backend data.
 - Cloud deployment decision.
 - Frontend UX review or alternative beta flow.
 

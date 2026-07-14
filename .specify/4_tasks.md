@@ -126,7 +126,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia: `notebooks/02_eda_exploratory.ipynb` incluye revision de nulos, duplicados, target, distribuciones numericas, variables categoricas, relacion con target, correlaciones, interpretaciones y conclusiones finales.
 - Comando de verificacion: `rg -n "TODO|a completar" notebooks/02_eda_exploratory.ipynb`.
 
-### [~] T-1.5 Interpretar graficos para negocio
+### [x] T-1.5 Interpretar graficos para negocio
 
 - Archivos afectados: `reports/model_report.md`, `docs/business_presentation/`.
 - Accion: escribir interpretaciones simples de los graficos principales.
@@ -136,7 +136,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-1.4.
 - Criterio de verificacion: cada grafico usado en presentacion tiene una lectura clara.
 - Avance: interpretaciones tecnicas agregadas en `notebooks/02_eda_exploratory.ipynb`.
-- Pendiente: trasladar las lecturas principales a informe o presentacion de negocio cuando se definan esos entregables.
+- Evidencia: lecturas principales trasladadas a `docs/business_presentation/eda_business_insights.md`.
 - Comando de verificacion: no aplica.
 
 ## Fase 2 - Nivel Esencial MVP
@@ -201,9 +201,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia: `POST /predict` carga el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`; `GET /model/info` devuelve `random_forest_champion_v0.1.0`.
 - Evidencia frontend: la tabla de reservas, las alertas y el modal consumen reservas reales desde `GET /reservations/demo` y predicciones reales desde `POST /predict`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
-- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el Champion. Queda validacion manual con capturas en T-2.6.
+- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el Champion. La validacion manual funcional queda cerrada en T-2.6 y documentada en `reports/manual_app_validation.md`.
 
-### [ ] T-2.6 Validacion manual de app
+### [x] T-2.6 Validacion manual de app
 
 - Archivos afectados: `docs/`, `reports/`, `README.md`.
 - Accion: probar 5 entradas manuales, tomar capturas y registrar resultados.
@@ -212,6 +212,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-2.5.
 - Criterio de verificacion: capturas y checklist de validacion completos.
+- Evidencia: validacion funcional documentada en `reports/manual_app_validation.md`.
 - Comando de verificacion: no aplica.
 
 ## Fase 3 - Nivel Medio
