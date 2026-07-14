@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -14,12 +16,20 @@ from .schemas import (
 from .services.feedback_service import get_feedback_summary, save_feedback
 from .services.model_service import get_model_info, predict_cancellation
 from .services.reservation_service import get_demo_reservations
+from src.data.database import create_database_schema
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    create_database_schema()
+    yield
 
 
 app = FastAPI(
     title="Hotel Insights API",
     version="0.1.0",
     description="Initial prediction API for hotel reservation cancellation risk.",
+    lifespan=lifespan,
 )
 
 app.add_middleware(

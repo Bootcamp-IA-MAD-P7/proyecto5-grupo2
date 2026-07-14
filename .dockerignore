@@ -17,3 +17,4 @@ app/frontend/dist/
 node_modules/
 dist/
 data/raw/**/.complete/
+data/app/
