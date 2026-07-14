@@ -1,17 +1,13 @@
 from fastapi.testclient import TestClient
 
 from app.backend.main import app
-from app.backend.services import feedback_service
 from tests.test_backend_api import valid_prediction_payload
 
 
 client = TestClient(app)
 
 
-def test_prediction_feedback_smoke_flow(tmp_path, monkeypatch) -> None:
-    feedback_file = tmp_path / "prediction_feedback.csv"
-    monkeypatch.setattr(feedback_service, "FEEDBACK_FILE", feedback_file)
-
+def test_prediction_feedback_smoke_flow(feedback_database) -> None:
     health = client.get("/health")
     assert health.status_code == 200
 

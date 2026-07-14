@@ -25,6 +25,7 @@ data/raw/**/.complete/
 
 # Runtime feedback data
 data/feedback/*.csv
+data/app/*.db
 
 # Frontend
 node_modules/

@@ -121,10 +121,7 @@ def valid_feedback_payload() -> dict:
     }
 
 
-def test_feedback_is_stored_and_counted(tmp_path, monkeypatch) -> None:
-    feedback_file = tmp_path / "prediction_feedback.csv"
-    monkeypatch.setattr(feedback_service, "FEEDBACK_FILE", feedback_file)
-
+def test_feedback_is_stored_and_counted(feedback_database) -> None:
     response = client.post("/feedback", json=valid_feedback_payload())
 
     assert response.status_code == 200
@@ -137,7 +134,7 @@ def test_feedback_is_stored_and_counted(tmp_path, monkeypatch) -> None:
 
     assert summary.status_code == 200
     assert summary.json()["total_records"] == 1
-    assert feedback_file.exists()
+    assert summary.json()["storage"] == "sqlite"
 
 
 def test_feedback_rejects_invalid_payload() -> None:

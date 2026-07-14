@@ -1,7 +1,10 @@
-import csv
-import json
+from uuid import uuid4
 
+from sqlalchemy.orm import sessionmaker
+
+from src.data.database import Base, create_database_engine
 from src.data.feedback_ingestion import build_retraining_dataset, load_feedback_records
+from src.data.models import PredictionFeedback
 from src.features.preprocessing import FEATURE_COLUMNS, TARGET_COLUMN
 
 
@@ -27,61 +30,54 @@ def sample_input() -> dict:
     }
 
 
-def write_feedback_file(path, *, actual_status: str = "Canceled") -> None:
-    fieldnames = [
-        "record_id",
-        "created_at",
-        "model_version",
-        "prediction",
-        "probability",
-        "risk_level",
-        "user_feedback",
-        "actual_status",
-        "source",
-        "comments",
-        "input_json",
-    ]
-    row = {
-        "record_id": "feedback-1",
-        "created_at": "2026-07-13T10:00:00+00:00",
-        "model_version": "random_forest_champion_v0.1.0",
-        "prediction": "Canceled",
-        "probability": 0.83,
-        "risk_level": "high",
-        "user_feedback": "correct",
-        "actual_status": actual_status,
-        "source": "unit_test",
-        "comments": "",
-        "input_json": json.dumps(sample_input(), sort_keys=True),
-    }
+def create_feedback_database(tmp_path, *, actual_status: str | None) -> str:
+    database_url = f"sqlite:///{(tmp_path / f'{uuid4()}.db').as_posix()}"
+    database_engine = create_database_engine(database_url)
+    Base.metadata.create_all(bind=database_engine)
+    session_factory = sessionmaker(bind=database_engine, expire_on_commit=False)
 
-    with path.open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerow(row)
+    with session_factory() as session:
+        session.add(
+            PredictionFeedback(
+                record_id=str(uuid4()),
+                model_version="random_forest_champion_v0.1.0",
+                prediction="Canceled",
+                probability=0.83,
+                risk_level="high",
+                user_feedback="correct",
+                actual_status=actual_status,
+                source="unit_test",
+                comments=None,
+                input_data=sample_input(),
+            )
+        )
+        session.commit()
+
+    database_engine.dispose()
+    return database_url
 
 
-def test_load_feedback_records_returns_empty_dataframe_for_missing_file(tmp_path) -> None:
-    feedback = load_feedback_records(tmp_path / "missing.csv")
+def test_load_feedback_records_returns_empty_dataframe_without_schema(tmp_path) -> None:
+    database_url = f"sqlite:///{(tmp_path / 'empty.db').as_posix()}"
+
+    feedback = load_feedback_records(database_url)
 
     assert feedback.empty
 
 
 def test_build_retraining_dataset_ignores_unlabeled_feedback(tmp_path) -> None:
-    feedback_file = tmp_path / "prediction_feedback.csv"
-    write_feedback_file(feedback_file, actual_status="")
+    database_url = create_feedback_database(tmp_path, actual_status=None)
 
-    retraining_data = build_retraining_dataset(feedback_file)
+    retraining_data = build_retraining_dataset(database_url)
 
     assert retraining_data.empty
     assert list(retraining_data.columns) == FEATURE_COLUMNS + [TARGET_COLUMN]
 
 
 def test_build_retraining_dataset_flattens_labeled_feedback(tmp_path) -> None:
-    feedback_file = tmp_path / "prediction_feedback.csv"
-    write_feedback_file(feedback_file, actual_status="Canceled")
+    database_url = create_feedback_database(tmp_path, actual_status="Canceled")
 
-    retraining_data = build_retraining_dataset(feedback_file)
+    retraining_data = build_retraining_dataset(database_url)
 
     assert len(retraining_data) == 1
     assert list(retraining_data.columns) == FEATURE_COLUMNS + [TARGET_COLUMN]
