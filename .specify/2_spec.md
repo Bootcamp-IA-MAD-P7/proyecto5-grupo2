@@ -694,7 +694,7 @@ El nivel esta cerrado si:
 - Informe tecnico inicial.
 - README con instalacion y ejecucion.
 
-Estado actual: cubierto. Queda solo validacion manual de demo y revision final de redaccion antes de entrega.
+Estado actual: cubierto. La validacion manual de demo esta documentada en `reports/manual_app_validation.md`. Queda revision final de redaccion antes de entrega.
 
 ### Nivel Medio
 
