@@ -638,7 +638,7 @@ Leyenda:
 | [x] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx validados con Champion, feedback y frontend `HTTP 200`. | Optimizar imagen para despliegue si se aborda cloud. |
 | [x] | Guardado en base de datos de datos recogidos | Persistencia CSV local en `data/feedback/prediction_feedback.csv`, ignorada por Git para no subir datos operativos. | Evolucionar a SQLite/PostgreSQL si se despliega. |
 | [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
-| [x] | Tests unitarios | 19 tests activos: API, preprocessing, baseline, challenger tuning, feedback ingestion y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 22 tests activos: API, preprocessing, baseline, challenger tuning, feedback ingestion y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
