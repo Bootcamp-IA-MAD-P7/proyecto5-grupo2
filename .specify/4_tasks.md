@@ -299,7 +299,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 
 ## Fase 4 - Nivel Avanzado
 
-### [ ] T-4.1 Crear tests minimos de preprocessing
+### [x] T-4.1 Crear tests minimos de preprocessing
 
 - Archivos afectados: `tests/`, `src/features/`.
 - Accion: validar que el pipeline procesa datos validos y rechaza datos invalidos controlados.
@@ -308,6 +308,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: con guia para casos simples.
 - Dependencias: T-2.1.
 - Criterio de verificacion: tests pasan.
+- Evidencia: `tests/unit/test_preprocessing.py` verifica el contrato de features y target, el split estratificado, la transformacion sin valores `NaN` y el rechazo controlado de columnas obligatorias ausentes y clases target desconocidas.
 - Comando de verificacion: `python -m pytest`
 
 ### [x] T-4.2 Crear tests minimos de metricas
