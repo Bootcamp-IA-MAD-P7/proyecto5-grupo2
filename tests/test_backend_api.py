@@ -1,10 +1,23 @@
 from fastapi.testclient import TestClient
 
-from app.backend.main import app
+from app.backend.main import LOCAL_CORS_ORIGINS, app, get_cors_origins
 from app.backend.services import feedback_service
 
 
 client = TestClient(app)
+
+
+def test_cors_origins_include_configured_deployment_domain(monkeypatch) -> None:
+    monkeypatch.setenv(
+        "CORS_ORIGINS",
+        "https://develop.example.amplifyapp.com/, https://hotel.example.com",
+    )
+
+    origins = get_cors_origins()
+
+    assert origins[: len(LOCAL_CORS_ORIGINS)] == LOCAL_CORS_ORIGINS
+    assert "https://develop.example.amplifyapp.com" in origins
+    assert "https://hotel.example.com" in origins
 
 
 def valid_prediction_payload() -> dict:

@@ -1,0 +1,8 @@
+fastapi
+numpy
+pandas
+psycopg[binary]
+pydantic
+scikit-learn
+sqlalchemy
+uvicorn
