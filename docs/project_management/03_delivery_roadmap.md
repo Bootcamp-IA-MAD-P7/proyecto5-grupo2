@@ -122,11 +122,13 @@ Estado actual:
 - Frontend React + Vite integrado en `app/frontend`.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
-- Endpoint `GET /health`, `GET /model/info` y `POST /predict` disponibles.
+- Endpoint `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary` disponibles.
 - `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
+- `GET /reservations/demo` sirve reservas candidatas desde el CSV real para alimentar el frontend principal.
+- El frontend principal consume reservas reales, predicciones reales y feedback real.
 - Informe tecnico disponible en `reports/model_report.md` con metricas, overfitting, curva ROC, matriz de confusion, feature importance y analisis de errores del Champion.
 - Docker local inicial preparado para frontend y backend.
-- Nivel Esencial cubierto; queda validacion manual con capturas para cierre de demo.
+- Nivel Esencial cubierto; validacion manual funcional documentada en `reports/manual_app_validation.md`.
 
 ## 6. Fase 3 - Nivel medio
 
@@ -163,7 +165,9 @@ Estado actual:
 - Random Forest optimizado, comparado contra baseline y seleccionado como Champion.
 - Validacion cruzada estratificada de 3 folds documentada con F1 medio `0.8160`.
 - Tuning de hiperparametros consolidado en script reproducible.
-- Pendiente: feedback y recogida de datos nuevos.
+- Feedback implementado con `POST /feedback` y `GET /feedback/summary`.
+- Recogida de datos nuevos para futuros reentrenamientos cubierta con CSV local e ingesta en `src/data/feedback_ingestion.py`.
+- Estado: Nivel Medio cubierto.
 
 ## 7. Fase 4 - Nivel avanzado operativo
 
