@@ -19,6 +19,14 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Feedback ingestion utility for future retraining datasets.
 - End-to-end smoke test covering health, model info, prediction, feedback and feedback summary.
 - Docker validation with backend, frontend, Champion inference and feedback endpoints.
+- Real reservation candidates endpoint `GET /reservations/demo`, sourced from the CSV dataset in `data/raw/`.
+- Frontend main reservation table and alerts connected to real backend data.
+- Frontend detail modal connected to real prediction factors, recommendations and feedback persistence.
+- Backend test coverage for the real reservation endpoint contract.
+- Manual app validation report in `reports/manual_app_validation.md`.
+- Business-oriented EDA interpretation in `docs/business_presentation/eda_business_insights.md`.
+- Experiment decision table in `reports/model_report.md`.
+- Controlled invalid-input tests for missing preprocessing columns and unknown target classes.
 
 ### Changed
 
@@ -27,10 +35,14 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Updated SPEC tasks, technical SPEC and README to mark feedback, new-data collection, Docker validation and smoke flow as completed.
 - Updated README, roadmap and model report to reflect the Champion Random Forest as the model loaded by the API.
 - Updated Champion metadata and diagnostics text with final validation metrics, cross-validation and overfitting evidence.
+- Updated SPEC tasks to close `T-1.5 Interpretar graficos para negocio`.
+- Removed frontend fixture-based reservation data from the main app flow; prediction data now comes from the backend.
+- Removed the frontend mock prediction mode from production service configuration.
+- Updated SPEC tasks to close `T-3.5 Crear tabla de experimentos`.
+- Updated SPEC tasks to close `T-4.1 Crear tests minimos de preprocessing`.
 
 ### Pending
 
-- Manual app validation with screenshots.
 - Cloud deployment decision.
 - Frontend UX review or alternative beta flow.
 

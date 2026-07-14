@@ -126,7 +126,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia: `notebooks/02_eda_exploratory.ipynb` incluye revision de nulos, duplicados, target, distribuciones numericas, variables categoricas, relacion con target, correlaciones, interpretaciones y conclusiones finales.
 - Comando de verificacion: `rg -n "TODO|a completar" notebooks/02_eda_exploratory.ipynb`.
 
-### [~] T-1.5 Interpretar graficos para negocio
+### [x] T-1.5 Interpretar graficos para negocio
 
 - Archivos afectados: `reports/model_report.md`, `docs/business_presentation/`.
 - Accion: escribir interpretaciones simples de los graficos principales.
@@ -136,7 +136,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-1.4.
 - Criterio de verificacion: cada grafico usado en presentacion tiene una lectura clara.
 - Avance: interpretaciones tecnicas agregadas en `notebooks/02_eda_exploratory.ipynb`.
-- Pendiente: trasladar las lecturas principales a informe o presentacion de negocio cuando se definan esos entregables.
+- Evidencia: lecturas principales trasladadas a `docs/business_presentation/eda_business_insights.md`.
 - Comando de verificacion: no aplica.
 
 ## Fase 2 - Nivel Esencial MVP
@@ -199,10 +199,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.2.
 - Criterio de verificacion: usuario puede ingresar datos y obtener clase predicha.
 - Evidencia: `POST /predict` carga el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`; `GET /model/info` devuelve `random_forest_champion_v0.1.0`.
+- Evidencia frontend: la tabla de reservas, las alertas y el modal consumen reservas reales desde `GET /reservations/demo` y predicciones reales desde `POST /predict`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
-- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el Champion. Queda validacion manual con capturas en T-2.6.
+- Nota de estado: app frontend y backend FastAPI tienen contrato real de inferencia con el Champion. La validacion manual funcional queda cerrada en T-2.6 y documentada en `reports/manual_app_validation.md`.
 
-### [ ] T-2.6 Validacion manual de app
+### [x] T-2.6 Validacion manual de app
 
 - Archivos afectados: `docs/`, `reports/`, `README.md`.
 - Accion: probar 5 entradas manuales, tomar capturas y registrar resultados.
@@ -211,6 +212,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-2.5.
 - Criterio de verificacion: capturas y checklist de validacion completos.
+- Evidencia: validacion funcional documentada en `reports/manual_app_validation.md`.
 - Comando de verificacion: no aplica.
 
 ## Fase 3 - Nivel Medio
@@ -269,7 +271,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Resultado clave: `GET /model/info` devuelve `random_forest_champion_v0.1.0` y `RandomForestClassifier`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py` y `python -m pytest`.
 
-### [ ] T-3.5 Crear tabla de experimentos
+### [x] T-3.5 Crear tabla de experimentos
 
 - Archivos afectados: `reports/`, `README.md`.
 - Accion: registrar modelo, parametros, metricas train/validacion, overfitting y decision.
@@ -278,6 +280,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-2.2.
 - Criterio de verificacion: todos los modelos probados aparecen en la tabla.
+- Evidencia: tabla de experimentos y decision incluida en `reports/model_report.md`; tabla completa de tuning disponible en `reports/random_forest_tuning_results.csv`.
 - Comando de verificacion: no aplica.
 
 ### [x] T-3.6 Implementar feedback
@@ -291,11 +294,12 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: feedback queda persistido y se puede abrir.
 - Evidencia: `POST /feedback` guarda prediccion, probabilidad, version de modelo, input validado, feedback de usuario y estado real si se conoce en `data/feedback/prediction_feedback.csv`.
 - Evidencia adicional: `GET /feedback/summary` devuelve el numero de registros persistidos.
+- Evidencia frontend: el modal de detalle del frontend principal registra feedback mediante `POST /feedback`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
 
 ## Fase 4 - Nivel Avanzado
 
-### [ ] T-4.1 Crear tests minimos de preprocessing
+### [x] T-4.1 Crear tests minimos de preprocessing
 
 - Archivos afectados: `tests/`, `src/features/`.
 - Accion: validar que el pipeline procesa datos validos y rechaza datos invalidos controlados.
@@ -304,6 +308,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: con guia para casos simples.
 - Dependencias: T-2.1.
 - Criterio de verificacion: tests pasan.
+- Evidencia: `tests/unit/test_preprocessing.py` verifica el contrato de features y target, el split estratificado, la transformacion sin valores `NaN` y el rechazo controlado de columnas obligatorias ausentes y clases target desconocidas.
 - Comando de verificacion: `python -m pytest`
 
 ### [x] T-4.2 Crear tests minimos de metricas
@@ -330,6 +335,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Comando de verificacion: `docker compose build`, `docker compose up -d`, `GET /health`, `GET /model/info`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `curl.exe -I http://localhost:8080/` y `docker compose down`.
 - Evidencia: Docker validado con frontend nginx, backend FastAPI, Champion Random Forest y endpoints de feedback.
 - Resultado clave: Docker devuelve `random_forest_champion_v0.1.0`, prediccion correcta, feedback persistido y frontend `HTTP/1.1 200 OK`.
+- Evidencia adicional: Docker incluye `data/raw/` en la imagen backend para servir `GET /reservations/demo` y permitir que el frontend principal use reservas reales.
 
 ### [x] T-4.4 Conectar almacenamiento persistente
 
@@ -426,6 +432,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: checklist de demo completo.
 - Evidencia: `tests/integration/test_prediction_feedback_smoke.py` valida flujo completo de API con health, metadata de modelo, prediccion, feedback y resumen de feedback.
 - Evidencia Docker: flujo validado manualmente con `docker compose build`, `docker compose up -d`, endpoints backend y frontend nginx.
+- Evidencia frontend: `pnpm build` valida el frontend principal conectado al servicio real de prediccion y reservas.
 - Comando de verificacion: `python -m pytest tests/integration/test_prediction_feedback_smoke.py`.
 
 ### [ ] T-6.2 Revision final de overfitting y metricas

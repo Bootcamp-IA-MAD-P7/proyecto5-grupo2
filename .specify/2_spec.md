@@ -18,8 +18,8 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
-- Frontend actual: existe en `app/frontend` con formulario conectado al contrato de prediccion.
-- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info` y `POST /predict` usando el Champion Random Forest.
+- Frontend actual: existe en `app/frontend` con tabla, alertas, modal, formulario y feedback conectados al backend real.
+- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -255,6 +255,7 @@ Decision actual:
 - El artefacto versionado se encuentra en `models/champion/random_forest_champion.pkl`.
 - La metadata del Champion se encuentra en `models/champion/champion_metadata.json`.
 - FastAPI carga el Champion desde la metadata y expone su version en `GET /model/info` y `POST /predict`.
+- El frontend principal consume reservas candidatas desde `GET /reservations/demo`, calcula predicciones reales con `POST /predict` y registra feedback real con `POST /feedback`.
 
 ## Estado del tuning inicial
 
@@ -557,6 +558,7 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 La app debe:
 
 - Mostrar un formulario con inputs equivalentes a las features del modelo.
+- Mostrar reservas candidatas obtenidas desde el backend, no desde fixtures locales.
 - Validar tipos y rangos basicos.
 - Ejecutar el mismo preprocesamiento usado en entrenamiento.
 - Devolver la clase predicha.
@@ -566,7 +568,7 @@ La app debe:
 
 ### Inputs del usuario
 
-Inputs definitivos: TODO.
+Inputs definitivos: definidos por `PredictionRequest` en `app/backend/schemas.py` y documentados en `docs/api_contract.md`.
 
 Cada input debe documentarse con:
 
@@ -650,7 +652,11 @@ Tecnologia de app definida: frontend React + Vite y backend de inferencia con Fa
 Backend inicial disponible:
 
 - `GET /health`.
+- `GET /model/info`.
+- `GET /reservations/demo` con reservas reales derivadas del CSV de `data/raw/`.
 - `POST /predict` con inferencia del Champion Random Forest.
+- `POST /feedback`.
+- `GET /feedback/summary`.
 - Contrato documentado en `docs/api_contract.md`.
 
 Docker inicial disponible:
@@ -661,7 +667,7 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 - Validado con Champion Random Forest `random_forest_champion_v0.1.0`.
-- Validado con endpoints `GET /health`, `GET /model/info`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
+- Validado con endpoints `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
 - Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
 
 Pendiente: optimizar imagen y variables de entorno si se aborda despliegue cloud.
@@ -694,7 +700,7 @@ El nivel esta cerrado si:
 - Informe tecnico inicial.
 - README con instalacion y ejecucion.
 
-Estado actual: cubierto. Queda solo validacion manual de demo y revision final de redaccion antes de entrega.
+Estado actual: cubierto. La validacion manual de demo esta documentada en `reports/manual_app_validation.md`. Queda revision final de redaccion antes de entrega.
 
 ### Nivel Medio
 
@@ -708,6 +714,7 @@ El nivel esta cerrado si:
 - Datos nuevos disponibles para futuro reentrenamiento.
 
 Estado actual: cubierto salvo posibles mejoras de producto sobre la interfaz visual de feedback.
+El frontend principal ya no depende de datos mock para tabla, alertas ni feedback del modal.
 
 ### Nivel Avanzado
 

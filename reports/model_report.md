@@ -154,6 +154,25 @@ Se selecciona `random_forest_champion_v0.1.0` como Champion Model del proyecto.
 - La validacion cruzada confirma estabilidad razonable: F1 medio 0.8160 con desviacion 0.0071.
 - La API ya carga este Champion desde `models/champion/random_forest_champion.pkl` usando la metadata versionada.
 
+### Tabla de experimentos y decision
+
+Esta tabla resume los modelos evaluados durante el proyecto y la decision tomada sobre cada uno. La metrica principal es el F1-score de la clase `Canceled`, porque el objetivo de negocio es anticipar cancelaciones sin depender solo de la clase mayoritaria.
+
+| experimento | familia | configuracion principal | f1_train_canceled | f1_validation_canceled | gap_f1 | validation_roc_auc | decision |
+| --- | --- | --- | ---: | ---: | ---: | ---: | --- |
+| `dummy_most_frequent` | Regla base | Predice siempre `Not_Canceled` | 0.0000 | 0.0000 | 0.0000 | 0.5000 | Descartado: solo sirve como piso minimo, no detecta cancelaciones. |
+| `logistic_regression_balanced` | Modelo lineal | Pipeline con preprocessing y `class_weight='balanced'` | 0.6949 | 0.6870 | 0.0079 | 0.8604 | Baseline valido: supera al dummy y cumple overfitting, pero queda por debajo del Champion. |
+| `rf_depth16_leaf8_split16` | Random Forest | `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight='balanced_subsample'` | 0.8284 | 0.8042 | 0.0242 | 0.9347 | Challenger descartado: buen rendimiento, pero inferior al mejor Random Forest. |
+| `rf_depth20_leaf8_split16` | Random Forest | `n_estimators=200`, `max_depth=20`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight='balanced_subsample'` | 0.8393 | 0.8092 | 0.0301 | 0.9370 | Challenger descartado: muy competitivo, pero no mejora el F1 del Champion. |
+| `rf_depth18_leaf6_split12` | Random Forest | `n_estimators=200`, `max_depth=18`, `min_samples_leaf=6`, `min_samples_split=12`, `class_weight='balanced_subsample'` | 0.8450 | 0.8105 | 0.0345 | 0.9391 | Seleccionado como Champion: mejor F1 de validacion manteniendo gap inferior a 0.05. |
+
+Decision final:
+
+- Se descarta el dummy porque no detecta la clase `Canceled`.
+- Se conserva Logistic Regression como baseline interpretable y reproducible.
+- Se promociona Random Forest `rf_depth18_leaf6_split12` como Champion por mejorar F1, precision, recall y ROC-AUC frente al baseline, manteniendo overfitting bajo el limite del proyecto.
+- La tabla completa de tuning queda exportada en `reports/random_forest_tuning_results.csv`.
+
 ## Interpretabilidad y analisis de errores
 
 ### Modelo analizado

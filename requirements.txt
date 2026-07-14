@@ -6,6 +6,8 @@ numpy
 pandas
 pydantic
 pytest
+psycopg[binary]
 scikit-learn
 seaborn
+sqlalchemy
 uvicorn

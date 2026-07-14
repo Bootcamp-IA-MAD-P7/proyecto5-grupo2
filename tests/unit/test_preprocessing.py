@@ -24,6 +24,19 @@ class PreprocessingTest(unittest.TestCase):
         self.assertEqual(len(X), len(y))
         self.assertEqual(set(y.unique()), {0, 1})
 
+    def test_missing_required_column_is_rejected(self):
+        invalid_df = self.df.drop(columns=["lead_time"])
+
+        with self.assertRaisesRegex(ValueError, "Missing required columns"):
+            make_features_and_target(invalid_df)
+
+    def test_unknown_target_class_is_rejected(self):
+        invalid_df = self.df.copy()
+        invalid_df.loc[invalid_df.index[0], TARGET_COLUMN] = "Unknown_Status"
+
+        with self.assertRaisesRegex(ValueError, "Unknown target classes"):
+            make_features_and_target(invalid_df)
+
     def test_stratified_splits_keep_target_distribution(self):
         splits = prepare_data_splits(self.df)
         full_rate = self.df[TARGET_COLUMN].eq("Canceled").mean()
