@@ -271,7 +271,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Resultado clave: `GET /model/info` devuelve `random_forest_champion_v0.1.0` y `RandomForestClassifier`.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py` y `python -m pytest`.
 
-### [ ] T-3.5 Crear tabla de experimentos
+### [x] T-3.5 Crear tabla de experimentos
 
 - Archivos afectados: `reports/`, `README.md`.
 - Accion: registrar modelo, parametros, metricas train/validacion, overfitting y decision.
@@ -280,6 +280,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-2.2.
 - Criterio de verificacion: todos los modelos probados aparecen en la tabla.
+- Evidencia: tabla de experimentos y decision incluida en `reports/model_report.md`; tabla completa de tuning disponible en `reports/random_forest_tuning_results.csv`.
 - Comando de verificacion: no aplica.
 
 ### [x] T-3.6 Implementar feedback

@@ -427,6 +427,7 @@ Estado actual destacado:
 [x] T-3.2 Aplicar validacion cruzada
 [x] T-3.3 Optimizar hiperparametros
 [x] T-3.4 Seleccionar Champion Model
+[x] T-3.5 Crear tabla de experimentos
 [x] T-3.6 Implementar feedback
 [x] T-4.2 Crear tests minimos de metricas
 [x] T-4.3 Dockerizar app

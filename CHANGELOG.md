@@ -25,6 +25,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Backend test coverage for the real reservation endpoint contract.
 - Manual app validation report in `reports/manual_app_validation.md`.
 - Business-oriented EDA interpretation in `docs/business_presentation/eda_business_insights.md`.
+- Experiment decision table in `reports/model_report.md`.
 
 ### Changed
 
@@ -36,6 +37,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Updated SPEC tasks to close `T-1.5 Interpretar graficos para negocio`.
 - Removed frontend fixture-based reservation data from the main app flow; prediction data now comes from the backend.
 - Removed the frontend mock prediction mode from production service configuration.
+- Updated SPEC tasks to close `T-3.5 Crear tabla de experimentos`.
 
 ### Pending
 
