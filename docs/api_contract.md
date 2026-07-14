@@ -14,7 +14,15 @@ El frontend debe enviar los datos de una reserva hotelera al backend y recibir u
 - Version del modelo.
 - Factores principales y recomendacion operativa.
 
-## 2. Base URL local
+## 2. Base URL
+
+AWS:
+
+```text
+https://d3lxpalnzir74p.cloudfront.net/api
+```
+
+Backend local:
 
 ```text
 http://localhost:8000
@@ -25,6 +33,8 @@ El frontend puede configurar esta URL mediante:
 ```text
 VITE_API_URL
 ```
+
+En Docker y AWS se usa `/api` para que nginx reenvie las solicitudes al backend dentro de la red de contenedores.
 
 Ejecutar backend local desde la raiz del repositorio:
 
@@ -307,10 +317,11 @@ Valores permitidos:
 Almacenamiento actual:
 
 ```text
-data/feedback/prediction_feedback.csv
+SQLite local mediante SQLAlchemy.
+PostgreSQL en Amazon RDS para el despliegue AWS.
 ```
 
-Los CSV operativos de feedback estan ignorados por Git.
+La conexión se configura mediante `DATABASE_URL`. La API nunca devuelve credenciales ni endpoints privados.
 
 ## 13. Feedback Summary
 
@@ -323,9 +334,11 @@ Devuelve un resumen minimo de registros de feedback persistidos.
 ```json
 {
   "total_records": 1,
-  "storage": "ruta/local/data/feedback/prediction_feedback.csv"
+  "storage": "postgresql"
 }
 ```
+
+`storage` puede ser `sqlite` en local o `postgresql` en AWS.
 
 ## 14. Error Response
 
@@ -360,4 +373,4 @@ Formato esperado:
 - Mantener sincronizada la version del Champion si se promociona un nuevo modelo.
 - Confirmar estrategia de categorias no vistas.
 - Confirmar si la probabilidad corresponde siempre a la clase `Canceled`.
-- Evolucionar feedback CSV a SQLite/PostgreSQL si se aborda despliegue cloud.
+- Mantener sincronizada la capa SQLAlchemy si cambia el esquema de feedback.
