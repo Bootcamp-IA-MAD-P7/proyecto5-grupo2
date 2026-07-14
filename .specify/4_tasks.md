@@ -292,9 +292,10 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-2.5.
 - Criterio de verificacion: feedback queda persistido y se puede abrir.
-- Evidencia: `POST /feedback` guarda prediccion, probabilidad, version de modelo, input validado, feedback de usuario y estado real si se conoce en `data/feedback/prediction_feedback.csv`.
-- Evidencia adicional: `GET /feedback/summary` devuelve el numero de registros persistidos.
+- Evidencia: `POST /feedback` guarda prediccion, probabilidad, version de modelo, input validado, feedback de usuario y estado real mediante la capa SQLAlchemy.
+- Evidencia adicional: `GET /feedback/summary` devuelve el numero de registros persistidos y el backend de almacenamiento sin exponer credenciales.
 - Evidencia frontend: el modal de detalle del frontend principal registra feedback mediante `POST /feedback`.
+- Evidencia operativa: SQLite se usa por defecto en local y PostgreSQL en Amazon RDS en el despliegue AWS.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
 
 ## Fase 4 - Nivel Avanzado
@@ -346,11 +347,12 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no como responsable unico.
 - Dependencias: T-3.6.
 - Criterio de verificacion: datos persisten tras reiniciar app.
-- Evidencia: almacenamiento CSV local en `data/feedback/prediction_feedback.csv`, ignorado por Git mediante `data/feedback/*.csv`.
-- Evidencia adicional: `src/data/feedback_ingestion.py` permite convertir feedback etiquetado con `actual_status` en dataset compatible con el pipeline para futuros reentrenamientos.
+- Evidencia: capa SQLAlchemy con SQLite local en `data/app/hotel_insights.db` y PostgreSQL en Amazon RDS para el despliegue AWS.
+- Evidencia adicional: `src/data/feedback_ingestion.py` consulta registros etiquetados con `actual_status` y genera un dataset compatible con el pipeline para futuros reentrenamientos.
+- Evidencia de persistencia: `GET /feedback/summary` mantiene el contador tras reiniciar el backend desplegado y devuelve `storage: postgresql`.
 - Comando de verificacion: `python -m pytest tests/unit/test_feedback_ingestion.py`.
 
-### [~] T-4.5 Documentar instalacion y ejecucion
+### [x] T-4.5 Documentar instalacion y ejecucion
 
 - Archivos afectados: `README.md`, `docs/project_management/`.
 - Accion: escribir pasos para entorno local, app, tests y Docker.
@@ -359,8 +361,21 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: T-2.5, T-4.3.
 - Criterio de verificacion: otra persona puede seguir el README.
-- Comando de verificacion: ejecutar comandos documentados.
-- Nota de estado: documentada ejecucion de frontend, backend, contrato API, tests, Docker y feedback. Queda revisar instrucciones finales antes de entrega.
+- Comando de verificacion: ejecutar comandos documentados y revisar `docs/aws_deployment.md`.
+- Evidencia: README actualizado para local y Docker; `docs/aws_deployment.md` documenta arquitectura, configuracion, despliegue manual y automatico, seguridad, verificacion y retirada de AWS.
+
+### [x] T-4.6 Desplegar app y automatizar entrega
+
+- Archivos afectados: `docker-compose.ec2.yml`, `.github/workflows/deploy-aws-ec2.yml`, `scripts/deploy_ec2.sh`, `docs/aws_deployment.md`.
+- Accion: desplegar la aplicacion web y automatizar la actualizacion desde `develop`.
+- Responsable sugerido: I3 con revision de I2 e I4.
+- Dificultad: alta.
+- Apto junior: no como responsable unico.
+- Dependencias: T-4.3, T-4.4, T-4.5.
+- Criterio de verificacion: URL HTTPS publica disponible, Champion cargado, PostgreSQL operativo y despliegue automatico verificado.
+- Evidencia: CloudFront publica la app; EC2 ejecuta Docker Compose; RDS PostgreSQL persiste feedback; GitHub Actions despliega mediante OIDC y SSM tras cada merge en `develop`.
+- Evidencia de seguridad: RDS es privado y el puerto HTTP de EC2 solo admite trafico desde la lista administrada de CloudFront.
+- URL verificada: `https://d3lxpalnzir74p.cloudfront.net`.
 
 ## Fase 5 - Nivel Experto
 
@@ -435,7 +450,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia frontend: `pnpm build` valida el frontend principal conectado al servicio real de prediccion y reservas.
 - Comando de verificacion: `python -m pytest tests/integration/test_prediction_feedback_smoke.py`.
 
-### [ ] T-6.2 Revision final de overfitting y metricas
+### [x] T-6.2 Revision final de overfitting y metricas
 
 - Archivos afectados: `reports/model_report.md`, `docs/technical_presentation/`.
 - Accion: revisar que metricas finales coincidan con informe, README y presentacion.
@@ -444,7 +459,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si para checklist, no para decision tecnica.
 - Dependencias: T-3.4.
 - Criterio de verificacion: overfitting < 5% demostrado y sin contradicciones.
-- Comando de verificacion: TODO.
+- Evidencia: `docs/technical_presentation/model_metrics_review.md` alinea modelo, version, F1, validacion cruzada y gap de overfitting con `reports/model_report.md`, README y artefactos Champion.
+- Resultado: gap F1 del Champion `0.0345`, inferior al limite `0.05`.
+- Comando de verificacion: `python -m pytest tests/unit/test_challenger_training.py`.
 
 ### [ ] T-6.3 Preparar presentacion de negocio
 

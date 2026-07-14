@@ -149,7 +149,7 @@ Mejorar el modelo con ensemble, validacion cruzada, tuning, Champion Model y fee
 ### Tareas paralelas
 
 - ML Core: entrenar Random Forest o Gradient Boosting y comparar con baseline.
-- App / Producto: guardar feedback en CSV o SQLite.
+- App / Producto: guardar feedback mediante la capa SQLAlchemy y validar SQLite/PostgreSQL según entorno.
 - MLOps / Experto: crear reglas de versionado Champion/Challenger.
 - QA / Docs: actualizar informe con feature importance y analisis de errores.
 
@@ -178,7 +178,7 @@ Mejorar el modelo con ensemble, validacion cruzada, tuning, Champion Model y fee
 
 ### Objetivo
 
-Preparar el proyecto para ejecucion controlada con tests, Docker y almacenamiento persistente.
+Preparar el proyecto para ejecucion controlada con tests, Docker, almacenamiento persistente y despliegue web.
 
 ### Responsables
 
@@ -201,12 +201,22 @@ Preparar el proyecto para ejecucion controlada con tests, Docker y almacenamient
 - Base de datos o almacenamiento persistente.
 - README con instalacion y ejecucion.
 - Smoke test documentado.
+- Despliegue HTTPS reproducible y automatizado.
 
 ### Verificacion
 
 - Tests pasan.
 - La app arranca con el comando documentado.
 - Docker levanta la app o queda documentado el bloqueo.
+- El despliegue carga el Champion, conecta PostgreSQL y supera el health check.
+
+### Estado alcanzado
+
+- SQLite disponible para desarrollo local y PostgreSQL en Amazon RDS para el entorno desplegado.
+- Docker Compose ejecutado en Amazon EC2.
+- Amazon CloudFront proporciona acceso HTTPS público.
+- GitHub Actions despliega desde `develop` mediante OIDC y AWS Systems Manager.
+- Operación documentada en `docs/aws_deployment.md`.
 
 ### Riesgos
 

@@ -605,8 +605,9 @@ Estado actual:
 
 - Endpoint de escritura: `POST /feedback`.
 - Endpoint de resumen: `GET /feedback/summary`.
-- Almacenamiento local: `data/feedback/prediction_feedback.csv`.
-- Los CSV operativos de feedback se ignoran en Git mediante `data/feedback/*.csv`.
+- Almacenamiento local por defecto: SQLite en `data/app/hotel_insights.db`.
+- Almacenamiento desplegado: PostgreSQL administrado en Amazon RDS mediante `DATABASE_URL`.
+- La base local y los archivos de entorno operativos se ignoran en Git.
 - Utilidad de ingesta para reentrenamiento: `src/data/feedback_ingestion.py`.
 - El dataset de reentrenamiento se construye solo con registros que tienen `actual_status` conocido.
 
@@ -615,12 +616,13 @@ Estado actual:
 Nivel Medio minimo:
 
 - Guardar feedback y datos nuevos en CSV o SQLite.
-- Estado actual: cubierto con CSV local en `data/feedback/prediction_feedback.csv`.
+- Estado actual: cubierto con SQLite local mediante SQLAlchemy.
 
 Nivel Avanzado recomendado:
 
 - SQLite o PostgreSQL para predicciones y feedback.
-- Estado actual: CSV local implementado; SQLite o PostgreSQL quedan como mejora posterior si el despliegue lo requiere.
+- Estado actual: cubierto con PostgreSQL en Amazon RDS para el despliegue AWS.
+- La misma capa SQLAlchemy usa SQLite como alternativa local y PostgreSQL en producción.
 
 No guardar datos personales sensibles salvo que sean estrictamente necesarios y esten justificados.
 
@@ -669,8 +671,23 @@ Docker inicial disponible:
 - Validado con Champion Random Forest `random_forest_champion_v0.1.0`.
 - Validado con endpoints `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
 - Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
+- `docker-compose.ec2.yml` disponible para la ejecución en AWS con PostgreSQL externo.
+- `scripts/deploy_ec2.sh` valida configuración, reconstruye servicios y ejecuta health checks.
 
-Pendiente: optimizar imagen y variables de entorno si se aborda despliegue cloud.
+## Despliegue web y CI/CD
+
+Despliegue operativo disponible en AWS:
+
+- URL pública HTTPS: `https://d3lxpalnzir74p.cloudfront.net`.
+- CloudFront como punto de entrada público y terminación HTTPS.
+- EC2 con Docker Compose para nginx, frontend React y backend FastAPI.
+- RDS PostgreSQL privado para feedback y datos operativos.
+- GitHub Actions despliega automáticamente cada merge en `develop`.
+- Autenticación GitHub-AWS mediante OIDC, sin claves AWS permanentes en GitHub.
+- AWS Systems Manager ejecuta el despliegue sin depender de SSH desde CI.
+- El puerto HTTP de EC2 solo admite orígenes de la lista administrada de CloudFront.
+
+Guía operativa: `docs/aws_deployment.md`.
 
 ## Documentacion e informes
 
@@ -726,7 +743,7 @@ El nivel esta cerrado si:
 - App desplegada o preparada para despliegue.
 - Smoke test documentado.
 
-Estado actual: Docker, almacenamiento CSV local, tests y smoke test estan cubiertos. El despliegue web queda fuera del cierre actual.
+Estado actual: cubierto. Docker, PostgreSQL en RDS, tests, smoke test, despliegue HTTPS en AWS y entrega automática desde `develop` están verificados.
 
 ### Nivel Experto
 
