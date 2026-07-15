@@ -625,6 +625,7 @@ v0.2.0-frontend-mock
 v0.4.0-essential-mvp
 v0.5.0-operational-mvp
 v0.6.0-aws-deployment
+v0.7.0-mlops-monitoring
 ```
 
 Significado:
@@ -634,6 +635,7 @@ Significado:
 - `v0.4.0-essential-mvp`: Nivel Esencial cubierto con EDA, baseline, overfitting, API con inferencia real e informe técnico.
 - `v0.5.0-operational-mvp`: Champion integrado, Docker, feedback y smoke test operativo.
 - `v0.6.0-aws-deployment`: despliegue HTTPS en AWS, PostgreSQL RDS y entrega automática desde `develop`.
+- `v0.7.0-mlops-monitoring`: holdout final, Alembic, auditoría de predicciones, Data Drift, observabilidad y quality gates de despliegue.
 
 Siguiente hito previsto:
 

@@ -6,6 +6,14 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+### Pending
+
+- Final business and technical presentations.
+- Final Jira and delivery checklist alignment.
+- Expert-scope evaluation for neural network, A/B testing and conditional model promotion; none of these items has been discarded.
+
+## [v0.7.0-mlops-monitoring] - 2026-07-15
+
 ### Added
 
 - One-time final Champion holdout protocol, guarded evaluation script and automated safety tests.
@@ -47,12 +55,6 @@ This project follows an incremental delivery approach. Versions and tags will be
 ### Removed
 
 - Legacy `apprunner.yaml`; the supported AWS runtime is CloudFront, EC2, Docker Compose and RDS.
-
-### Pending
-
-- Final business and technical presentations.
-- Final Jira and delivery checklist alignment.
-- Expert-scope evaluation for neural network, A/B testing and conditional model promotion; none of these items has been discarded.
 
 ## [v0.6.0-aws-deployment] - 2026-07-14
 
