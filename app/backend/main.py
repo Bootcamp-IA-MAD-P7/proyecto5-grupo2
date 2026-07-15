@@ -1,10 +1,10 @@
-from contextlib import asynccontextmanager
 import os
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .schemas import (
+    DriftReportResponse,
     FeedbackRequest,
     FeedbackHistoryResponse,
     FeedbackRecordResponse,
@@ -17,6 +17,7 @@ from .schemas import (
     PredictionRequest,
     PredictionResponse,
 )
+from .services.drift_service import get_data_drift_report
 from .services.feedback_service import (
     get_feedback_history,
     get_feedback_summary,
@@ -25,7 +26,6 @@ from .services.feedback_service import (
 )
 from .services.model_service import get_model_info, predict_cancellation
 from .services.reservation_service import get_demo_reservations
-from src.data.database import create_database_schema
 
 
 LOCAL_CORS_ORIGINS = [
@@ -47,17 +47,10 @@ def get_cors_origins() -> list[str]:
     return list(dict.fromkeys([*LOCAL_CORS_ORIGINS, *deployment_origins]))
 
 
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    create_database_schema()
-    yield
-
-
 app = FastAPI(
     title="Hotel Insights API",
     version="0.1.0",
     description="Initial prediction API for hotel reservation cancellation risk.",
-    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -113,3 +106,8 @@ def update_feedback(
     if updated_record is None:
         raise HTTPException(status_code=404, detail="Feedback no encontrado.")
     return updated_record
+
+
+@app.get("/monitoring/drift", response_model=DriftReportResponse)
+def data_drift() -> DriftReportResponse:
+    return get_data_drift_report()

@@ -209,6 +209,7 @@ Estado actual:
 - Tests backend y build frontend verificados por GitHub Actions.
 - Docker Compose validado en local y en EC2.
 - PostgreSQL desplegado en Amazon RDS privado.
+- Esquema SQLite/PostgreSQL versionado con Alembic y migrado antes del arranque de la API.
 - CloudFront publica la app mediante HTTPS.
 - GitHub Actions despliega automáticamente en EC2 mediante OIDC y SSM.
 - Guía operativa disponible en `docs/aws_deployment.md`.
@@ -225,14 +226,14 @@ Incluye:
 - Red neuronal experimental.
 - Champion/Challenger.
 - A/B Testing real o simulado.
-- Data Drift.
+- Data Drift mediante perfil de entrenamiento versionado, PSI y endpoint de monitorizacion. Completado.
 - Auto-reemplazo condicionado.
 
 Entregables:
 
 - Modelo Challenger.
 - Comparación Champion vs Challenger.
-- Script o reporte de drift.
+- Script y endpoint de reporte de drift.
 - Reglas de promoción de modelos.
 - Diagrama de ciclo MLOps.
 - Documentación de limitaciones.

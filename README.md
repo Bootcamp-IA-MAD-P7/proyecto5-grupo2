@@ -107,12 +107,15 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 23 tests disponible en `tests/`.
+- Suite Python de 30 tests disponible en `tests/`.
+- Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
 - Configuración Docker validada para frontend, backend y Champion Random Forest.
 - Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
+- Monitorización PSI disponible en `GET /monitoring/drift`, con perfil de entrenamiento versionado y control de muestra mínima.
+- Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0001_prediction_feedback`.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
 - Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
 - URL pública HTTPS disponible en `https://d3lxpalnzir74p.cloudfront.net`.
@@ -151,7 +154,7 @@ Pendiente principal:
 | Machine Learning | Scikit-learn, Pandas | Preprocesamiento, baseline, challenger, métricas y análisis. |
 | Aplicación web | React, Vite, FastAPI | Interfaz de predicción y API de inferencia. |
 | Calidad | Pytest, GitHub Actions | Tests backend, preprocessing, baseline y checks de PR. |
-| Operación | Docker, Docker Compose, AWS | Contenedores desplegados en EC2, HTTPS con CloudFront y PostgreSQL en RDS. |
+| Operación | Docker, Docker Compose, Alembic, AWS | Migraciones controladas, contenedores en EC2, HTTPS con CloudFront y PostgreSQL en RDS. |
 | Entrega | GitHub Actions, OIDC, AWS SSM | CI para backend/frontend y CD automático desde `develop`. |
 | Gestión | Git, GitHub, Jira | Ramas, PRs, changelog, tags, issues/historias y seguimiento. |
 
@@ -172,6 +175,9 @@ Pendiente principal:
 |   |-- 2_spec.md
 |   |-- 3_plan.md
 |   `-- 4_tasks.md
+|-- alembic/
+|   |-- versions/
+|   `-- env.py
 |-- app/
 |   |-- backend/
 |   |   |-- Dockerfile
@@ -194,6 +200,7 @@ Pendiente principal:
 |-- docs/
 |   |-- assets/
 |   |-- aws_deployment.md
+|   |-- database_migrations.md
 |   |-- business_presentation/
 |   |-- project_management/
 |   `-- technical_presentation/
@@ -203,8 +210,10 @@ Pendiente principal:
 |   `-- data_dictionary.md
 |-- src/
 |-- scripts/
-|   `-- deploy_ec2.sh
+|   |-- deploy_ec2.sh
+|   `-- start_backend.sh
 |-- tests/
+|-- alembic.ini
 |-- CHANGELOG.md
 |-- docker-compose.ec2.yml
 |-- docker-compose.yml
@@ -221,6 +230,7 @@ POST /predict
 POST /feedback
 GET /feedback/summary
 GET /reservations/demo
+GET /monitoring/drift
 ```
 
 `GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
@@ -307,6 +317,15 @@ pip install -r requirements.txt
 
 Las dependencias directas tienen versiones exactas para que desarrollo, CI y Docker utilicen un entorno reproducible. La imagen del backend instala el subconjunto de producción definido en `requirements-backend.txt`.
 
+Aplicar migraciones antes de arrancar el backend fuera de Docker:
+
+```bash
+python -m alembic upgrade head
+python -m alembic current
+```
+
+La política completa de migraciones se documenta en [`docs/database_migrations.md`](docs/database_migrations.md).
+
 Comprobar Python activo:
 
 ```bash
@@ -324,6 +343,8 @@ deactivate
 ## 9. Docker
 
 El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
+
+El contenedor backend ejecuta automáticamente `alembic upgrade head` antes de iniciar FastAPI. Si una migración falla, la API no arranca y el despliegue no supera el health check.
 
 Servicios:
 
@@ -473,6 +494,7 @@ Estado actual destacado:
 [x] T-4.4 Conectar almacenamiento persistente
 [x] T-4.5 Documentar instalacion y ejecucion
 [x] T-4.6 Desplegar app y automatizar entrega
+[x] T-4.7 Versionar el esquema de base de datos
 [x] T-6.1 Smoke test completo
 [x] T-6.2 Revisar metricas finales y overfitting
 ```
@@ -656,7 +678,7 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con Pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener test reservado para una revisión final imparcial. |
+| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con Pipeline reproducible. Holdout final: F1 `Canceled` `0.8258` y ROC-AUC `0.9499`. | Test cerrado; no reutilizar para tuning. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Champion Random Forest gap F1 `0.0345`, ambos bajo el límite `0.05`. | Mantener control si se reentrena el Champion. |
 | [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, Champion real, Docker y despliegue HTTPS en AWS verificados. | Mantener disponible hasta la entrega o demostración final. |
@@ -677,9 +699,9 @@ Leyenda:
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
-| [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS en AWS. | Mantener migraciones controladas si cambia el esquema. |
+| [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 23 tests activos: API, preprocessing, baseline, challenger tuning, persistencia, ingesta y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 34 tests activos: API, preprocessing, modelos, holdout, persistencia, migraciones, ingesta, smoke flow y data drift. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
@@ -687,7 +709,7 @@ Leyenda:
 | --- | --- | --- | --- |
 | [ ] | Experimentos con redes neuronales | No iniciado. | Valorar si aporta frente a modelos clásicos. |
 | [ ] | A/B Testing para comparar modelos | Documentado como posibilidad MLOps. | Definir Champion/Challenger y reparto de tráfico o evaluación offline. |
-| [ ] | Monitorización de Data Drift | Documentado como objetivo experto. | Definir variables a monitorizar y umbrales de alerta. |
+| [x] | Monitorización de Data Drift | Perfil de entrenamiento versionado, PSI para todas las variables, endpoint `GET /monitoring/drift` y tests de estabilidad, alerta y muestra insuficiente. | Acumular al menos 100 registros reales; hasta entonces el estado esperado es `insufficient_data`. |
 | [ ] | Auto-reemplazo condicionado de modelos | Documentado como objetivo experto. | Diseñar política de promoción solo si el nuevo modelo supera métricas mínimas. |
 
 ---
@@ -718,7 +740,7 @@ Prioridades inmediatas:
 2. Mantener capturas finales de la demo si se requieren evidencias visuales.
 3. Revisar frontend y narrativa comercial antes de la presentación.
 4. Alinear Jira con las tareas cerradas en SPEC.
-5. Decidir si se aborda una capa experta: drift, A/B testing o auto-reemplazo condicionado.
+5. Decidir si se aborda otra capa experta: red neuronal, A/B testing o promoción condicionada.
 6. Planificar la retirada de recursos AWS cuando termine la demostración.
 
 ---

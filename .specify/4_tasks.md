@@ -253,8 +253,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-3.2.
 - Criterio de verificacion: mejores parametros y comparacion documentados.
 - Evidencia: la configuracion optimizada esta aplicada en `src/models/train_challengers.py`, el artefacto fue regenerado en `models/challengers/random_forest_challenger.pkl` y el resultado esta documentado en `reports/model_report.md`.
-- Mejor configuracion: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
-- Resultado: F1 validacion 0,8042, gap train-validacion 0,0242 y ROC-AUC validacion 0,9347.
+- Mejor configuracion: `n_estimators=200`, `max_depth=18`, `min_samples_leaf=6`, `min_samples_split=12`, `class_weight="balanced_subsample"`.
+- Resultado: F1 validacion 0,8105, gap train-validacion 0,0345 y ROC-AUC validacion 0,9391.
 - Verificacion automatizada: `tests/unit/test_challenger_training.py` comprueba hiperparametros, F1 minimo y regla de overfitting.
 - Comando de verificacion: `python -m pytest tests/unit/test_challenger_training.py`.
 
@@ -269,6 +269,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: Champion versionado y explicado.
 - Evidencia: Random Forest queda promocionado como Champion en `models/champion/random_forest_champion.pkl`, con metadata en `models/champion/champion_metadata.json` y API FastAPI cargandolo desde `app/backend/services/model_service.py`.
 - Resultado clave: `GET /model/info` devuelve `random_forest_champion_v0.1.0` y `RandomForestClassifier`.
+- Evaluacion final: holdout ejecutado una unica vez sobre 5442 filas; F1 `Canceled` 0,8258, ROC-AUC 0,9499 y gap validacion-test 0,0153.
+- Evidencia final: `docs/champion_holdout_protocol.md`, `reports/champion_test_metrics.json` y metadata Champion actualizada.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py` y `python -m pytest`.
 
 ### [x] T-3.5 Crear tabla de experimentos
@@ -380,6 +382,20 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia de seguridad: RDS es privado y el puerto HTTP de EC2 solo admite trafico desde la lista administrada de CloudFront.
 - URL verificada: `https://d3lxpalnzir74p.cloudfront.net`.
 
+### [x] T-4.7 Versionar el esquema de base de datos
+
+- Archivos afectados: `alembic/`, `alembic.ini`, `src/data/`, `app/backend/Dockerfile`, `scripts/start_backend.sh`, `tests/`, `docs/`.
+- Accion: sustituir la creacion implicita de tablas por migraciones Alembic reproducibles.
+- Responsable sugerido: I3.
+- Dificultad: alta.
+- Apto junior: no como responsable unico.
+- Dependencias: T-4.4, T-4.6.
+- Criterio de verificacion: SQLite y PostgreSQL alcanzan la revision `0001_prediction_feedback` sin perder registros existentes.
+- Evidencia: migracion inicial compatible con bases nuevas y con la tabla historica creada antes de Alembic; un esquema incompatible detiene el despliegue.
+- Evidencia operativa: `scripts/start_backend.sh` ejecuta `alembic upgrade head` antes de iniciar FastAPI en Docker local y AWS.
+- Tests: `tests/unit/test_database_migrations.py` cubre creacion, adopcion sin perdida y rechazo de schema incompatible.
+- Comando de verificacion: `python -m pytest tests/unit/test_database_migrations.py` y `python -m alembic current`.
+
 ## Fase 5 - Nivel Experto
 
 ### [ ] T-5.1 Entrenar red neuronal experimental
@@ -404,16 +420,21 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: comparacion Champion vs Challenger reproducible.
 - Comando de verificacion: TODO.
 
-### [ ] T-5.3 Medir Data Drift
+### [x] T-5.3 Medir Data Drift
 
-- Archivos afectados: `src/mlops/`, `reports/`, `data/feedback/`.
-- Accion: calcular PSI, KS Test o metodo equivalente entre entrenamiento y datos nuevos.
+- Archivos afectados: `src/mlops/`, `models/monitoring/`, `app/backend/`, `tests/`, `docs/`.
+- Accion: calcular PSI entre el perfil congelado de entrenamiento y los inputs nuevos persistidos mediante feedback.
 - Responsable sugerido: I3.
 - Dificultad: alta.
 - Apto junior: no.
 - Dependencias: T-3.6.
 - Criterio de verificacion: reporte de drift con umbrales.
-- Comando de verificacion: TODO.
+- Evidencia: `models/monitoring/training_reference_profile.json` contiene el perfil versionado del split de entrenamiento y `GET /monitoring/drift` devuelve el estado global y el PSI por variable cuando existen al menos 100 registros validos.
+- Umbrales: PSI menor de 0.10 estable; entre 0.10 y 0.25 aviso; desde 0.25 drift alto.
+- Comportamiento seguro: con menos de 100 registros devuelve `insufficient_data` y nunca promociona modelos automaticamente.
+- Tests: casos de muestra insuficiente, distribucion estable, drift alto, transformacion de feedback y contrato API.
+- Documentacion: `docs/data_drift_monitoring.md` y `docs/api_contract.md`.
+- Comando de verificacion: `python -m pytest tests/unit/test_data_drift.py tests/test_backend_api.py`.
 
 ### [ ] T-5.4 Auto-reemplazo condicionado
 

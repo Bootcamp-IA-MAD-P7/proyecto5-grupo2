@@ -15,11 +15,11 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Target: `booking_status`.
 - Metrica principal: F1-score de la clase `Canceled`.
 - Metricas secundarias: precision, recall, ROC-AUC y matriz de confusion.
-- Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
+- Tecnologia de app: frontend web con React + Vite y backend de inferencia con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con tabla, alertas, modal, formulario y feedback conectados al backend real.
-- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
+- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -244,10 +244,10 @@ Resultados de validacion frente al baseline:
 Validacion cruzada:
 
 - Estrategia: Stratified K-Fold de 3 folds.
-- F1 medio clase `Canceled`: 0,8082.
-- Desviacion F1: 0,0053.
-- ROC-AUC medio: 0,9391.
-- Desviacion ROC-AUC: 0,0015.
+- F1 medio clase `Canceled`: 0,8160.
+- Desviacion F1: 0,0071.
+- ROC-AUC medio: 0,9426.
+- Desviacion ROC-AUC: 0,0017.
 
 Decision actual:
 
@@ -256,6 +256,8 @@ Decision actual:
 - La metadata del Champion se encuentra en `models/champion/champion_metadata.json`.
 - FastAPI carga el Champion desde la metadata y expone su version en `GET /model/info` y `POST /predict`.
 - El frontend principal consume reservas candidatas desde `GET /reservations/demo`, calcula predicciones reales con `POST /predict` y registra feedback real con `POST /feedback`.
+- El holdout final se evaluo una unica vez: F1 `Canceled` 0,8258, ROC-AUC 0,9499 y gap F1 validacion-test 0,0153.
+- La evidencia queda registrada en `reports/champion_test_metrics.json`; el test queda cerrado para nuevos ajustes.
 
 ## Estado del tuning inicial
 
@@ -264,19 +266,20 @@ Busqueda controlada ejecutada para `RandomForestClassifier`.
 Configuracion ganadora aplicada:
 
 - `n_estimators=200`.
-- `max_depth=16`.
-- `min_samples_leaf=8`.
-- `min_samples_split=16`.
+- `max_depth=18`.
+- `min_samples_leaf=6`.
+- `min_samples_split=12`.
 - `class_weight="balanced_subsample"`.
 
 Comparacion de validacion:
 
 - Random Forest inicial (`max_depth=14`, `min_samples_leaf=12`): F1 = 0,7952; gap = 0,0186; ROC-AUC = 0,9287.
-- Random Forest optimizado (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
+- Random Forest intermedio (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
+- Random Forest final (`max_depth=18`, `min_samples_leaf=6`): F1 = 0,8105; gap = 0,0345; ROC-AUC = 0,9391.
 
 Decision actual:
 
-- La configuracion optimizada mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
+- La configuracion final mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
 - La configuracion esta aplicada en `src/models/train_challengers.py`, el artefacto esta regenerado en `models/challengers/random_forest_challenger.pkl` y la verificacion queda cubierta por `tests/unit/test_challenger_training.py`.
 
 ## Metricas obligatorias
@@ -461,25 +464,33 @@ TODO: confirmar si el A/B sera real en app, simulado con dataset holdout o docum
 
 Objetivo: detectar si los datos nuevos se alejan de los datos de entrenamiento.
 
-Contrato minimo:
+Contrato implementado:
 
-- Comparar distribucion de datos de entrenamiento contra datos nuevos o feedback acumulado.
-- Medir drift por feature relevante.
-- Generar alerta si el drift supera umbral.
+- El perfil de referencia se genera exclusivamente con el split de entrenamiento estratificado y queda versionado en `models/monitoring/training_reference_profile.json`.
+- Los datos actuales proceden de los inputs persistidos mediante `POST /feedback`; no requieren que el resultado real este etiquetado.
+- Se calcula PSI para todas las variables del contrato de entrada.
+- El calculo requiere al menos 100 registros actuales validos; con menos datos devuelve `insufficient_data`.
+- `GET /monitoring/drift` publica estado global, PSI maximo, variables alertadas y detalle por variable.
 
-Metodos sugeridos:
+Metodo implementado:
 
-- PSI para variables numericas o discretizadas.
-- KS Test para variables numericas.
-- Chi-square o distribucion de frecuencias para categoricas.
+- Variables numericas: PSI sobre intervalos definidos por deciles del entrenamiento.
+- Variables categoricas y binarias: PSI sobre frecuencias de entrenamiento, incluyendo una categoria controlada para valores nuevos.
 
-Umbrales sugeridos para PSI:
+Umbrales operativos de PSI:
 
 - PSI < 0.10: sin drift relevante.
 - 0.10 <= PSI < 0.25: drift moderado, revisar.
 - PSI >= 0.25: drift alto, considerar reentrenamiento.
 
-El drift por si solo no autoriza auto-reemplazo. Solo indica que se debe evaluar un nuevo modelo.
+Estados globales:
+
+- `insufficient_data`: menos de 100 registros actuales validos.
+- `stable`: todas las variables tienen PSI inferior a 0.10.
+- `warning`: existe drift moderado y no existe drift alto.
+- `drift_detected`: al menos una variable tiene PSI igual o superior a 0.25.
+
+Limitacion actual: la muestra de produccion solo incluye reservas cuyo feedback fue persistido, no todas las llamadas a `POST /predict`. El drift por si solo no autoriza auto-reemplazo; solo indica que se debe evaluar un nuevo modelo.
 
 ## Reglas de auto-reemplazo
 
@@ -509,6 +520,9 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   |-- 2_spec.md
 |   |-- 3_plan.md
 |   `-- 4_tasks.md
+|-- alembic/
+|   |-- versions/
+|   `-- env.py
 |-- app/
 |   |-- frontend/
 |   |   |-- Dockerfile
@@ -547,6 +561,7 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |-- .github/
 |   `-- pull_request_template.md
 |-- .dockerignore
+|-- alembic.ini
 |-- CHANGELOG.md
 |-- docker-compose.yml
 |-- requirements.txt
@@ -623,6 +638,10 @@ Nivel Avanzado recomendado:
 - SQLite o PostgreSQL para predicciones y feedback.
 - Estado actual: cubierto con PostgreSQL en Amazon RDS para el despliegue AWS.
 - La misma capa SQLAlchemy usa SQLite como alternativa local y PostgreSQL en producción.
+- Alembic `1.18.5` versiona el esquema mediante revisiones auditables.
+- Revision actual: `0001_prediction_feedback`.
+- El backend ejecuta `alembic upgrade head` antes de iniciar FastAPI en local, Docker y AWS.
+- La migracion inicial adopta la tabla historica solo si su contrato de columnas coincide; cualquier incompatibilidad detiene el arranque sin modificar datos.
 
 No guardar datos personales sensibles salvo que sean estrictamente necesarios y esten justificados.
 
@@ -644,6 +663,7 @@ Tests requeridos para Nivel Avanzado:
 Docker debe permitir:
 
 - Instalar dependencias.
+- Aplicar migraciones pendientes antes de arrancar la API.
 - Levantar la app.
 - Cargar el modelo Champion.
 - Exponer el puerto de la app.
@@ -659,6 +679,7 @@ Backend inicial disponible:
 - `POST /predict` con inferencia del Champion Random Forest.
 - `POST /feedback`.
 - `GET /feedback/summary`.
+- `GET /monitoring/drift`.
 - Contrato documentado en `docs/api_contract.md`.
 
 Docker inicial disponible:
@@ -669,10 +690,11 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 - Validado con Champion Random Forest `random_forest_champion_v0.1.0`.
-- Validado con endpoints `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
+- Validado con endpoints `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
 - Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
 - `docker-compose.ec2.yml` disponible para la ejecución en AWS con PostgreSQL externo.
 - `scripts/deploy_ec2.sh` valida configuración, reconstruye servicios y ejecuta health checks.
+- `scripts/start_backend.sh` ejecuta las migraciones Alembic antes de iniciar Uvicorn.
 
 ## Despliegue web y CI/CD
 

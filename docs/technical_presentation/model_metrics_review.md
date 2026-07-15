@@ -1,7 +1,7 @@
 # Revision final de metricas y overfitting - T-6.2
 
 Responsable principal: Integrante 1 - ML Core  
-Fecha de revision: 2026-07-13
+Fecha de revision: 2026-07-15
 
 ## Alcance
 
@@ -35,6 +35,18 @@ Esta revision valida que el modelo final del proyecto sea coherente entre codigo
 | Recall `Canceled` | 0.8220 | 0.0079 | 3 |
 | ROC-AUC | 0.9426 | 0.0017 | 3 |
 
+## Evaluacion final sobre test
+
+| metrica | resultado |
+| --- | ---: |
+| F1 `Canceled` | 0.8258 |
+| Precision `Canceled` | 0.8233 |
+| Recall `Canceled` | 0.8284 |
+| ROC-AUC | 0.9499 |
+| Gap F1 validacion-test | 0.0153 |
+
+El test reservado se evaluo una unica vez sobre 5442 registros. Cumple los criterios declarados antes de abrir el holdout: F1 igual o superior a 0.80 y gap validacion-test igual o inferior a 0.05.
+
 ## Evidencia visual
 
 - Matriz de confusion: `reports/figures/champion_random_forest_confusion_matrix.png`.
@@ -43,4 +55,4 @@ Esta revision valida que el modelo final del proyecto sea coherente entre codigo
 
 ## Conclusion para defensa
 
-El Champion Random Forest mejora claramente el F1 de la clase `Canceled`, mantiene el gap de overfitting por debajo del limite del proyecto y muestra estabilidad razonable en validacion cruzada. El split de test queda reservado para una comprobacion imparcial final si el equipo decide hacer una validacion adicional antes de presentar.
+El Champion Random Forest mejora claramente el F1 de la clase `Canceled`, mantiene el gap de overfitting por debajo del limite del proyecto, muestra estabilidad en validacion cruzada y confirma su rendimiento en el holdout final. El test queda cerrado y no se utilizara para nuevos ajustes.
