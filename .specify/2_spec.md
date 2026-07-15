@@ -15,11 +15,11 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Target: `booking_status`.
 - Metrica principal: F1-score de la clase `Canceled`.
 - Metricas secundarias: precision, recall, ROC-AUC y matriz de confusion.
-- Tecnologia de app: frontend web con React + Vite y backend de inferencia previsto con FastAPI.
+- Tecnologia de app: frontend web con React + Vite y backend de inferencia con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con tabla, alertas, modal, formulario y feedback conectados al backend real.
-- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
+- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -464,25 +464,33 @@ TODO: confirmar si el A/B sera real en app, simulado con dataset holdout o docum
 
 Objetivo: detectar si los datos nuevos se alejan de los datos de entrenamiento.
 
-Contrato minimo:
+Contrato implementado:
 
-- Comparar distribucion de datos de entrenamiento contra datos nuevos o feedback acumulado.
-- Medir drift por feature relevante.
-- Generar alerta si el drift supera umbral.
+- El perfil de referencia se genera exclusivamente con el split de entrenamiento estratificado y queda versionado en `models/monitoring/training_reference_profile.json`.
+- Los datos actuales proceden de los inputs persistidos mediante `POST /feedback`; no requieren que el resultado real este etiquetado.
+- Se calcula PSI para todas las variables del contrato de entrada.
+- El calculo requiere al menos 100 registros actuales validos; con menos datos devuelve `insufficient_data`.
+- `GET /monitoring/drift` publica estado global, PSI maximo, variables alertadas y detalle por variable.
 
-Metodos sugeridos:
+Metodo implementado:
 
-- PSI para variables numericas o discretizadas.
-- KS Test para variables numericas.
-- Chi-square o distribucion de frecuencias para categoricas.
+- Variables numericas: PSI sobre intervalos definidos por deciles del entrenamiento.
+- Variables categoricas y binarias: PSI sobre frecuencias de entrenamiento, incluyendo una categoria controlada para valores nuevos.
 
-Umbrales sugeridos para PSI:
+Umbrales operativos de PSI:
 
 - PSI < 0.10: sin drift relevante.
 - 0.10 <= PSI < 0.25: drift moderado, revisar.
 - PSI >= 0.25: drift alto, considerar reentrenamiento.
 
-El drift por si solo no autoriza auto-reemplazo. Solo indica que se debe evaluar un nuevo modelo.
+Estados globales:
+
+- `insufficient_data`: menos de 100 registros actuales validos.
+- `stable`: todas las variables tienen PSI inferior a 0.10.
+- `warning`: existe drift moderado y no existe drift alto.
+- `drift_detected`: al menos una variable tiene PSI igual o superior a 0.25.
+
+Limitacion actual: la muestra de produccion solo incluye reservas cuyo feedback fue persistido, no todas las llamadas a `POST /predict`. El drift por si solo no autoriza auto-reemplazo; solo indica que se debe evaluar un nuevo modelo.
 
 ## Reglas de auto-reemplazo
 
@@ -662,6 +670,7 @@ Backend inicial disponible:
 - `POST /predict` con inferencia del Champion Random Forest.
 - `POST /feedback`.
 - `GET /feedback/summary`.
+- `GET /monitoring/drift`.
 - Contrato documentado en `docs/api_contract.md`.
 
 Docker inicial disponible:
@@ -672,7 +681,7 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 - Validado con Champion Random Forest `random_forest_champion_v0.1.0`.
-- Validado con endpoints `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary`.
+- Validado con endpoints `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
 - Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
 - `docker-compose.ec2.yml` disponible para la ejecución en AWS con PostgreSQL externo.
 - `scripts/deploy_ec2.sh` valida configuración, reconstruye servicios y ejecuta health checks.

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .schemas import (
+    DriftReportResponse,
     FeedbackRequest,
     FeedbackResponse,
     FeedbackSummaryResponse,
@@ -14,6 +15,7 @@ from .schemas import (
     PredictionRequest,
     PredictionResponse,
 )
+from .services.drift_service import get_data_drift_report
 from .services.feedback_service import get_feedback_summary, save_feedback
 from .services.model_service import get_model_info, predict_cancellation
 from .services.reservation_service import get_demo_reservations
@@ -89,3 +91,8 @@ def feedback(payload: FeedbackRequest) -> FeedbackResponse:
 @app.get("/feedback/summary", response_model=FeedbackSummaryResponse)
 def feedback_summary() -> FeedbackSummaryResponse:
     return get_feedback_summary()
+
+
+@app.get("/monitoring/drift", response_model=DriftReportResponse)
+def data_drift() -> DriftReportResponse:
+    return get_data_drift_report()

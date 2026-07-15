@@ -10,6 +10,10 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 - One-time final Champion holdout protocol, guarded evaluation script and automated safety tests.
 - Final test evidence for `random_forest_champion_v0.1.0`: F1 `Canceled` 0.8258, ROC-AUC 0.9499 and validation-test F1 gap 0.0153.
+- Versioned training reference profile for production input drift monitoring.
+- PSI drift calculation for numeric, categorical and binary model features.
+- `GET /monitoring/drift` endpoint with stable, warning, drift and insufficient-data states.
+- Automated drift tests for stable, shifted, malformed and insufficient production samples.
 
 ### Changed
 
@@ -26,7 +30,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 - Final business and technical presentations.
 - Final Jira, SPEC and delivery checklist alignment.
-- Optional expert MLOps work: neural network, A/B testing, drift and conditional model promotion.
+- Optional expert MLOps work: neural network, A/B testing and conditional model promotion.
 
 ## [v0.6.0-aws-deployment] - 2026-07-14
 

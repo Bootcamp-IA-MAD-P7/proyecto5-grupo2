@@ -225,14 +225,14 @@ Incluye:
 - Red neuronal experimental.
 - Champion/Challenger.
 - A/B Testing real o simulado.
-- Data Drift.
+- Data Drift mediante perfil de entrenamiento versionado, PSI y endpoint de monitorizacion. Completado.
 - Auto-reemplazo condicionado.
 
 Entregables:
 
 - Modelo Challenger.
 - Comparación Champion vs Challenger.
-- Script o reporte de drift.
+- Script y endpoint de reporte de drift.
 - Reglas de promoción de modelos.
 - Diagrama de ciclo MLOps.
 - Documentación de limitaciones.

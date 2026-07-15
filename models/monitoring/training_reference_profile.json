@@ -1,0 +1,249 @@
+{
+  "profile_version": "training_reference_v1",
+  "created_at": "2026-07-15T09:18:57.043935+00:00",
+  "source": "stratified_training_split",
+  "reference_rows": 25391,
+  "dataset_path": "data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv",
+  "dataset_sha256": "d25e1d4680b2b91bcf5fd0a6b690f26c3bdfd52eb4e434e69018cb7bd60f6782",
+  "split": {
+    "train_fraction": 0.7,
+    "validation_fraction": 0.15,
+    "test_fraction": 0.15,
+    "random_state": 42,
+    "stratified": true
+  },
+  "thresholds": {
+    "moderate": 0.1,
+    "high": 0.25,
+    "minimum_current_rows": 100
+  },
+  "features": {
+    "no_of_adults": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        1.0,
+        2.0
+      ],
+      "expected_proportions": [
+        0.0037414832027096215,
+        0.21161041313851364,
+        0.7846481036587767
+      ]
+    },
+    "no_of_children": {
+      "feature_type": "numeric",
+      "bin_edges": [],
+      "expected_proportions": [
+        1.0
+      ]
+    },
+    "no_of_weekend_nights": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        1.0,
+        2.0
+      ],
+      "expected_proportions": [
+        0.46370761293371665,
+        0.27537316371942816,
+        0.2609192233468552
+      ]
+    },
+    "no_of_week_nights": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        1.0,
+        2.0,
+        3.0,
+        4.0
+      ],
+      "expected_proportions": [
+        0.0661651766373912,
+        0.26509393092040484,
+        0.31479658146587375,
+        0.21511559213894688,
+        0.13882871883738332
+      ]
+    },
+    "lead_time": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        3.0,
+        11.0,
+        24.0,
+        39.0,
+        57.0,
+        80.0,
+        109.0,
+        151.0,
+        213.0
+      ],
+      "expected_proportions": [
+        0.08404552794297192,
+        0.10621873892324052,
+        0.10708518766492064,
+        0.10011421369776692,
+        0.0971997952030247,
+        0.10255602378795636,
+        0.10062620613603246,
+        0.10015359773147965,
+        0.10149265487771257,
+        0.10050805403489425
+      ]
+    },
+    "arrival_year": {
+      "feature_type": "numeric",
+      "bin_edges": [],
+      "expected_proportions": [
+        1.0
+      ]
+    },
+    "arrival_month": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        3.0,
+        4.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        11.0
+      ],
+      "expected_proportions": [
+        0.07471151195305423,
+        0.06545626403056201,
+        0.14702059784963176,
+        0.08837777165137253,
+        0.08290339096530266,
+        0.10385569690047655,
+        0.12673782048757434,
+        0.14631168524280258,
+        0.16462526091922336
+      ]
+    },
+    "arrival_date": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        4.0,
+        7.0,
+        10.0,
+        13.0,
+        16.0,
+        18.0,
+        21.0,
+        25.0,
+        28.0
+      ],
+      "expected_proportions": [
+        0.09668780276475916,
+        0.10298924815879643,
+        0.09546689771966445,
+        0.09318262376432594,
+        0.1077547162380371,
+        0.07463274388562877,
+        0.10724272379977157,
+        0.11697058012681659,
+        0.09180418258438029,
+        0.1132684809578197
+      ]
+    },
+    "no_of_previous_cancellations": {
+      "feature_type": "numeric",
+      "bin_edges": [],
+      "expected_proportions": [
+        1.0
+      ]
+    },
+    "no_of_previous_bookings_not_canceled": {
+      "feature_type": "numeric",
+      "bin_edges": [],
+      "expected_proportions": [
+        1.0
+      ]
+    },
+    "avg_price_per_room": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        67.0,
+        76.5,
+        85.0,
+        91.0,
+        99.45,
+        108.0,
+        116.1,
+        129.0,
+        147.1
+      ],
+      "expected_proportions": [
+        0.09471860107912253,
+        0.09798747587727935,
+        0.09475798511283526,
+        0.10921192548540821,
+        0.0991296128549486,
+        0.1024772557205309,
+        0.10090189437202159,
+        0.10042928596746879,
+        0.10035051790004332,
+        0.10003544563034146
+      ]
+    },
+    "no_of_special_requests": {
+      "feature_type": "numeric",
+      "bin_edges": [
+        1.0,
+        2.0
+      ],
+      "expected_proportions": [
+        0.5409790870780985,
+        0.31467842936473556,
+        0.14434248355716592
+      ]
+    },
+    "type_of_meal_plan": {
+      "feature_type": "categorical",
+      "expected_proportions": {
+        "Meal Plan 1": 0.7671222086566106,
+        "Meal Plan 2": 0.0912134220786893,
+        "Meal Plan 3": 0.00015753613485093142,
+        "Not Selected": 0.14150683312984916
+      }
+    },
+    "room_type_reserved": {
+      "feature_type": "categorical",
+      "expected_proportions": {
+        "Room_Type 1": 0.7738962624552007,
+        "Room_Type 2": 0.019258792485526366,
+        "Room_Type 3": 0.00019692016856366428,
+        "Room_Type 4": 0.16824859202079476,
+        "Room_Type 5": 0.0072466622031428455,
+        "Room_Type 6": 0.026938679059509276,
+        "Room_Type 7": 0.004214091607262416
+      }
+    },
+    "market_segment_type": {
+      "feature_type": "categorical",
+      "expected_proportions": {
+        "Aviation": 0.003347642865582293,
+        "Complementary": 0.010830609271001535,
+        "Corporate": 0.05478319089441141,
+        "Offline": 0.2875428301366626,
+        "Online": 0.6434957268323421
+      }
+    },
+    "required_car_parking_space": {
+      "feature_type": "categorical",
+      "expected_proportions": {
+        "0": 0.9678626284904099,
+        "1": 0.032137371509590014
+      }
+    },
+    "repeated_guest": {
+      "feature_type": "categorical",
+      "expected_proportions": {
+        "0": 0.9740853058170218,
+        "1": 0.02591469418297822
+      }
+    }
+  }
+}

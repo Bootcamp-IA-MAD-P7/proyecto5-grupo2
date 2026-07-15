@@ -340,7 +340,43 @@ Devuelve un resumen minimo de registros de feedback persistidos.
 
 `storage` puede ser `sqlite` en local o `postgresql` en AWS.
 
-## 14. Error Response
+## 14. Data Drift Monitoring
+
+### `GET /monitoring/drift`
+
+Compara los inputs persistidos mediante feedback con el perfil versionado del conjunto de entrenamiento. No necesita conocer todavía el resultado real de la reserva.
+
+#### Response `200 OK` con muestra insuficiente
+
+```json
+{
+  "profile_version": "training_reference_v1",
+  "generated_at": "2026-07-15T10:00:00+00:00",
+  "reference_rows": 25391,
+  "current_rows": 2,
+  "minimum_current_rows": 100,
+  "thresholds": {
+    "moderate": 0.1,
+    "high": 0.25
+  },
+  "status": "insufficient_data",
+  "max_psi": null,
+  "drifted_features": [],
+  "features": [],
+  "message": "At least 100 current records are required; only 2 are available."
+}
+```
+
+Con al menos 100 registros validos, `features` incluye el nombre, tipo, PSI y estado de cada variable. Los estados globales posibles son:
+
+- `insufficient_data`: no existe una muestra minima fiable.
+- `stable`: todas las variables tienen PSI inferior a `0.10`.
+- `warning`: existe drift moderado y no existe drift alto.
+- `drift_detected`: al menos una variable tiene PSI igual o superior a `0.25`.
+
+Este endpoint es informativo. Una alerta nunca promociona ni reemplaza automaticamente el modelo Champion.
+
+## 15. Error Response
 
 FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
 
@@ -358,15 +394,16 @@ Formato esperado:
 }
 ```
 
-## 15. Reglas Provisionales
+## 16. Reglas Provisionales
 
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
 - El modelo real debe respetar este contrato o proponer una actualizacion documentada.
 - `GET /model/info` debe reflejar la version y estado real del modelo cargado.
 - `GET /reservations/demo` debe devolver `input_data` compatible con `POST /predict`.
+- `GET /monitoring/drift` debe usar el perfil versionado y declarar `insufficient_data` cuando no alcance la muestra minima.
 
-## 16. Pendiente
+## 17. Pendiente
 
 - Confirmar inputs definitivos con ML Core.
 - Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.
