@@ -1,6 +1,6 @@
 # API Contract - Hotel Insights
 
-Este contrato define la comunicacion inicial entre la aplicacion web y el backend de prediccion.
+Este contrato define la comunicacion vigente entre la aplicacion web y el backend de prediccion.
 
 Estado: vigente para la API actual con Champion Random Forest. El contrato debe actualizarse si cambia el pipeline final de preprocesamiento o el formato de entrada/salida.
 
@@ -238,18 +238,20 @@ Cabecera operativa opcional:
 | `no_of_previous_cancellations` | integer | si | Cancelaciones previas del cliente. |
 | `no_of_previous_bookings_not_canceled` | integer | si | Reservas previas no canceladas. |
 
-## 9. Valores Iniciales Permitidos
+## 9. Valores Permitidos
 
 Valores actuales usados por el frontend:
 
 - `market_segment_type`: `Online`, `Offline`, `Corporate`, `Complementary`, `Aviation`.
-- `room_type_reserved`: `Room_Type 1`, `Room_Type 2`, `Room_Type 3`, `Room_Type 4`, `Room_Type 5`.
+- `type_of_meal_plan`: `Meal Plan 1`, `Meal Plan 2`, `Meal Plan 3`, `Not Selected`.
+- `room_type_reserved`: `Room_Type 1` a `Room_Type 7`.
 
-Valores pendientes de cerrar con ML Core:
+Validacion vigente:
 
-- Lista definitiva de `type_of_meal_plan`.
-- Rango maximo recomendado para campos numericos.
-- Tratamiento de categorias no vistas durante entrenamiento.
+- `PredictionRequest` aplica los limites basicos indicados en la tabla de inputs.
+- Los campos de conteo y precio no admiten valores negativos.
+- Mes, dia y campos binarios tienen limites superiores explicitos.
+- El pipeline usa `OneHotEncoder(handle_unknown="ignore")`; una categoria no vista no rompe la inferencia, aunque debe revisarse como posible senal de drift.
 
 ## 10. Response JSON
 
@@ -392,7 +394,70 @@ Devuelve un resumen minimo de registros de feedback persistidos.
 
 `storage` puede ser `sqlite` en local o `postgresql` en AWS.
 
-## 15. Data Drift Monitoring
+## 15. Feedback History And Correction
+
+### `GET /feedback`
+
+Devuelve el historico completo de feedback ordenado por fecha. Cada registro incluye su identificador, prediccion, probabilidad, version de modelo, estado de validacion e input original.
+
+#### Response `200 OK`
+
+```json
+{
+  "total_records": 1,
+  "records": [
+    {
+      "record_id": "uuid-generado",
+      "created_at": "2026-07-15T10:00:00Z",
+      "model_version": "random_forest_champion_v0.1.0",
+      "prediction": "Canceled",
+      "probability": 0.8338,
+      "risk_level": "high",
+      "user_feedback": "correct",
+      "actual_status": null,
+      "comments": "Feedback de validacion operativa.",
+      "source": "web_app",
+      "input_data": {
+        "lead_time": 120,
+        "arrival_year": 2018,
+        "arrival_month": 7,
+        "arrival_date": 15,
+        "no_of_special_requests": 0,
+        "avg_price_per_room": 156.0,
+        "market_segment_type": "Online",
+        "no_of_weekend_nights": 1,
+        "no_of_week_nights": 2,
+        "type_of_meal_plan": "Meal Plan 1",
+        "room_type_reserved": "Room_Type 1",
+        "no_of_adults": 2,
+        "no_of_children": 0,
+        "required_car_parking_space": 0,
+        "repeated_guest": 0,
+        "no_of_previous_cancellations": 0,
+        "no_of_previous_bookings_not_canceled": 0
+      }
+    }
+  ]
+}
+```
+
+### `PATCH /feedback/{record_id}`
+
+Permite corregir el feedback cuando se conoce el resultado real de la reserva.
+
+#### Request JSON
+
+```json
+{
+  "user_feedback": "incorrect",
+  "actual_status": "Not_Canceled",
+  "comments": "Resultado real confirmado por operaciones."
+}
+```
+
+Devuelve el registro actualizado con el mismo contrato usado por los elementos de `GET /feedback`. Si `record_id` no existe, responde `404 Not Found`.
+
+## 16. Data Drift Monitoring
 
 ### `GET /monitoring/drift`
 
@@ -431,7 +496,7 @@ Compara las predicciones operativas persistidas en `prediction_logs` con el perf
 
 Este endpoint es informativo. Una alerta nunca promociona ni reemplaza automaticamente el modelo Champion.
 
-## 16. Error Response
+## 17. Error Response
 
 FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
 
@@ -449,7 +514,7 @@ Formato esperado:
 }
 ```
 
-## 17. Reglas Provisionales
+## 18. Reglas De Compatibilidad
 
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
@@ -461,11 +526,10 @@ Formato esperado:
 - Cada respuesta `200 OK` de `POST /predict` debe tener un registro con el mismo `prediction_id`.
 - `GET /monitoring/drift` debe usar el perfil versionado y declarar `insufficient_data` cuando no alcance la muestra minima.
 
-## 18. Pendiente
+## 19. Mantenimiento Del Contrato
 
-- Confirmar inputs definitivos con ML Core.
 - Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.
 - Mantener sincronizada la version del Champion si se promociona un nuevo modelo.
-- Confirmar estrategia de categorias no vistas.
-- Confirmar si la probabilidad corresponde siempre a la clase `Canceled`.
 - Mantener sincronizada la capa SQLAlchemy si cambia el esquema de feedback.
+- Mantener `PredictionRequest` como fuente de verdad para los inputs. El pipeline actual usa `OneHotEncoder(handle_unknown="ignore")` para categorias no vistas.
+- Mantener la probabilidad asociada a la clase positiva `Canceled` (`prediction_label = 1`) mientras siga vigente este contrato.

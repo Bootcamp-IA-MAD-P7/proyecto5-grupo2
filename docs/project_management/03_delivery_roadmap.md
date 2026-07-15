@@ -165,7 +165,7 @@ Estado actual:
 - Random Forest optimizado, comparado contra baseline y seleccionado como Champion.
 - Validacion cruzada estratificada de 3 folds documentada con F1 medio `0.8160`.
 - Tuning de hiperparametros consolidado en script reproducible.
-- Feedback implementado con `POST /feedback` y `GET /feedback/summary`.
+- Feedback implementado con escritura, resumen, historico y correccion mediante `POST /feedback`, `GET /feedback/summary`, `GET /feedback` y `PATCH /feedback/{record_id}`.
 - Recogida de datos nuevos para futuros reentrenamientos cubierta con SQLAlchemy, SQLite local, PostgreSQL RDS e ingesta en `src/data/feedback_ingestion.py`.
 - Estado: Nivel Medio cubierto.
 
@@ -229,6 +229,12 @@ Incluye:
 - A/B Testing real o simulado.
 - Data Drift mediante perfil de entrenamiento versionado, PSI y endpoint de monitorizacion. Completado.
 - Auto-reemplazo condicionado.
+
+Estado actual:
+
+- Data Drift completado con perfil versionado, PSI, auditoria de predicciones, filtrado por origen y endpoint operativo.
+- Red neuronal experimental, A/B Testing y auto-reemplazo condicionado quedan pendientes de evaluacion en la proxima sesion.
+- Ninguno de esos tres puntos se ha descartado; cualquier implementacion se realizara en una rama independiente y sin alterar el Champion estable.
 
 Entregables:
 

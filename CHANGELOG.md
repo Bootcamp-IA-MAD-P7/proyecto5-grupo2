@@ -27,6 +27,9 @@ This project follows an incremental delivery approach. Versions and tags will be
 - `GET /health/ready` readiness endpoint for Champion and database availability.
 - Structured JSON runtime logs and `X-Request-ID` correlation across API requests and prediction events.
 - Automated readiness and observability tests without logging request payloads or credentials.
+- Local `risk_factors` explanations in `POST /predict`, including impact in percentage points, current value, historical reference and recommended action.
+- Feedback history and correction endpoints: `GET /feedback` and `PATCH /feedback/{record_id}`.
+- Integration tests for listing, editing and handling missing feedback records.
 
 ### Changed
 
@@ -39,6 +42,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Database tables are no longer created implicitly during FastAPI startup; Alembic owns schema changes.
 - Docker health checks and AWS deployment verification now use readiness instead of liveness.
 - Shell scripts now enforce LF line endings for reproducible Linux and Docker startup from Windows workstations.
+- README, SPEC, roadmap and data dictionary now reflect the real API surface, completed EDA, operational Data Drift and current Expert-level evaluation status.
 
 ### Removed
 
@@ -47,8 +51,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 ### Pending
 
 - Final business and technical presentations.
-- Final Jira, SPEC and delivery checklist alignment.
-- Optional expert MLOps work: neural network, A/B testing and conditional model promotion.
+- Final Jira and delivery checklist alignment.
+- Expert-scope evaluation for neural network, A/B testing and conditional model promotion; none of these items has been discarded.
 
 ## [v0.6.0-aws-deployment] - 2026-07-14
 

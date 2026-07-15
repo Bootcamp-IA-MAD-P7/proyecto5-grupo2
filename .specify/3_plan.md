@@ -230,6 +230,12 @@ Preparar el proyecto para ejecucion controlada con tests, Docker, almacenamiento
 
 Sumar red neuronal, A/B Testing, Data Drift y auto-reemplazo sin romper el Champion estable.
 
+### Estado actual
+
+- Data Drift esta implementado, probado y documentado con perfil de entrenamiento versionado, PSI y datos operativos auditados.
+- Red neuronal experimental, A/B Testing y auto-reemplazo condicionado se mantienen en el plan y se evaluaran en la proxima sesion.
+- Ninguno de esos tres experimentos esta descartado ni debe comprometer la aplicacion estable ya desplegada.
+
 ### Responsables
 
 - ML Core compara resultados contra Champion.

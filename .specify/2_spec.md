@@ -19,7 +19,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con tabla, alertas, modal, formulario y feedback conectados al backend real.
-- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
+- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `GET /feedback`, `PATCH /feedback/{record_id}` y `GET /monitoring/drift`.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -459,7 +459,7 @@ Regla inicial sugerida:
 - 80% Champion.
 - 20% Challenger.
 
-TODO: confirmar si el A/B sera real en app, simulado con dataset holdout o documentado como experimento offline.
+Estado actual: pendiente de evaluacion en la proxima sesion. El equipo debe decidir si el A/B sera real en app, simulado con un conjunto de evaluacion o documentado como experimento offline. Ninguna alternativa queda descartada todavia.
 
 ## Reglas de Data Drift
 
@@ -508,7 +508,7 @@ Un modelo nuevo solo puede reemplazar al Champion si:
 - Tiene version, fecha y artefacto guardado.
 - Queda documentado en la tabla de experimentos.
 
-TODO: definir margen minimo de mejora para reemplazo. Sugerencia inicial: +0.02 absoluto en la metrica principal.
+Estado actual: pendiente de evaluacion en la proxima sesion. Si se aprueba su implementacion, debe fijarse el margen minimo de mejora; la sugerencia inicial es +0.02 absoluto en la metrica principal.
 
 Para entrega academica, el auto-reemplazo puede implementarse como script controlado y documentado, no necesariamente como servicio autonomo permanente.
 
@@ -604,6 +604,9 @@ La salida minima debe incluir:
 - Clase predicha.
 - Probabilidad o confianza si el modelo la expone.
 - Mensaje corto interpretable para negocio.
+- Identificador unico y version del modelo.
+- Nivel de riesgo y recomendacion operativa.
+- Hasta tres factores locales ordenados por impacto estimado, sin presentarlos como relaciones causales.
 
 ### Guardado de feedback
 
@@ -623,6 +626,8 @@ Estado actual:
 
 - Endpoint de escritura: `POST /feedback`.
 - Endpoint de resumen: `GET /feedback/summary`.
+- Endpoint de historico: `GET /feedback`.
+- Endpoint de correccion: `PATCH /feedback/{record_id}`.
 - Almacenamiento local por defecto: SQLite en `data/app/hotel_insights.db`.
 - Almacenamiento desplegado: PostgreSQL administrado en Amazon RDS mediante `DATABASE_URL`.
 - La base local y los archivos de entorno operativos se ignoran en Git.
@@ -675,7 +680,7 @@ Docker debe permitir:
 
 Tecnologia de app definida: frontend React + Vite y backend de inferencia con FastAPI.
 
-Backend inicial disponible:
+Backend operativo disponible:
 
 - `GET /health`.
 - `GET /health/ready` comprueba que el Champion esta disponible y que la base de datos contiene las tablas operativas migradas.
@@ -684,10 +689,12 @@ Backend inicial disponible:
 - `POST /predict` con inferencia del Champion Random Forest.
 - `POST /feedback`.
 - `GET /feedback/summary`.
+- `GET /feedback`.
+- `PATCH /feedback/{record_id}`.
 - `GET /monitoring/drift`.
 - Contrato documentado en `docs/api_contract.md`.
 
-Docker inicial disponible:
+Docker validado disponible:
 
 - `app/backend/Dockerfile`.
 - `app/frontend/Dockerfile`.
@@ -695,7 +702,7 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 - Validado con Champion Random Forest `random_forest_champion_v0.1.0`.
-- Validado con endpoints `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
+- Validado con endpoints `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `GET /feedback`, `PATCH /feedback/{record_id}` y `GET /monitoring/drift`.
 - Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
 - `docker-compose.ec2.yml` disponible para la ejecución en AWS con PostgreSQL externo.
 - `scripts/deploy_ec2.sh` valida configuracion, reconstruye servicios y espera el readiness check antes de completar el despliegue.
@@ -789,3 +796,9 @@ El nivel esta cerrado si:
 - Auto-reemplazo condicionado por metricas.
 - Dashboard o reporte de monitoreo.
 - Ciclo MLOps explicado en documentacion.
+
+Estado actual:
+
+- Data Drift esta implementado, probado y documentado mediante perfil versionado, PSI, auditoria de predicciones y `GET /monitoring/drift`.
+- Red neuronal experimental, A/B Testing y auto-reemplazo condicionado siguen pendientes y se evaluaran en la proxima sesion; no se descarta ninguno de los tres requisitos.
+- La documentacion final del ciclo MLOps se cerrara cuando el equipo decida el alcance de esos tres experimentos.
