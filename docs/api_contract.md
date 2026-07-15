@@ -39,7 +39,8 @@ En Docker y AWS se usa `/api` para que nginx reenvie las solicitudes al backend 
 Ejecutar backend local desde la raiz del repositorio:
 
 ```bash
-uvicorn app.backend.main:app --reload
+python -m alembic upgrade head
+python -m uvicorn app.backend.main:app --reload --port 8000
 ```
 
 ## 3. Health Check
@@ -60,7 +61,7 @@ Liveness check. Comprueba que el proceso de la API esta disponible sin consultar
 
 ### `GET /health/ready`
 
-Readiness check. Comprueba que el Champion puede cargarse y que la base de datos acepta consultas.
+Readiness check. Comprueba que el Champion puede cargarse y que la base de datos acepta consultas sobre las tablas operativas requeridas.
 
 Devuelve `200 OK` cuando ambas dependencias estan disponibles y `503 Service Unavailable` en caso contrario.
 

@@ -678,7 +678,7 @@ Tecnologia de app definida: frontend React + Vite y backend de inferencia con Fa
 Backend inicial disponible:
 
 - `GET /health`.
-- `GET /health/ready` comprueba que el Champion y la base de datos estan disponibles.
+- `GET /health/ready` comprueba que el Champion esta disponible y que la base de datos contiene las tablas operativas migradas.
 - `GET /model/info`.
 - `GET /reservations/demo` con reservas reales derivadas del CSV de `data/raw/`.
 - `POST /predict` con inferencia del Champion Random Forest.
