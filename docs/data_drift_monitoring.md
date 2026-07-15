@@ -18,9 +18,15 @@ El perfil incluye version, hash del dataset, contrato del split, numero de filas
 
 ## Datos actuales
 
-La muestra actual procede de los inputs almacenados por `POST /feedback` en SQLite o PostgreSQL. El resultado real de la reserva puede seguir siendo desconocido porque el data drift solo necesita variables de entrada.
+La muestra procede de `prediction_logs`, que contiene todas las respuestas correctas de `POST /predict` en SQLite o PostgreSQL. El resultado real de la reserva puede seguir siendo desconocido porque el data drift solo necesita variables de entrada.
 
-Todas las llamadas correctas a `POST /predict` ya se guardan en `prediction_logs`. Sin embargo, el monitor todavia lee `prediction_feedback`; cambiar esa fuente forma parte del siguiente paso operativo. Hasta entonces, la muestra puede tener sesgo de seleccion.
+Para evitar que el CSV historico de demostracion contamine una muestra supuestamente productiva, cada inferencia registra su origen:
+
+- `frontend_manual`: calculo solicitado por una persona desde la evaluacion de reserva.
+- `frontend_demo_queue`: calculo automatico de las reservas historicas mostradas en la cola.
+- `api`: llamada externa sin un origen frontend especifico.
+
+El monitor utiliza las 1.000 predicciones operativas mas recientes. Excluye `frontend_demo_queue` y el origen heredado `prediction_api`, utilizado antes de que la API distinguiera el tipo de trafico. Todas las predicciones permanecen disponibles en auditoria aunque no formen parte del calculo PSI.
 
 ## Metodo y umbrales
 
@@ -47,7 +53,7 @@ Estados posibles:
 - `warning`: una o mas variables muestran drift moderado.
 - `drift_detected`: una o mas variables muestran drift alto.
 
-La respuesta contiene el PSI maximo, las variables alertadas y el detalle por variable cuando la muestra es suficiente.
+La respuesta contiene `data_source`, limite de muestra, fuentes excluidas, PSI maximo, variables alertadas y detalle por variable cuando la muestra es suficiente.
 
 ## Operacion
 
@@ -60,7 +66,7 @@ python -m src.mlops.data_drift
 Ejecutar las verificaciones:
 
 ```bash
-python -m pytest tests/unit/test_data_drift.py tests/test_backend_api.py
+python -m pytest tests/unit/test_data_drift.py tests/unit/test_prediction_ingestion.py tests/test_backend_api.py
 ```
 
 ## Regla de decision

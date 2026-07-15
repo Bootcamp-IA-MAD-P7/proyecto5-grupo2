@@ -20,10 +20,13 @@ async function requestJson(path, options) {
   return response.json();
 }
 
-export function predictReservation(payload) {
+export function predictReservation(payload, source = "frontend_manual") {
   return requestJson("/predict", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Prediction-Source": source
+    },
     body: JSON.stringify(payload)
   });
 }
@@ -99,7 +102,7 @@ export async function fetchPredictedReservations(limit = 16) {
   const response = await fetchDemoReservations(limit);
   const reservations = await Promise.all(
     response.reservations.map(async (reservation) => {
-      const prediction = await predictReservation(reservation.input_data);
+      const prediction = await predictReservation(reservation.input_data, "frontend_demo_queue");
       return toFrontendReservation(reservation, prediction);
     })
   );

@@ -11,7 +11,7 @@ def save_prediction_log(
     payload: PredictionRequest,
     prediction: PredictionResponse,
     *,
-    source: str = "prediction_api",
+    source: str = "api",
 ) -> None:
     """Persist a prediction before its successful API response is returned."""
 
