@@ -7,9 +7,10 @@ Hotel Insights aplica una observabilidad proporcionada al alcance del proyecto: 
 ## Health checks
 
 - `GET /health`: liveness. Confirma que el proceso FastAPI responde.
-- `GET /health/ready`: readiness. Comprueba que el Champion se puede cargar y que la base de datos acepta una consulta.
+- `GET /health/ready`: readiness. Comprueba que el Champion se puede cargar y que existen las tablas operativas `prediction_logs` y `prediction_feedback`.
 - Docker y `scripts/deploy_ec2.sh` usan readiness para no publicar una API sin sus dependencias.
 - Readiness responde `200` cuando el servicio esta preparado y `503` cuando alguna dependencia falla.
+- Una base accesible pero sin las migraciones Alembic requeridas se considera `not_ready`.
 
 ## Correlacion
 

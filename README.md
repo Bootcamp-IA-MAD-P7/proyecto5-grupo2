@@ -108,7 +108,7 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 50 tests disponible en `tests/`.
+- Suite Python de 51 tests disponible en `tests/`.
 - Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
@@ -325,7 +325,10 @@ Aplicar migraciones antes de arrancar el backend fuera de Docker:
 ```bash
 python -m alembic upgrade head
 python -m alembic current
+python -m uvicorn app.backend.main:app --reload --port 8000
 ```
+
+No se debe iniciar Uvicorn directamente sobre una base local sin migrar. En Docker y AWS, `scripts/start_backend.sh` aplica Alembic automaticamente antes de iniciar la API.
 
 La política completa de migraciones se documenta en [`docs/database_migrations.md`](docs/database_migrations.md).
 
@@ -708,7 +711,7 @@ Leyenda:
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. `prediction_logs` audita todas las inferencias correctas y `prediction_feedback` conserva el aprendizaje aportado por usuarios. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 50 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, data drift y observabilidad. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 51 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, data drift y observabilidad. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 

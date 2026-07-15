@@ -416,7 +416,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Responsable sugerido: I3.
 - Dificultad: media.
 - Dependencias: T-4.6, T-4.7, T-4.8.
-- Criterio de verificacion: `GET /health/ready` solo responde `200` con Champion y base de datos disponibles; todas las respuestas incluyen `X-Request-ID`.
+- Criterio de verificacion: `GET /health/ready` solo responde `200` con Champion y esquema operativo migrado; todas las respuestas incluyen `X-Request-ID`.
 - Evidencia: Docker y el despliegue AWS esperan el readiness check; `prediction_completed` relaciona `request_id`, `prediction_id` y version del modelo.
 - Privacidad: los logs no incluyen payloads de reserva, credenciales ni cadenas de conexion.
 - Documentacion: `docs/observability.md`, `docs/api_contract.md` y `docs/aws_deployment.md`.

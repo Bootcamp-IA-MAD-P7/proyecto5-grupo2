@@ -83,6 +83,21 @@ def test_readiness_returns_503_when_database_is_unavailable(monkeypatch) -> None
     assert body["database_connected"] is False
 
 
+def test_readiness_returns_503_when_prediction_log_migration_is_missing(
+    operational_database,
+) -> None:
+    _, session_factory = operational_database
+    PredictionLog.__table__.drop(bind=session_factory.kw["bind"])
+
+    response = client.get("/health/ready")
+
+    assert response.status_code == 503
+    body = response.json()
+    assert body["status"] == "not_ready"
+    assert body["model_loaded"] is True
+    assert body["database_connected"] is False
+
+
 def test_request_id_is_returned_to_the_caller() -> None:
     response = client.get(
         "/health",

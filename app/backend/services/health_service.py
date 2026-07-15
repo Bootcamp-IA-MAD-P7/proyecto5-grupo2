@@ -1,12 +1,13 @@
-"""Liveness dependencies used by the API readiness endpoint."""
+"""Operational dependencies used by the API readiness endpoint."""
 
 from datetime import UTC, datetime
 
-from sqlalchemy import text
+from sqlalchemy import select
 
 from app.backend.schemas import ReadinessResponse
 from app.backend.services.model_service import load_model, load_model_metadata
 from src.data.database import DATABASE_URL, SessionLocal, database_backend_name
+from src.data.models import PredictionFeedback, PredictionLog
 
 
 def get_readiness() -> ReadinessResponse:
@@ -24,7 +25,8 @@ def get_readiness() -> ReadinessResponse:
     database_connected = False
     try:
         with SessionLocal() as session:
-            session.execute(text("SELECT 1"))
+            session.execute(select(PredictionLog).limit(1))
+            session.execute(select(PredictionFeedback).limit(1))
         database_connected = True
     except Exception:
         database_connected = False
