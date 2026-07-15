@@ -358,6 +358,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Archivos afectados: `README.md`, `docs/project_management/`.
 - Accion: escribir pasos para entorno local, app, tests y Docker.
 - Responsable sugerido: I4 con revision de I2 e I3.
+- Evidencia de reproducibilidad: `requirements.txt` y `requirements-backend.txt` fijan versiones exactas para desarrollo, CI y la imagen de produccion.
 - Dificultad: baja.
 - Apto junior: si.
 - Dependencias: T-2.5, T-4.3.
