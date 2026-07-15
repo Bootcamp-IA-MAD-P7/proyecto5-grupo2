@@ -6,6 +6,10 @@ Detectar cambios en la distribucion de las variables recibidas por el modelo ant
 
 El monitor genera una senal para revision. No reentrena, reemplaza ni promociona modelos automaticamente.
 
+## Estado de implementacion
+
+La implementacion tecnica esta completa: perfil de referencia versionado, ingesta desde `prediction_logs`, filtrado por origen, calculo PSI, contrato API y tests automatizados. En un entorno con menos de 100 predicciones operativas reales, `insufficient_data` es el resultado correcto y no indica una funcionalidad incompleta.
+
 ## Fuente de referencia
 
 El perfil de referencia se genera con el split de entrenamiento estratificado usado por el proyecto:

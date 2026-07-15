@@ -1,4 +1,4 @@
-# Diccionario inicial de datos
+# Diccionario de datos
 
 Dataset: Hotel Reservations Classification Dataset  
 Archivo: `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`  
@@ -9,9 +9,7 @@ Tipo de problema: clasificacion supervisada binaria
 
 ## Objetivo del diccionario
 
-Este documento describe las columnas del dataset antes del EDA profundo. Su funcion es dejar claro que representa cada variable, si sera candidata a feature, si sera target o si debe excluirse inicialmente.
-
-El diccionario puede cambiar despues del EDA si aparecen problemas de calidad, leakage, valores raros o variables poco utiles.
+Este documento describe las columnas del dataset y recoge las decisiones consolidadas tras la inspeccion, el EDA y el entrenamiento. Su funcion es dejar claro que representa cada variable, si se utiliza como feature, si es el target o si debe excluirse.
 
 ## Resumen del target
 
@@ -20,7 +18,7 @@ El diccionario puede cambiar despues del EDA si aparecen problemas de calidad, l
 | `Not_Canceled` | 24.390 | 67.2% |
 | `Canceled` | 11.885 | 32.8% |
 
-Interpretacion inicial:
+Interpretacion consolidada:
 
 - El problema es binario: reserva cancelada o no cancelada.
 - Existe desbalance moderado hacia `Not_Canceled`.
@@ -29,31 +27,31 @@ Interpretacion inicial:
 
 ## Diccionario de columnas
 
-| Columna | Rol inicial | Tipo esperado | Descripcion | Decision inicial |
+| Columna | Rol actual | Tipo esperado | Descripcion | Decision actual |
 |---|---|---|---|---|
-| `Booking_ID` | Excluir | Identificador | Codigo unico de la reserva. | No usar como feature porque no generaliza a nuevas reservas. |
-| `no_of_adults` | Feature | Numerica discreta | Numero de adultos incluidos en la reserva. | Usar inicialmente. |
-| `no_of_children` | Feature | Numerica discreta | Numero de ninos incluidos en la reserva. | Usar inicialmente. |
-| `no_of_weekend_nights` | Feature | Numerica discreta | Numero de noches de fin de semana reservadas. | Usar inicialmente. |
-| `no_of_week_nights` | Feature | Numerica discreta | Numero de noches entre semana reservadas. | Usar inicialmente. |
-| `type_of_meal_plan` | Feature | Categorica nominal | Tipo de plan de comidas seleccionado. | Usar inicialmente con encoding. |
-| `required_car_parking_space` | Feature | Binaria | Indica si la reserva requiere plaza de parking. | Usar inicialmente. |
-| `room_type_reserved` | Feature | Categorica nominal | Tipo de habitacion reservada. | Usar inicialmente con encoding. |
-| `lead_time` | Feature | Numerica discreta | Dias entre la reserva y la fecha de llegada. | Usar inicialmente; revisar distribucion y outliers. |
-| `arrival_year` | Feature | Numerica temporal | Ano de llegada. | Usar inicialmente; revisar si aporta o introduce sesgo temporal. |
-| `arrival_month` | Feature | Numerica temporal | Mes de llegada. | Usar inicialmente; puede capturar estacionalidad. |
-| `arrival_date` | Feature | Numerica temporal | Dia del mes de llegada. | Usar inicialmente; revisar utilidad real. |
-| `market_segment_type` | Feature | Categorica nominal | Canal o segmento de mercado de la reserva. | Usar inicialmente con encoding. |
-| `repeated_guest` | Feature | Binaria | Indica si el cliente es repetido. | Usar inicialmente. |
-| `no_of_previous_cancellations` | Feature | Numerica discreta | Numero de cancelaciones anteriores del cliente. | Usar inicialmente; posible variable predictiva fuerte. |
-| `no_of_previous_bookings_not_canceled` | Feature | Numerica discreta | Reservas anteriores no canceladas del cliente. | Usar inicialmente. |
-| `avg_price_per_room` | Feature | Numerica continua | Precio medio por habitacion. | Usar inicialmente; revisar outliers. |
-| `no_of_special_requests` | Feature | Numerica discreta | Numero de solicitudes especiales realizadas. | Usar inicialmente. |
+| `Booking_ID` | Excluir | Identificador | Codigo unico de la reserva. | Excluida del pipeline porque no generaliza a nuevas reservas. |
+| `no_of_adults` | Feature | Numerica discreta | Numero de adultos incluidos en la reserva. | Utilizada por el pipeline. |
+| `no_of_children` | Feature | Numerica discreta | Numero de ninos incluidos en la reserva. | Utilizada por el pipeline. |
+| `no_of_weekend_nights` | Feature | Numerica discreta | Numero de noches de fin de semana reservadas. | Utilizada por el pipeline. |
+| `no_of_week_nights` | Feature | Numerica discreta | Numero de noches entre semana reservadas. | Utilizada por el pipeline. |
+| `type_of_meal_plan` | Feature | Categorica nominal | Tipo de plan de comidas seleccionado. | Utilizada con One-Hot Encoding. |
+| `required_car_parking_space` | Feature | Binaria | Indica si la reserva requiere plaza de parking. | Utilizada por el pipeline. |
+| `room_type_reserved` | Feature | Categorica nominal | Tipo de habitacion reservada. | Utilizada con One-Hot Encoding. |
+| `lead_time` | Feature | Numerica discreta | Dias entre la reserva y la fecha de llegada. | Utilizada; es una de las variables con mayor senal predictiva. |
+| `arrival_year` | Feature | Numerica temporal | Ano de llegada. | Utilizada por el pipeline actual. |
+| `arrival_month` | Feature | Numerica temporal | Mes de llegada. | Utilizada para capturar estacionalidad. |
+| `arrival_date` | Feature | Numerica temporal | Dia del mes de llegada. | Utilizada por el pipeline actual. |
+| `market_segment_type` | Feature | Categorica nominal | Canal o segmento de mercado de la reserva. | Utilizada con One-Hot Encoding. |
+| `repeated_guest` | Feature | Binaria | Indica si el cliente es repetido. | Utilizada por el pipeline. |
+| `no_of_previous_cancellations` | Feature | Numerica discreta | Numero de cancelaciones anteriores del cliente. | Utilizada por el pipeline. |
+| `no_of_previous_bookings_not_canceled` | Feature | Numerica discreta | Reservas anteriores no canceladas del cliente. | Utilizada por el pipeline. |
+| `avg_price_per_room` | Feature | Numerica continua | Precio medio por habitacion. | Utilizada; su distribucion y rango se documentaron en el EDA. |
+| `no_of_special_requests` | Feature | Numerica discreta | Numero de solicitudes especiales realizadas. | Utilizada; muestra relacion inversa con la cancelacion. |
 | `booking_status` | Target | Categorica binaria | Estado final historico de la reserva. | Predecir esta columna. |
 
-## Inspeccion tecnica inicial
+## Inspeccion tecnica confirmada
 
-La inspeccion ligera del CSV confirma que no hay valores nulos en ninguna columna. Esto simplifica el primer baseline, porque no necesitamos imputacion inmediata antes de entrenar un modelo inicial.
+La inspeccion del CSV confirma que no hay valores nulos en ninguna columna. El pipeline actual no necesita imputacion para este dataset.
 
 | Columna | Nulos | Unicos | Rango o ejemplos |
 |---|---:|---:|---|
@@ -77,14 +75,14 @@ La inspeccion ligera del CSV confirma que no hay valores nulos en ninguna column
 | `no_of_special_requests` | 0 | 6 | Min: 0, Max: 5 |
 | `booking_status` | 0 | 2 | `Not_Canceled`, `Canceled` |
 
-Interpretacion inicial:
+Interpretacion consolidada:
 
 - El dataset esta completo a nivel de nulos, lo cual facilita la primera version del pipeline.
-- `Booking_ID` tiene un valor unico por fila, por eso se confirma su exclusion inicial.
+- `Booking_ID` tiene un valor unico por fila, por eso se confirma su exclusion.
 - `lead_time` llega hasta 443 dias; conviene revisar su distribucion y posibles outliers en el EDA.
 - `avg_price_per_room` llega hasta 540 y tambien requiere revision visual.
 - Las variables binarias estan codificadas como 0/1 y podran tratarse como numericas o binarias segun el preprocessing.
-- Las variables categoricas tienen pocas categorias, por lo que One-Hot Encoding parece una opcion inicial razonable.
+- Las variables categoricas tienen pocas categorias y se procesan mediante One-Hot Encoding.
 
 ## Variables numericas candidatas
 
@@ -112,17 +110,19 @@ Interpretacion inicial:
 - `required_car_parking_space`
 - `repeated_guest`
 
-## Variables excluidas inicialmente
+## Variables excluidas
 
 - `Booking_ID`
 
 Motivo: es un identificador unico. Puede ayudar a memorizar filas, pero no aporta una regla general para predecir nuevas reservas.
 
-## Pendientes de confirmar en EDA
+## Conclusiones confirmadas tras el EDA
 
-- Duplicados.
-- Valores raros o categorias poco frecuentes.
-- Distribucion de `lead_time` y `avg_price_per_room`.
-- Relacion de cada feature con `booking_status`.
-- Posibles variables temporales que convenga transformar.
-- Si el desbalance requiere tratamiento especifico.
+- No existen valores nulos ni duplicados exactos en las 36.275 filas.
+- `lead_time` presenta un rango de 0 a 443 dias y una mediana de 57; las reservas canceladas muestran mayor anticipacion que las no canceladas.
+- `avg_price_per_room` presenta un rango de 0 a 540 y una mediana de 99,45; su relacion con la cancelacion existe, aunque es menos marcada que la de `lead_time`.
+- `no_of_special_requests` muestra una relacion inversa con la cancelacion.
+- `market_segment_type` y `repeated_guest` presentan diferencias relevantes en la tasa de cancelacion.
+- Las variables temporales se mantienen en el contrato actual como columnas separadas y se evaluan dentro del pipeline reproducible.
+- El desbalance es moderado: 67,24% `Not_Canceled` y 32,76% `Canceled`. Se usa F1 de `Canceled` como metrica principal y pesos balanceados cuando corresponde; no se aplica sobremuestreo sintetico.
+- Las categorias se codifican con `OneHotEncoder(handle_unknown="ignore")`, por lo que valores no vistos no rompen la inferencia.
