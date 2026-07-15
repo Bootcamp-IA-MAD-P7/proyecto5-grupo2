@@ -126,7 +126,7 @@ Resultado validado el 14 de julio de 2026:
 - Champion `random_forest_champion_v0.1.0` cargado.
 - Persistencia identificada como `postgresql`.
 - Feedback conservado después de reiniciar el backend.
-- Esquema registrado en `alembic_version` con revisión `0001_prediction_feedback`.
+- Esquema gestionado por Alembic; el despliegue aplica `0002_prediction_logs` antes de iniciar la API.
 - Despliegue automático desde `develop` completado correctamente.
 - Acceso HTTP directo a la IP de EC2 bloqueado después de restringir el origen a CloudFront.
 

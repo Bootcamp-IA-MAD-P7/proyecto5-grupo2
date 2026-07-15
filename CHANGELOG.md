@@ -17,6 +17,10 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Alembic configuration and initial `prediction_feedback` schema revision.
 - Migration tests for new databases, legacy schema adoption and incompatible schema rejection.
 - Backend startup script that applies pending migrations before starting FastAPI.
+- Immutable `prediction_logs` audit table for every successful inference.
+- Unique `prediction_id` in the `POST /predict` response contract.
+- Alembic revision `0002_prediction_logs` with date and model-version indexes.
+- API persistence assertions covering prediction inputs and outputs.
 
 ### Changed
 

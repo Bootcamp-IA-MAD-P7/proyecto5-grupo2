@@ -449,8 +449,9 @@ Contrato minimo:
 
 - Champion recibe el trafico principal.
 - Challenger recibe una porcion menor o un conjunto simulado equivalente.
-- Cada prediccion registra `model_version`.
-- Se guarda input validado, prediccion, probabilidad si aplica, timestamp y feedback si existe.
+- Cada prediccion registra un `prediction_id` unico y `model_version`.
+- Toda respuesta correcta de `POST /predict` guarda input validado, prediccion, etiqueta, probabilidad, riesgo, timestamp, fuente y version de modelo en `prediction_logs`.
+- El feedback se mantiene en `prediction_feedback` y puede existir solo para una parte de las predicciones.
 - La comparacion usa la misma metrica principal definida en la spec.
 
 Regla inicial sugerida:
@@ -490,7 +491,7 @@ Estados globales:
 - `warning`: existe drift moderado y no existe drift alto.
 - `drift_detected`: al menos una variable tiene PSI igual o superior a 0.25.
 
-Limitacion actual: la muestra de produccion solo incluye reservas cuyo feedback fue persistido, no todas las llamadas a `POST /predict`. El drift por si solo no autoriza auto-reemplazo; solo indica que se debe evaluar un nuevo modelo.
+Limitacion actual: aunque todas las llamadas correctas a `POST /predict` ya se persisten, Data Drift todavia consume reservas cuyo feedback fue guardado. El punto operativo siguiente cambiara la fuente a `prediction_logs`. El drift por si solo no autoriza auto-reemplazo; solo indica que se debe evaluar un nuevo modelo.
 
 ## Reglas de auto-reemplazo
 
@@ -639,9 +640,10 @@ Nivel Avanzado recomendado:
 - Estado actual: cubierto con PostgreSQL en Amazon RDS para el despliegue AWS.
 - La misma capa SQLAlchemy usa SQLite como alternativa local y PostgreSQL en producción.
 - Alembic `1.18.5` versiona el esquema mediante revisiones auditables.
-- Revision actual: `0001_prediction_feedback`.
+- Revision actual: `0002_prediction_logs`.
 - El backend ejecuta `alembic upgrade head` antes de iniciar FastAPI en local, Docker y AWS.
 - La migracion inicial adopta la tabla historica solo si su contrato de columnas coincide; cualquier incompatibilidad detiene el arranque sin modificar datos.
+- La segunda migracion crea `prediction_logs` para auditar todas las respuestas correctas de inferencia.
 
 No guardar datos personales sensibles salvo que sean estrictamente necesarios y esten justificados.
 

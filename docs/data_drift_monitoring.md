@@ -20,7 +20,7 @@ El perfil incluye version, hash del dataset, contrato del split, numero de filas
 
 La muestra actual procede de los inputs almacenados por `POST /feedback` en SQLite o PostgreSQL. El resultado real de la reserva puede seguir siendo desconocido porque el data drift solo necesita variables de entrada.
 
-Limitacion: el sistema observa reservas con feedback persistido, no todas las llamadas a `POST /predict`. Por tanto, la muestra puede tener sesgo de seleccion.
+Todas las llamadas correctas a `POST /predict` ya se guardan en `prediction_logs`. Sin embargo, el monitor todavia lee `prediction_feedback`; cambiar esa fuente forma parte del siguiente paso operativo. Hasta entonces, la muestra puede tener sesgo de seleccion.
 
 ## Metodo y umbrales
 
