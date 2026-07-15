@@ -253,8 +253,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-3.2.
 - Criterio de verificacion: mejores parametros y comparacion documentados.
 - Evidencia: la configuracion optimizada esta aplicada en `src/models/train_challengers.py`, el artefacto fue regenerado en `models/challengers/random_forest_challenger.pkl` y el resultado esta documentado en `reports/model_report.md`.
-- Mejor configuracion: `n_estimators=200`, `max_depth=16`, `min_samples_leaf=8`, `min_samples_split=16`, `class_weight="balanced_subsample"`.
-- Resultado: F1 validacion 0,8042, gap train-validacion 0,0242 y ROC-AUC validacion 0,9347.
+- Mejor configuracion: `n_estimators=200`, `max_depth=18`, `min_samples_leaf=6`, `min_samples_split=12`, `class_weight="balanced_subsample"`.
+- Resultado: F1 validacion 0,8105, gap train-validacion 0,0345 y ROC-AUC validacion 0,9391.
 - Verificacion automatizada: `tests/unit/test_challenger_training.py` comprueba hiperparametros, F1 minimo y regla de overfitting.
 - Comando de verificacion: `python -m pytest tests/unit/test_challenger_training.py`.
 
@@ -269,6 +269,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: Champion versionado y explicado.
 - Evidencia: Random Forest queda promocionado como Champion en `models/champion/random_forest_champion.pkl`, con metadata en `models/champion/champion_metadata.json` y API FastAPI cargandolo desde `app/backend/services/model_service.py`.
 - Resultado clave: `GET /model/info` devuelve `random_forest_champion_v0.1.0` y `RandomForestClassifier`.
+- Evaluacion final: holdout ejecutado una unica vez sobre 5442 filas; F1 `Canceled` 0,8258, ROC-AUC 0,9499 y gap validacion-test 0,0153.
+- Evidencia final: `docs/champion_holdout_protocol.md`, `reports/champion_test_metrics.json` y metadata Champion actualizada.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py` y `python -m pytest`.
 
 ### [x] T-3.5 Crear tabla de experimentos

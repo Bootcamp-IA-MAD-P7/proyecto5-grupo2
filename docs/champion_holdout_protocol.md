@@ -39,3 +39,17 @@ El comando:
 ## Política posterior
 
 Una vez abierto el holdout, sus resultados no se utilizarán para modificar hiperparámetros, seleccionar variables o reentrenar el Champion. Cualquier modelo posterior deberá tratarse como una nueva versión y validarse con datos futuros o con un nuevo protocolo independiente.
+
+## Resultado registrado
+
+La evaluación se ejecutó una única vez el 15 de julio de 2026 sobre 5442 registros de test.
+
+| Métrica | Resultado |
+| --- | ---: |
+| Accuracy | 0.8855 |
+| Precision `Canceled` | 0.8233 |
+| Recall `Canceled` | 0.8284 |
+| F1 `Canceled` | 0.8258 |
+| ROC-AUC | 0.9499 |
+
+El gap absoluto entre F1 de validación y test fue `0.0153`. El Champion superó el F1 mínimo de `0.80` y el límite de estabilidad de `0.05`. El holdout queda cerrado.

@@ -6,11 +6,17 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+### Added
+
+- One-time final Champion holdout protocol, guarded evaluation script and automated safety tests.
+- Final test evidence for `random_forest_champion_v0.1.0`: F1 `Canceled` 0.8258, ROC-AUC 0.9499 and validation-test F1 gap 0.0153.
+
 ### Changed
 
 - Backend CI now runs the complete Python test suite instead of API tests only.
 - AWS deployment now waits for successful backend and frontend quality gates before updating EC2.
 - Python development and production dependencies now use exact versions for reproducible CI and Docker builds.
+- Champion metadata, technical report, SPEC and README now record the closed final holdout evaluation.
 
 ### Removed
 
