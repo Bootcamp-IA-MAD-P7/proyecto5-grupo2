@@ -1,5 +1,13 @@
 import React, { useEffect } from "react";
-import { ArrowRight, CalendarDays, CircleDollarSign, Clock3, X } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  CircleDollarSign,
+  Clock3,
+  Lightbulb,
+  TrendingUp,
+  X
+} from "lucide-react";
 import "./ReservationDetailModal.css";
 
 function formatDate(dateString) {
@@ -35,6 +43,9 @@ function ReservationDetailModal({ reservation, onClose, onEvaluate }) {
   }, [onClose]);
 
   if (!reservation) return null;
+
+  const riskFactors = reservation.riskFactors || [];
+  const strongestImpact = riskFactors[0]?.impact_percentage_points || 1;
 
   return (
     <div className="detail-layer" role="presentation">
@@ -76,11 +87,58 @@ function ReservationDetailModal({ reservation, onClose, onEvaluate }) {
           </div>
         </dl>
 
-        <section className="detail-section">
-          <h3>Factores principales</h3>
-          <ul>
-            {reservation.mainFactors.map((factor) => <li key={factor}>{factor}</li>)}
-          </ul>
+        <section className="detail-section risk-driver-section">
+          <div className="risk-driver-heading">
+            <div>
+              <TrendingUp size={18} />
+              <h3>Qué está elevando el riesgo</h3>
+            </div>
+            <span>Estimación local</span>
+          </div>
+
+          {riskFactors.length > 0 ? (
+            <ol className="risk-driver-list">
+              {riskFactors.map((factor, index) => (
+                <li className={index === 0 ? "primary" : ""} key={factor.feature}>
+                  <div className="risk-driver-topline">
+                    <span>{index === 0 ? "Mayor impacto" : `Prioridad ${index + 1}`}</span>
+                    <strong>+{factor.impact_percentage_points.toFixed(1)} pp</strong>
+                  </div>
+                  <h4>{factor.label}</h4>
+                  <div className="risk-driver-comparison">
+                    <span>Actual <strong>{factor.current_value}</strong></span>
+                    <span>Referencia <strong>{factor.reference_value}</strong></span>
+                  </div>
+                  <div className="risk-impact-track" aria-hidden="true">
+                    <span
+                      style={{
+                        width: `${Math.max(
+                          12,
+                          (factor.impact_percentage_points / strongestImpact) * 100
+                        )}%`
+                      }}
+                    />
+                  </div>
+                  <p>
+                    <Lightbulb size={16} />
+                    <span><strong>Acción sugerida:</strong> {factor.action}</span>
+                  </p>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="risk-driver-empty">
+              <p>No se detecta una variable dominante frente al histórico de referencia.</p>
+              <ul>
+                {reservation.mainFactors.map((factor) => <li key={factor}>{factor}</li>)}
+              </ul>
+            </div>
+          )}
+
+          <small className="risk-method-note">
+            El impacto compara esta reserva con valores habituales de reservas no canceladas.
+            Sirve para priorizar la revisión y no implica causalidad.
+          </small>
         </section>
 
         <section className="detail-section recommendation-section">

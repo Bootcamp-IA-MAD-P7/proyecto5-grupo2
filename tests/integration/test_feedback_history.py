@@ -56,6 +56,7 @@ def test_feedback_history_can_be_listed_and_edited(feedback_database) -> None:
     assert body["records"][0]["record_id"] == created["record_id"]
     assert body["records"][0]["user_feedback"] == "correct"
     assert body["records"][0]["input_data"]["lead_time"] == 120
+    assert body["records"][0]["created_at"].endswith("Z")
 
     update = client.patch(
         f"/feedback/{created['record_id']}",

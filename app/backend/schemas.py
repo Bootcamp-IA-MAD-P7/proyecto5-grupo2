@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 
 class HealthResponse(BaseModel):
@@ -30,6 +30,15 @@ class ModelInfoResponse(BaseModel):
     target: str
     positive_class: str
     notes: list[str]
+
+
+class RiskFactorResponse(BaseModel):
+    feature: str
+    label: str
+    current_value: str
+    reference_value: str
+    impact_percentage_points: float = Field(..., ge=0)
+    action: str
 
 
 class PredictionRequest(BaseModel):
@@ -61,6 +70,7 @@ class PredictionResponse(BaseModel):
     risk_label: str
     model_version: str
     main_factors: list[str]
+    risk_factors: list[RiskFactorResponse]
     recommendation: str
 
 
@@ -117,6 +127,12 @@ class FeedbackRecordResponse(BaseModel):
     comments: str | None = None
     source: str
     input_data: PredictionRequest
+
+    @field_serializer("created_at", when_used="json")
+    def serialize_created_at_as_utc(self, value: datetime) -> str:
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=UTC)
+        return value.astimezone(UTC).isoformat().replace("+00:00", "Z")
 
 
 class FeedbackHistoryResponse(BaseModel):
