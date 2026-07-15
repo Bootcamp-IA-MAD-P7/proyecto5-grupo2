@@ -17,6 +17,7 @@ from .schemas import (
 from .services.drift_service import get_data_drift_report
 from .services.feedback_service import get_feedback_summary, save_feedback
 from .services.model_service import get_model_info, predict_cancellation
+from .services.prediction_log_service import save_prediction_log
 from .services.reservation_service import get_demo_reservations
 
 
@@ -66,7 +67,9 @@ def model_info() -> ModelInfoResponse:
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(payload: PredictionRequest) -> PredictionResponse:
-    return predict_cancellation(payload)
+    prediction = predict_cancellation(payload)
+    save_prediction_log(payload, prediction)
+    return prediction
 
 
 @app.get("/reservations/demo", response_model=DemoReservationsResponse)

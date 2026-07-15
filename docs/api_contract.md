@@ -85,8 +85,6 @@ Este endpoint informa del modelo que usa la API para generar predicciones.
 }
 ```
 
-## 5. Prediction Endpoint
-
 ## 5. Reservation Candidates Endpoint
 
 ### `GET /reservations/demo`
@@ -229,6 +227,7 @@ Valores pendientes de cerrar con ML Core:
 
 ```json
 {
+  "prediction_id": "uuid-generado",
   "prediction": "Canceled",
   "prediction_label": 1,
   "probability": 0.72,
@@ -248,6 +247,7 @@ Valores pendientes de cerrar con ML Core:
 
 | Campo | Tipo | Descripcion |
 | --- | --- | --- |
+| `prediction_id` | string | UUID unico del registro de auditoria persistido antes de devolver la respuesta. |
 | `prediction` | string | Clase predicha: `Canceled` o `Not_Canceled`. |
 | `prediction_label` | integer | Codificacion numerica inicial: `1` cancelada, `0` no cancelada. |
 | `probability` | float | Probabilidad estimada de cancelacion entre `0` y `1`. |
@@ -323,7 +323,18 @@ PostgreSQL en Amazon RDS para el despliegue AWS.
 
 La conexión se configura mediante `DATABASE_URL`. La API nunca devuelve credenciales ni endpoints privados.
 
-## 13. Feedback Summary
+## 13. Prediction Audit
+
+Cada respuesta correcta de `POST /predict` queda persistida en `prediction_logs` antes de devolver `200 OK`. El registro incluye:
+
+- `prediction_id` y timestamp UTC.
+- Input validado completo.
+- Prediccion, etiqueta numerica, probabilidad y nivel de riesgo.
+- Version del modelo y fuente de la operacion.
+
+Si la persistencia falla, la API no devuelve una prediccion correcta sin auditar. El campo adicional `prediction_id` es compatible con clientes anteriores que ignoren campos no utilizados.
+
+## 14. Feedback Summary
 
 ### `GET /feedback/summary`
 
@@ -340,7 +351,7 @@ Devuelve un resumen minimo de registros de feedback persistidos.
 
 `storage` puede ser `sqlite` en local o `postgresql` en AWS.
 
-## 14. Data Drift Monitoring
+## 15. Data Drift Monitoring
 
 ### `GET /monitoring/drift`
 
@@ -376,7 +387,7 @@ Con al menos 100 registros validos, `features` incluye el nombre, tipo, PSI y es
 
 Este endpoint es informativo. Una alerta nunca promociona ni reemplaza automaticamente el modelo Champion.
 
-## 15. Error Response
+## 16. Error Response
 
 FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
 
@@ -394,16 +405,17 @@ Formato esperado:
 }
 ```
 
-## 16. Reglas Provisionales
+## 17. Reglas Provisionales
 
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
 - El modelo real debe respetar este contrato o proponer una actualizacion documentada.
 - `GET /model/info` debe reflejar la version y estado real del modelo cargado.
 - `GET /reservations/demo` debe devolver `input_data` compatible con `POST /predict`.
+- Cada respuesta `200 OK` de `POST /predict` debe tener un registro con el mismo `prediction_id`.
 - `GET /monitoring/drift` debe usar el perfil versionado y declarar `insufficient_data` cuando no alcance la muestra minima.
 
-## 17. Pendiente
+## 18. Pendiente
 
 - Confirmar inputs definitivos con ML Core.
 - Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.
@@ -411,3 +423,4 @@ Formato esperado:
 - Confirmar estrategia de categorias no vistas.
 - Confirmar si la probabilidad corresponde siempre a la clase `Canceled`.
 - Mantener sincronizada la capa SQLAlchemy si cambia el esquema de feedback.
+- Cambiar la fuente de Data Drift desde feedback a `prediction_logs` para observar todo el trafico de inferencia.

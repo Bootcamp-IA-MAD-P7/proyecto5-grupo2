@@ -18,6 +18,7 @@ def test_prediction_feedback_smoke_flow(feedback_database) -> None:
     prediction = client.post("/predict", json=valid_prediction_payload())
     assert prediction.status_code == 200
     prediction_body = prediction.json()
+    assert isinstance(prediction_body["prediction_id"], str)
 
     feedback_payload = {
         "input_data": valid_prediction_payload(),

@@ -12,7 +12,7 @@ from src.data.models import PredictionFeedback
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 ALEMBIC_CONFIG_PATH = PROJECT_ROOT / "alembic.ini"
-MIGRATION_REVISION = "0001_prediction_feedback"
+MIGRATION_REVISION = "0002_prediction_logs"
 
 
 def run_upgrade(database_url: str, monkeypatch) -> Config:
@@ -29,13 +29,17 @@ def test_initial_migration_creates_versioned_schema(tmp_path, monkeypatch) -> No
 
     engine = create_database_engine(database_url)
     inspector = inspect(engine)
-    assert {"alembic_version", "prediction_feedback"}.issubset(
+    assert {"alembic_version", "prediction_feedback", "prediction_logs"}.issubset(
         inspector.get_table_names()
     )
     assert {index["name"] for index in inspector.get_indexes("prediction_feedback")} == {
         "ix_prediction_feedback_actual_status",
         "ix_prediction_feedback_model_version",
         "ix_prediction_feedback_user_feedback",
+    }
+    assert {index["name"] for index in inspector.get_indexes("prediction_logs")} == {
+        "ix_prediction_logs_created_at",
+        "ix_prediction_logs_model_version",
     }
     with engine.connect() as connection:
         revision = connection.scalar(text("SELECT version_num FROM alembic_version"))
@@ -49,7 +53,7 @@ def test_initial_migration_adopts_legacy_table_without_data_loss(
 ) -> None:
     database_url = f"sqlite:///{(tmp_path / 'legacy.db').as_posix()}"
     engine = create_database_engine(database_url)
-    Base.metadata.create_all(bind=engine)
+    PredictionFeedback.__table__.create(bind=engine)
 
     with Session(engine) as session:
         session.add(
@@ -77,6 +81,7 @@ def test_initial_migration_adopts_legacy_table_without_data_loss(
         revision = connection.scalar(text("SELECT version_num FROM alembic_version"))
     assert record_count == 1
     assert revision == MIGRATION_REVISION
+    assert "prediction_logs" in inspect(engine).get_table_names()
     engine.dispose()
 
 
@@ -107,4 +112,5 @@ def test_initial_migration_can_downgrade_temporary_schema(
 
     engine = create_database_engine(database_url)
     assert "prediction_feedback" not in inspect(engine).get_table_names()
+    assert "prediction_logs" not in inspect(engine).get_table_names()
     engine.dispose()

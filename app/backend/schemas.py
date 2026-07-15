@@ -41,6 +41,7 @@ class PredictionRequest(BaseModel):
 
 
 class PredictionResponse(BaseModel):
+    prediction_id: str
     prediction: str
     prediction_label: int
     probability: float = Field(..., ge=0, le=1)

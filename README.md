@@ -101,13 +101,14 @@ Estado actual:
 - Endpoint de salud disponible en `GET /health`.
 - Endpoint de información de modelo disponible en `GET /model/info`.
 - Endpoint de predicción real disponible en `POST /predict` usando el Champion Random Forest.
+- Auditoría de todas las predicciones correctas mediante `prediction_id` y la tabla `prediction_logs`.
 - Endpoint de reservas reales disponible en `GET /reservations/demo`, alimentado desde el CSV de `data/raw/`.
 - Frontend principal conectado a reservas reales, predicciones reales y feedback real.
 - Baseline reproducible guardado en `models/baseline/logistic_regression_baseline.pkl`.
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 30 tests disponible en `tests/`.
+- Suite Python de 34 tests disponible en `tests/`.
 - Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
@@ -115,7 +116,7 @@ Estado actual:
 - Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
 - Monitorización PSI disponible en `GET /monitoring/drift`, con perfil de entrenamiento versionado y control de muestra mínima.
-- Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0001_prediction_feedback`.
+- Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0002_prediction_logs`.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
 - Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
 - URL pública HTTPS disponible en `https://d3lxpalnzir74p.cloudfront.net`.
@@ -495,6 +496,7 @@ Estado actual destacado:
 [x] T-4.5 Documentar instalacion y ejecucion
 [x] T-4.6 Desplegar app y automatizar entrega
 [x] T-4.7 Versionar el esquema de base de datos
+[x] T-4.8 Auditar todas las predicciones
 [x] T-6.1 Smoke test completo
 [x] T-6.2 Revisar metricas finales y overfitting
 ```
@@ -699,7 +701,7 @@ Leyenda:
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
-| [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. | Crear una nueva revisión por cada cambio futuro del esquema. |
+| [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. `prediction_logs` audita todas las inferencias correctas y `prediction_feedback` conserva el aprendizaje aportado por usuarios. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
 | [x] | Tests unitarios | 34 tests activos: API, preprocessing, modelos, holdout, persistencia, migraciones, ingesta, smoke flow y data drift. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
@@ -709,7 +711,7 @@ Leyenda:
 | --- | --- | --- | --- |
 | [ ] | Experimentos con redes neuronales | No iniciado. | Valorar si aporta frente a modelos clásicos. |
 | [ ] | A/B Testing para comparar modelos | Documentado como posibilidad MLOps. | Definir Champion/Challenger y reparto de tráfico o evaluación offline. |
-| [x] | Monitorización de Data Drift | Perfil de entrenamiento versionado, PSI para todas las variables, endpoint `GET /monitoring/drift` y tests de estabilidad, alerta y muestra insuficiente. | Acumular al menos 100 registros reales; hasta entonces el estado esperado es `insufficient_data`. |
+| [x] | Monitorización de Data Drift | Perfil de entrenamiento versionado, PSI para todas las variables, endpoint `GET /monitoring/drift` y tests de estabilidad, alerta y muestra insuficiente. | Cambiar la muestra operativa de feedback a `prediction_logs` y acumular al menos 100 registros reales. |
 | [ ] | Auto-reemplazo condicionado de modelos | Documentado como objetivo experto. | Diseñar política de promoción solo si el nuevo modelo supera métricas mínimas. |
 
 ---
