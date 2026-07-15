@@ -1,4 +1,3 @@
-from contextlib import asynccontextmanager
 import os
 
 from fastapi import FastAPI
@@ -19,7 +18,6 @@ from .services.drift_service import get_data_drift_report
 from .services.feedback_service import get_feedback_summary, save_feedback
 from .services.model_service import get_model_info, predict_cancellation
 from .services.reservation_service import get_demo_reservations
-from src.data.database import create_database_schema
 
 
 LOCAL_CORS_ORIGINS = [
@@ -41,17 +39,10 @@ def get_cors_origins() -> list[str]:
     return list(dict.fromkeys([*LOCAL_CORS_ORIGINS, *deployment_origins]))
 
 
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    create_database_schema()
-    yield
-
-
 app = FastAPI(
     title="Hotel Insights API",
     version="0.1.0",
     description="Initial prediction API for hotel reservation cancellation risk.",
-    lifespan=lifespan,
 )
 
 app.add_middleware(

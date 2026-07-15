@@ -520,6 +520,9 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |   |-- 2_spec.md
 |   |-- 3_plan.md
 |   `-- 4_tasks.md
+|-- alembic/
+|   |-- versions/
+|   `-- env.py
 |-- app/
 |   |-- frontend/
 |   |   |-- Dockerfile
@@ -558,6 +561,7 @@ No crear todas las carpetas hasta que sean necesarias. Esta es la estructura obj
 |-- .github/
 |   `-- pull_request_template.md
 |-- .dockerignore
+|-- alembic.ini
 |-- CHANGELOG.md
 |-- docker-compose.yml
 |-- requirements.txt
@@ -634,6 +638,10 @@ Nivel Avanzado recomendado:
 - SQLite o PostgreSQL para predicciones y feedback.
 - Estado actual: cubierto con PostgreSQL en Amazon RDS para el despliegue AWS.
 - La misma capa SQLAlchemy usa SQLite como alternativa local y PostgreSQL en producción.
+- Alembic `1.18.5` versiona el esquema mediante revisiones auditables.
+- Revision actual: `0001_prediction_feedback`.
+- El backend ejecuta `alembic upgrade head` antes de iniciar FastAPI en local, Docker y AWS.
+- La migracion inicial adopta la tabla historica solo si su contrato de columnas coincide; cualquier incompatibilidad detiene el arranque sin modificar datos.
 
 No guardar datos personales sensibles salvo que sean estrictamente necesarios y esten justificados.
 
@@ -655,6 +663,7 @@ Tests requeridos para Nivel Avanzado:
 Docker debe permitir:
 
 - Instalar dependencias.
+- Aplicar migraciones pendientes antes de arrancar la API.
 - Levantar la app.
 - Cargar el modelo Champion.
 - Exponer el puerto de la app.
@@ -685,6 +694,7 @@ Docker inicial disponible:
 - Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
 - `docker-compose.ec2.yml` disponible para la ejecución en AWS con PostgreSQL externo.
 - `scripts/deploy_ec2.sh` valida configuración, reconstruye servicios y ejecuta health checks.
+- `scripts/start_backend.sh` ejecuta las migraciones Alembic antes de iniciar Uvicorn.
 
 ## Despliegue web y CI/CD
 

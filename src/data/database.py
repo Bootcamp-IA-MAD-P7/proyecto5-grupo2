@@ -56,11 +56,3 @@ def database_backend_name(database_url: str) -> str:
 DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL)
 engine = create_database_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
-
-
-def create_database_schema() -> None:
-    """Create missing tables for the current application schema."""
-
-    from src.data import models  # noqa: F401
-
-    Base.metadata.create_all(bind=engine)

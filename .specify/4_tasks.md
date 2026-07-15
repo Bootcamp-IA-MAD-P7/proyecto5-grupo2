@@ -382,6 +382,20 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia de seguridad: RDS es privado y el puerto HTTP de EC2 solo admite trafico desde la lista administrada de CloudFront.
 - URL verificada: `https://d3lxpalnzir74p.cloudfront.net`.
 
+### [x] T-4.7 Versionar el esquema de base de datos
+
+- Archivos afectados: `alembic/`, `alembic.ini`, `src/data/`, `app/backend/Dockerfile`, `scripts/start_backend.sh`, `tests/`, `docs/`.
+- Accion: sustituir la creacion implicita de tablas por migraciones Alembic reproducibles.
+- Responsable sugerido: I3.
+- Dificultad: alta.
+- Apto junior: no como responsable unico.
+- Dependencias: T-4.4, T-4.6.
+- Criterio de verificacion: SQLite y PostgreSQL alcanzan la revision `0001_prediction_feedback` sin perder registros existentes.
+- Evidencia: migracion inicial compatible con bases nuevas y con la tabla historica creada antes de Alembic; un esquema incompatible detiene el despliegue.
+- Evidencia operativa: `scripts/start_backend.sh` ejecuta `alembic upgrade head` antes de iniciar FastAPI en Docker local y AWS.
+- Tests: `tests/unit/test_database_migrations.py` cubre creacion, adopcion sin perdida y rechazo de schema incompatible.
+- Comando de verificacion: `python -m pytest tests/unit/test_database_migrations.py` y `python -m alembic current`.
+
 ## Fase 5 - Nivel Experto
 
 ### [ ] T-5.1 Entrenar red neuronal experimental

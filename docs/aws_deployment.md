@@ -33,6 +33,7 @@ Componentes:
 - **EC2** ejecuta frontend y backend con `docker-compose.ec2.yml`.
 - **nginx** sirve la SPA y envía las solicitudes `/api/` al backend dentro de la red Docker.
 - **FastAPI** carga `random_forest_champion_v0.1.0`, expone inferencia y registra feedback.
+- **Alembic** aplica las migraciones pendientes antes de que el contenedor backend inicie FastAPI.
 - **RDS PostgreSQL** persiste feedback y resultados operativos fuera del ciclo de vida de los contenedores.
 - **GitHub Actions** despliega automáticamente cada merge en `develop` mediante OIDC y AWS Systems Manager.
 
@@ -68,9 +69,10 @@ El script:
 1. Comprueba que existe `.env.ec2`.
 2. Valida la configuración de Docker Compose.
 3. Reconstruye y levanta los contenedores.
-4. Espera a que `GET /api/health` responda correctamente.
-5. Comprueba `GET /api/model/info`.
-6. Muestra el estado de los servicios y limpia imágenes no utilizadas.
+4. El backend ejecuta `alembic upgrade head`; si falla, FastAPI no arranca.
+5. Espera a que `GET /api/health` responda correctamente.
+6. Comprueba `GET /api/model/info`.
+7. Muestra el estado de los servicios y limpia imágenes no utilizadas.
 
 ## 5. Despliegue automático
 
@@ -124,6 +126,7 @@ Resultado validado el 14 de julio de 2026:
 - Champion `random_forest_champion_v0.1.0` cargado.
 - Persistencia identificada como `postgresql`.
 - Feedback conservado después de reiniciar el backend.
+- Esquema registrado en `alembic_version` con revisión `0001_prediction_feedback`.
 - Despliegue automático desde `develop` completado correctamente.
 - Acceso HTTP directo a la IP de EC2 bloqueado después de restringir el origen a CloudFront.
 

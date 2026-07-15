@@ -209,6 +209,7 @@ Estado actual:
 - Tests backend y build frontend verificados por GitHub Actions.
 - Docker Compose validado en local y en EC2.
 - PostgreSQL desplegado en Amazon RDS privado.
+- Esquema SQLite/PostgreSQL versionado con Alembic y migrado antes del arranque de la API.
 - CloudFront publica la app mediante HTTPS.
 - GitHub Actions despliega automáticamente en EC2 mediante OIDC y SSM.
 - Guía operativa disponible en `docs/aws_deployment.md`.
