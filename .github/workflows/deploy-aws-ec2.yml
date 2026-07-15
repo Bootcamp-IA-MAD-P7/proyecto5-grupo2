@@ -15,8 +15,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  backend-tests:
+    name: Backend quality gate
+    uses: ./.github/workflows/backend-tests.yml
+
+  frontend-build:
+    name: Frontend quality gate
+    uses: ./.github/workflows/frontend-build.yml
+
   deploy:
     name: Deploy production
+    needs:
+      - backend-tests
+      - frontend-build
     runs-on: ubuntu-latest
     timeout-minutes: 20
 

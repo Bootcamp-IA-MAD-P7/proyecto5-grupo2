@@ -322,6 +322,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-2.3, T-2.4.
 - Criterio de verificacion: tests pasan y fallan si la regla se incumple.
 - Evidencia: `tests/unit/test_baseline_training.py` y `tests/unit/test_challenger_training.py` verifican metricas minimas, versionado, parametros del challenger y regla de overfitting.
+- Evidencia CI: `.github/workflows/backend-tests.yml` ejecuta la suite Python completa y se reutiliza como quality gate del despliegue.
 - Comando de verificacion: `python -m pytest`
 
 ### [x] T-4.3 Dockerizar app
@@ -374,6 +375,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Dependencias: T-4.3, T-4.4, T-4.5.
 - Criterio de verificacion: URL HTTPS publica disponible, Champion cargado, PostgreSQL operativo y despliegue automatico verificado.
 - Evidencia: CloudFront publica la app; EC2 ejecuta Docker Compose; RDS PostgreSQL persiste feedback; GitHub Actions despliega mediante OIDC y SSM tras cada merge en `develop`.
+- Evidencia de quality gate: el job de despliegue depende de la suite Python completa y del build frontend mediante `needs`.
 - Evidencia de seguridad: RDS es privado y el puerto HTTP de EC2 solo admite trafico desde la lista administrada de CloudFront.
 - URL verificada: `https://d3lxpalnzir74p.cloudfront.net`.
 

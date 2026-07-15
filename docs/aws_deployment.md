@@ -78,11 +78,13 @@ El workflow `.github/workflows/deploy-aws-ec2.yml` se ejecuta tras cada `push` a
 
 Flujo:
 
-1. GitHub solicita credenciales temporales de AWS mediante OIDC.
-2. GitHub Actions asume un rol IAM sin almacenar claves de acceso permanentes.
-3. AWS Systems Manager envía el comando de despliegue a EC2.
-4. EC2 actualiza `develop` con `--ff-only` y ejecuta `scripts/deploy_ec2.sh`.
-5. El workflow espera el resultado y falla si el despliegue o el health check no terminan correctamente.
+1. GitHub ejecuta la suite Python completa y el build frontend como quality gates reutilizables.
+2. El despliegue solo continúa si ambos jobs terminan correctamente.
+3. GitHub solicita credenciales temporales de AWS mediante OIDC.
+4. GitHub Actions asume un rol IAM sin almacenar claves de acceso permanentes.
+5. AWS Systems Manager envía el comando de despliegue a EC2.
+6. EC2 actualiza `develop` con `--ff-only` y ejecuta `scripts/deploy_ec2.sh`.
+7. El workflow espera el resultado y falla si el despliegue o el health check no terminan correctamente.
 
 Variables de repositorio requeridas:
 
