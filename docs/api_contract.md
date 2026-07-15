@@ -241,9 +241,19 @@ Valores pendientes de cerrar con ML Core:
   "risk_label": "Alto",
   "model_version": "random_forest_champion_v0.1.0",
   "main_factors": [
-    "Lead time elevado",
-    "Sin solicitudes especiales",
-    "Segmento con cancelacion frecuente"
+    "Solicitudes especiales",
+    "Precio medio por habitacion",
+    "Antelacion de la reserva"
+  ],
+  "risk_factors": [
+    {
+      "feature": "no_of_special_requests",
+      "label": "Solicitudes especiales",
+      "current_value": "0",
+      "reference_value": "1",
+      "impact_percentage_points": 54.7,
+      "action": "Contactar al huesped para personalizar la estancia y reforzar su compromiso."
+    }
   ],
   "recommendation": "Activar contacto proactivo, confirmar intencion de viaje y proteger inventario con lista de espera."
 }
@@ -260,8 +270,11 @@ Valores pendientes de cerrar con ML Core:
 | `risk_level` | string | Nivel tecnico: `low`, `medium` o `high`. |
 | `risk_label` | string | Etiqueta visible: `Bajo`, `Medio` o `Alto`. |
 | `model_version` | string | Version del modelo usado. |
-| `main_factors` | array[string] | Factores explicativos principales. |
+| `main_factors` | array[string] | Etiquetas de los factores locales ordenados por impacto estimado. |
+| `risk_factors` | array[object] | Hasta tres variables que elevan el riesgo frente a referencias historicas de reservas no canceladas. Incluye valor actual, referencia, impacto en puntos porcentuales y accion sugerida. |
 | `recommendation` | string | Recomendacion operativa para el equipo hotelero. |
+
+`risk_factors` es una explicacion local por contrafactuales: recalcula la probabilidad al sustituir cada variable por un valor de referencia historico. Orienta la priorizacion operativa, pero no implica causalidad.
 
 ## 12. Feedback Endpoint
 
