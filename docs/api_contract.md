@@ -46,7 +46,7 @@ uvicorn app.backend.main:app --reload
 
 ### `GET /health`
 
-Comprueba que la API esta disponible.
+Liveness check. Comprueba que el proceso de la API esta disponible sin consultar dependencias externas.
 
 #### Response `200 OK`
 
@@ -57,6 +57,27 @@ Comprueba que la API esta disponible.
   "version": "0.1.0"
 }
 ```
+
+### `GET /health/ready`
+
+Readiness check. Comprueba que el Champion puede cargarse y que la base de datos acepta consultas.
+
+Devuelve `200 OK` cuando ambas dependencias estan disponibles y `503 Service Unavailable` en caso contrario.
+
+```json
+{
+  "status": "ready",
+  "service": "hotel-insights-api",
+  "version": "0.1.0",
+  "checked_at": "2026-07-15T10:00:00Z",
+  "model_loaded": true,
+  "model_version": "random_forest_champion_v0.1.0",
+  "database_connected": true,
+  "storage": "postgresql"
+}
+```
+
+Todas las respuestas de la API incluyen `X-Request-ID`. Si el cliente envia un identificador seguro en esa cabecera, la API lo conserva; en otro caso genera un UUID.
 
 ## 4. Model Info
 
@@ -420,6 +441,8 @@ Formato esperado:
 - El frontend no debe depender de campos no definidos aqui.
 - El modelo real debe respetar este contrato o proponer una actualizacion documentada.
 - `GET /model/info` debe reflejar la version y estado real del modelo cargado.
+- `GET /health/ready` debe fallar con `503` si el Champion o la base de datos no estan disponibles.
+- Toda respuesta debe incluir `X-Request-ID` para correlacion operativa.
 - `GET /reservations/demo` debe devolver `input_data` compatible con `POST /predict`.
 - Cada respuesta `200 OK` de `POST /predict` debe tener un registro con el mismo `prediction_id`.
 - `GET /monitoring/drift` debe usar el perfil versionado y declarar `insufficient_data` cuando no alcance la muestra minima.

@@ -17,7 +17,7 @@ docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" config --quiet
 docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" up -d --build --remove-orphans
 
 for attempt in $(seq 1 24); do
-  if curl --fail --silent --show-error http://localhost/api/health >/dev/null; then
+  if curl --fail --silent --show-error http://localhost/api/health/ready >/dev/null; then
     curl --fail --silent --show-error http://localhost/api/model/info
     echo
     docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" ps
@@ -25,11 +25,11 @@ for attempt in $(seq 1 24); do
     exit 0
   fi
 
-  echo "Waiting for the API health check (${attempt}/24)..."
+  echo "Waiting for the API readiness check (${attempt}/24)..."
   sleep 5
 done
 
-echo "Deployment failed: API health check did not pass." >&2
+echo "Deployment failed: API readiness check did not pass." >&2
 docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" ps >&2
 docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" logs --tail=100 >&2
 exit 1

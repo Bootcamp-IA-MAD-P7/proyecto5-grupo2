@@ -98,7 +98,7 @@ Estado actual:
 - Prototipo visual de producto disponible para validar la experiencia.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
-- Endpoint de salud disponible en `GET /health`.
+- Endpoints operativos disponibles: `GET /health` para liveness y `GET /health/ready` para comprobar Champion y base de datos.
 - Endpoint de información de modelo disponible en `GET /model/info`.
 - Endpoint de predicción real disponible en `POST /predict` usando el Champion Random Forest.
 - Auditoría de todas las predicciones correctas mediante `prediction_id` y la tabla `prediction_logs`.
@@ -108,7 +108,7 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 39 tests disponible en `tests/`.
+- Suite Python de 48 tests disponible en `tests/`.
 - Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
@@ -116,6 +116,7 @@ Estado actual:
 - Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
 - Monitorización PSI operativa disponible en `GET /monitoring/drift`, alimentada por las predicciones auditadas y con exclusión de la cola histórica de demostración.
+- Observabilidad proporcionada con logs JSON, identificadores `X-Request-ID` y eventos de predicción correlacionados sin registrar payloads ni credenciales.
 - Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0002_prediction_logs`.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
 - Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
@@ -226,6 +227,7 @@ El backend actual es una API FastAPI con endpoints:
 
 ```text
 GET /health
+GET /health/ready
 GET /model/info
 POST /predict
 POST /feedback
@@ -234,7 +236,7 @@ GET /reservations/demo
 GET /monitoring/drift
 ```
 
-`GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
+`GET /health` confirma que el proceso responde. `GET /health/ready` devuelve `200` solo cuando el Champion y la base de datos están disponibles. `GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
 
 ---
 
@@ -345,7 +347,7 @@ deactivate
 
 El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
 
-El contenedor backend ejecuta automáticamente `alembic upgrade head` antes de iniciar FastAPI. Si una migración falla, la API no arranca y el despliegue no supera el health check.
+El contenedor backend ejecuta automáticamente `alembic upgrade head` antes de iniciar FastAPI. Si una migración falla, la API no arranca y el despliegue no supera el readiness check.
 
 Servicios:
 
@@ -381,6 +383,7 @@ Comprobar backend:
 
 ```text
 http://localhost:8000/health
+http://localhost:8000/health/ready
 ```
 
 Comprobar frontend:
@@ -402,6 +405,7 @@ Endpoints verificados:
 
 ```text
 GET http://localhost:8000/health
+GET http://localhost:8000/health/ready
 GET http://localhost:8000/model/info
 POST http://localhost:8000/predict
 POST http://localhost:8000/feedback
@@ -497,6 +501,7 @@ Estado actual destacado:
 [x] T-4.6 Desplegar app y automatizar entrega
 [x] T-4.7 Versionar el esquema de base de datos
 [x] T-4.8 Auditar todas las predicciones
+[x] T-4.9 Añadir observabilidad operativa
 [x] T-6.1 Smoke test completo
 [x] T-6.2 Revisar metricas finales y overfitting
 ```
@@ -703,7 +708,7 @@ Leyenda:
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. `prediction_logs` audita todas las inferencias correctas y `prediction_feedback` conserva el aprendizaje aportado por usuarios. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 39 tests activos: API, preprocessing, modelos, holdout, persistencia, migraciones, ingesta, smoke flow y data drift. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 48 tests activos: API, preprocessing, modelos, holdout, persistencia, migraciones, ingesta, smoke flow, data drift y observabilidad. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
