@@ -9,12 +9,16 @@ COPY requirements-backend.txt .
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements-backend.txt
 
+COPY alembic.ini .
+COPY alembic ./alembic
 COPY app/backend ./app/backend
 COPY src ./src
+COPY scripts/start_backend.sh ./scripts/start_backend.sh
 COPY data/raw ./data/raw
 COPY models/champion ./models/champion
 COPY models/monitoring ./models/monitoring
+RUN chmod +x ./scripts/start_backend.sh
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./scripts/start_backend.sh"]

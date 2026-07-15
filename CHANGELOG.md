@@ -14,6 +14,9 @@ This project follows an incremental delivery approach. Versions and tags will be
 - PSI drift calculation for numeric, categorical and binary model features.
 - `GET /monitoring/drift` endpoint with stable, warning, drift and insufficient-data states.
 - Automated drift tests for stable, shifted, malformed and insufficient production samples.
+- Alembic configuration and initial `prediction_feedback` schema revision.
+- Migration tests for new databases, legacy schema adoption and incompatible schema rejection.
+- Backend startup script that applies pending migrations before starting FastAPI.
 
 ### Changed
 
@@ -21,6 +24,7 @@ This project follows an incremental delivery approach. Versions and tags will be
 - AWS deployment now waits for successful backend and frontend quality gates before updating EC2.
 - Python development and production dependencies now use exact versions for reproducible CI and Docker builds.
 - Champion metadata, technical report, SPEC and README now record the closed final holdout evaluation.
+- Database tables are no longer created implicitly during FastAPI startup; Alembic owns schema changes.
 
 ### Removed
 

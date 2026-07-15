@@ -115,6 +115,7 @@ Estado actual:
 - Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
 - Monitorización PSI disponible en `GET /monitoring/drift`, con perfil de entrenamiento versionado y control de muestra mínima.
+- Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0001_prediction_feedback`.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
 - Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
 - URL pública HTTPS disponible en `https://d3lxpalnzir74p.cloudfront.net`.
@@ -153,7 +154,7 @@ Pendiente principal:
 | Machine Learning | Scikit-learn, Pandas | Preprocesamiento, baseline, challenger, métricas y análisis. |
 | Aplicación web | React, Vite, FastAPI | Interfaz de predicción y API de inferencia. |
 | Calidad | Pytest, GitHub Actions | Tests backend, preprocessing, baseline y checks de PR. |
-| Operación | Docker, Docker Compose, AWS | Contenedores desplegados en EC2, HTTPS con CloudFront y PostgreSQL en RDS. |
+| Operación | Docker, Docker Compose, Alembic, AWS | Migraciones controladas, contenedores en EC2, HTTPS con CloudFront y PostgreSQL en RDS. |
 | Entrega | GitHub Actions, OIDC, AWS SSM | CI para backend/frontend y CD automático desde `develop`. |
 | Gestión | Git, GitHub, Jira | Ramas, PRs, changelog, tags, issues/historias y seguimiento. |
 
@@ -174,6 +175,9 @@ Pendiente principal:
 |   |-- 2_spec.md
 |   |-- 3_plan.md
 |   `-- 4_tasks.md
+|-- alembic/
+|   |-- versions/
+|   `-- env.py
 |-- app/
 |   |-- backend/
 |   |   |-- Dockerfile
@@ -196,6 +200,7 @@ Pendiente principal:
 |-- docs/
 |   |-- assets/
 |   |-- aws_deployment.md
+|   |-- database_migrations.md
 |   |-- business_presentation/
 |   |-- project_management/
 |   `-- technical_presentation/
@@ -205,8 +210,10 @@ Pendiente principal:
 |   `-- data_dictionary.md
 |-- src/
 |-- scripts/
-|   `-- deploy_ec2.sh
+|   |-- deploy_ec2.sh
+|   `-- start_backend.sh
 |-- tests/
+|-- alembic.ini
 |-- CHANGELOG.md
 |-- docker-compose.ec2.yml
 |-- docker-compose.yml
@@ -310,6 +317,15 @@ pip install -r requirements.txt
 
 Las dependencias directas tienen versiones exactas para que desarrollo, CI y Docker utilicen un entorno reproducible. La imagen del backend instala el subconjunto de producción definido en `requirements-backend.txt`.
 
+Aplicar migraciones antes de arrancar el backend fuera de Docker:
+
+```bash
+python -m alembic upgrade head
+python -m alembic current
+```
+
+La política completa de migraciones se documenta en [`docs/database_migrations.md`](docs/database_migrations.md).
+
 Comprobar Python activo:
 
 ```bash
@@ -327,6 +343,8 @@ deactivate
 ## 9. Docker
 
 El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
+
+El contenedor backend ejecuta automáticamente `alembic upgrade head` antes de iniciar FastAPI. Si una migración falla, la API no arranca y el despliegue no supera el health check.
 
 Servicios:
 
@@ -476,6 +494,7 @@ Estado actual destacado:
 [x] T-4.4 Conectar almacenamiento persistente
 [x] T-4.5 Documentar instalacion y ejecucion
 [x] T-4.6 Desplegar app y automatizar entrega
+[x] T-4.7 Versionar el esquema de base de datos
 [x] T-6.1 Smoke test completo
 [x] T-6.2 Revisar metricas finales y overfitting
 ```
@@ -680,9 +699,9 @@ Leyenda:
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
-| [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS en AWS. | Mantener migraciones controladas si cambia el esquema. |
+| [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 30 tests activos: API, preprocessing, baseline, challenger tuning, holdout final, persistencia, ingesta, smoke flow y data drift. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 34 tests activos: API, preprocessing, modelos, holdout, persistencia, migraciones, ingesta, smoke flow y data drift. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
