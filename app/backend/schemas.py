@@ -88,3 +88,29 @@ class FeedbackResponse(BaseModel):
 class FeedbackSummaryResponse(BaseModel):
     total_records: int
     storage: str
+
+
+class DriftThresholdsResponse(BaseModel):
+    moderate: float
+    high: float
+
+
+class DriftFeatureResponse(BaseModel):
+    feature: str
+    feature_type: Literal["numeric", "categorical"]
+    psi: float
+    status: Literal["stable", "moderate", "high"]
+
+
+class DriftReportResponse(BaseModel):
+    profile_version: str
+    generated_at: str
+    reference_rows: int
+    current_rows: int
+    minimum_current_rows: int
+    thresholds: DriftThresholdsResponse
+    status: Literal["insufficient_data", "stable", "warning", "drift_detected"]
+    max_psi: float | None
+    drifted_features: list[str]
+    features: list[DriftFeatureResponse]
+    message: str

@@ -107,13 +107,14 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 25 tests disponible en `tests/`.
+- Suite Python de 30 tests disponible en `tests/`.
 - Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
 - Configuración Docker validada para frontend, backend y Champion Random Forest.
 - Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
+- Monitorización PSI disponible en `GET /monitoring/drift`, con perfil de entrenamiento versionado y control de muestra mínima.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
 - Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
 - URL pública HTTPS disponible en `https://d3lxpalnzir74p.cloudfront.net`.
@@ -222,6 +223,7 @@ POST /predict
 POST /feedback
 GET /feedback/summary
 GET /reservations/demo
+GET /monitoring/drift
 ```
 
 `GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
@@ -680,7 +682,7 @@ Leyenda:
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS en AWS. | Mantener migraciones controladas si cambia el esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 25 tests activos: API, preprocessing, baseline, challenger tuning, holdout final, persistencia, ingesta y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 30 tests activos: API, preprocessing, baseline, challenger tuning, holdout final, persistencia, ingesta, smoke flow y data drift. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
@@ -688,7 +690,7 @@ Leyenda:
 | --- | --- | --- | --- |
 | [ ] | Experimentos con redes neuronales | No iniciado. | Valorar si aporta frente a modelos clásicos. |
 | [ ] | A/B Testing para comparar modelos | Documentado como posibilidad MLOps. | Definir Champion/Challenger y reparto de tráfico o evaluación offline. |
-| [ ] | Monitorización de Data Drift | Documentado como objetivo experto. | Definir variables a monitorizar y umbrales de alerta. |
+| [x] | Monitorización de Data Drift | Perfil de entrenamiento versionado, PSI para todas las variables, endpoint `GET /monitoring/drift` y tests de estabilidad, alerta y muestra insuficiente. | Acumular al menos 100 registros reales; hasta entonces el estado esperado es `insufficient_data`. |
 | [ ] | Auto-reemplazo condicionado de modelos | Documentado como objetivo experto. | Diseñar política de promoción solo si el nuevo modelo supera métricas mínimas. |
 
 ---
@@ -719,7 +721,7 @@ Prioridades inmediatas:
 2. Mantener capturas finales de la demo si se requieren evidencias visuales.
 3. Revisar frontend y narrativa comercial antes de la presentación.
 4. Alinear Jira con las tareas cerradas en SPEC.
-5. Decidir si se aborda una capa experta: drift, A/B testing o auto-reemplazo condicionado.
+5. Decidir si se aborda otra capa experta: red neuronal, A/B testing o promoción condicionada.
 6. Planificar la retirada de recursos AWS cuando termine la demostración.
 
 ---

@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 
+from app.backend import main as backend_main
 from app.backend.main import LOCAL_CORS_ORIGINS, app, get_cors_origins
 from app.backend.services import feedback_service
 
@@ -157,3 +158,33 @@ def test_feedback_rejects_invalid_payload() -> None:
     response = client.post("/feedback", json=payload)
 
     assert response.status_code == 422
+
+
+def test_data_drift_returns_monitoring_contract(monkeypatch) -> None:
+    monkeypatch.setattr(
+        backend_main,
+        "get_data_drift_report",
+        lambda: {
+            "profile_version": "training_reference_v1",
+            "generated_at": "2026-07-15T10:00:00+00:00",
+            "reference_rows": 25391,
+            "current_rows": 2,
+            "minimum_current_rows": 100,
+            "thresholds": {"moderate": 0.10, "high": 0.25},
+            "status": "insufficient_data",
+            "max_psi": None,
+            "drifted_features": [],
+            "features": [],
+            "message": "At least 100 current records are required; only 2 are available.",
+        },
+    )
+
+    response = client.get("/monitoring/drift")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "insufficient_data"
+    assert body["profile_version"] == "training_reference_v1"
+    assert body["current_rows"] == 2
+    assert body["minimum_current_rows"] == 100
+    assert body["features"] == []
