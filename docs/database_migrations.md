@@ -7,7 +7,7 @@ Versionar todos los cambios de esquema de Hotel Insights y aplicar la misma secu
 La aplicacion utiliza Alembic `1.18.5`. La revision actual es:
 
 ```text
-0001_prediction_feedback
+0002_prediction_logs
 ```
 
 ## Politica
@@ -65,6 +65,11 @@ La revision inicial contempla la tabla `prediction_feedback` que existia antes d
 
 La migracion no elimina datos durante esta adopcion.
 
+## Historial actual
+
+- `0001_prediction_feedback`: crea o adopta la tabla historica de feedback.
+- `0002_prediction_logs`: crea el registro inmutable de todas las predicciones correctas, con indices por fecha y version de modelo.
+
 ## Crear una nueva revision
 
 Despues de modificar los modelos SQLAlchemy:
@@ -94,5 +99,6 @@ Cubren:
 - Creacion de una base nueva.
 - Conservacion de registros de una base anterior.
 - Rechazo de un esquema incompatible.
+- Creacion de la tabla de auditoria `prediction_logs` y sus indices.
 - Registro de la revision en `alembic_version`.
 - Reversion controlada sobre una base temporal.

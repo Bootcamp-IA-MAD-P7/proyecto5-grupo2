@@ -1,8 +1,10 @@
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
 from app.backend import main as backend_main
 from app.backend.main import LOCAL_CORS_ORIGINS, app, get_cors_origins
 from app.backend.services import feedback_service
+from src.data.models import PredictionLog
 
 
 client = TestClient(app)
@@ -70,12 +72,14 @@ def test_model_info_returns_loaded_champion_state() -> None:
     assert isinstance(body["notes"], list)
 
 
-def test_predict_returns_contract_shape() -> None:
+def test_predict_returns_contract_shape(operational_database) -> None:
     response = client.post("/predict", json=valid_prediction_payload())
 
     assert response.status_code == 200
     body = response.json()
 
+    assert isinstance(body["prediction_id"], str)
+    assert len(body["prediction_id"]) == 36
     assert body["prediction"] in {"Canceled", "Not_Canceled"}
     assert body["prediction_label"] in {0, 1}
     assert 0 <= body["probability"] <= 1
@@ -84,6 +88,23 @@ def test_predict_returns_contract_shape() -> None:
     assert isinstance(body["model_version"], str)
     assert isinstance(body["main_factors"], list)
     assert isinstance(body["recommendation"], str)
+
+    _, session_factory = operational_database
+    with session_factory() as session:
+        stored_prediction = session.scalar(
+            select(PredictionLog).where(
+                PredictionLog.prediction_id == body["prediction_id"]
+            )
+        )
+
+    assert stored_prediction is not None
+    assert stored_prediction.model_version == body["model_version"]
+    assert stored_prediction.prediction == body["prediction"]
+    assert stored_prediction.prediction_label == body["prediction_label"]
+    assert stored_prediction.probability == body["probability"]
+    assert stored_prediction.risk_level == body["risk_level"]
+    assert stored_prediction.source == "prediction_api"
+    assert stored_prediction.input_data == valid_prediction_payload()
 
 
 def test_predict_model_version_matches_model_info() -> None:

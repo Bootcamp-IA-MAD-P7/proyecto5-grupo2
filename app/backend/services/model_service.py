@@ -2,6 +2,7 @@ from functools import lru_cache
 import json
 import pickle
 from pathlib import Path
+from uuid import uuid4
 
 import pandas as pd
 
@@ -64,6 +65,7 @@ def predict_cancellation(payload: PredictionRequest) -> PredictionResponse:
     risk_level, risk_label = _risk_from_probability(probability)
 
     return PredictionResponse(
+        prediction_id=str(uuid4()),
         prediction="Canceled" if prediction_label == 1 else "Not_Canceled",
         prediction_label=prediction_label,
         probability=probability,
