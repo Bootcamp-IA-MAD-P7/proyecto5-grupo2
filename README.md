@@ -107,7 +107,8 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 23 tests disponible en `tests/`.
+- Suite Python de 25 tests disponible en `tests/`.
+- Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
 - Configuración Docker validada para frontend, backend y Champion Random Forest.
@@ -656,7 +657,7 @@ Leyenda:
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con Pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener test reservado para una revisión final imparcial. |
+| [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con Pipeline reproducible. Holdout final: F1 `Canceled` `0.8258` y ROC-AUC `0.9499`. | Test cerrado; no reutilizar para tuning. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Champion Random Forest gap F1 `0.0345`, ambos bajo el límite `0.05`. | Mantener control si se reentrena el Champion. |
 | [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, Champion real, Docker y despliegue HTTPS en AWS verificados. | Mantener disponible hasta la entrega o demostración final. |
@@ -679,7 +680,7 @@ Leyenda:
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS en AWS. | Mantener migraciones controladas si cambia el esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 23 tests activos: API, preprocessing, baseline, challenger tuning, persistencia, ingesta y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 25 tests activos: API, preprocessing, baseline, challenger tuning, holdout final, persistencia, ingesta y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 

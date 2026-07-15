@@ -93,8 +93,46 @@
   },
   "decision": "Random Forest is selected as Champion because it improves the Canceled-class F1-score versus the Logistic Regression baseline, keeps the overfitting gap below 0.05 and remains reproducible in stratified cross-validation.",
   "limitations": [
-    "The test split remains reserved for a final unbiased check.",
     "FastAPI loads this Champion through app/backend/services/model_service.py.",
-    "Tree-based feature importance is documented in model diagnostics and should be complemented with monitoring after deployment."
-  ]
+    "Tree-based feature importance is documented in model diagnostics and should be complemented with monitoring after deployment.",
+    "The reserved test split was evaluated once and is closed for further tuning."
+  ],
+  "champion_test_metrics": {
+    "model_name": "random_forest_champion",
+    "split": "test",
+    "accuracy": 0.8855200294009555,
+    "precision_canceled": 0.8232998885172799,
+    "recall_canceled": 0.8283791362871564,
+    "f1_canceled": 0.8258317025440313,
+    "roc_auc": 0.9499176655047511,
+    "true_negative": 3342,
+    "false_positive": 317,
+    "false_negative": 306,
+    "true_positive": 1477
+  },
+  "final_holdout_evaluation": {
+    "evaluation_date": "2026-07-15",
+    "result_artifact": "reports/champion_test_metrics.json",
+    "model_sha256": "b1b26946153ca1f8fe255cb26a5d53134da83c7a3b7ad73cde849fb954b6c162",
+    "dataset_sha256": "d25e1d4680b2b91bcf5fd0a6b690f26c3bdfd52eb4e434e69018cb7bd60f6782",
+    "split_strategy": {
+      "train_fraction": 0.7,
+      "validation_fraction": 0.15,
+      "test_fraction": 0.15,
+      "random_state": 42,
+      "stratified": true,
+      "train_rows": 25391,
+      "validation_rows": 5442,
+      "test_rows": 5442
+    },
+    "acceptance": {
+      "minimum_f1_canceled": 0.8,
+      "maximum_validation_test_f1_gap": 0.05,
+      "validation_test_f1_gap": 0.01533770310222271,
+      "passes_minimum_f1": true,
+      "passes_stability_gap": true,
+      "passes_all_criteria": true
+    },
+    "policy": "The Champion remains frozen after this evaluation. Test results must not be used for further model tuning."
+  }
 }

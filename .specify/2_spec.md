@@ -244,10 +244,10 @@ Resultados de validacion frente al baseline:
 Validacion cruzada:
 
 - Estrategia: Stratified K-Fold de 3 folds.
-- F1 medio clase `Canceled`: 0,8082.
-- Desviacion F1: 0,0053.
-- ROC-AUC medio: 0,9391.
-- Desviacion ROC-AUC: 0,0015.
+- F1 medio clase `Canceled`: 0,8160.
+- Desviacion F1: 0,0071.
+- ROC-AUC medio: 0,9426.
+- Desviacion ROC-AUC: 0,0017.
 
 Decision actual:
 
@@ -256,6 +256,8 @@ Decision actual:
 - La metadata del Champion se encuentra en `models/champion/champion_metadata.json`.
 - FastAPI carga el Champion desde la metadata y expone su version en `GET /model/info` y `POST /predict`.
 - El frontend principal consume reservas candidatas desde `GET /reservations/demo`, calcula predicciones reales con `POST /predict` y registra feedback real con `POST /feedback`.
+- El holdout final se evaluo una unica vez: F1 `Canceled` 0,8258, ROC-AUC 0,9499 y gap F1 validacion-test 0,0153.
+- La evidencia queda registrada en `reports/champion_test_metrics.json`; el test queda cerrado para nuevos ajustes.
 
 ## Estado del tuning inicial
 
@@ -264,19 +266,20 @@ Busqueda controlada ejecutada para `RandomForestClassifier`.
 Configuracion ganadora aplicada:
 
 - `n_estimators=200`.
-- `max_depth=16`.
-- `min_samples_leaf=8`.
-- `min_samples_split=16`.
+- `max_depth=18`.
+- `min_samples_leaf=6`.
+- `min_samples_split=12`.
 - `class_weight="balanced_subsample"`.
 
 Comparacion de validacion:
 
 - Random Forest inicial (`max_depth=14`, `min_samples_leaf=12`): F1 = 0,7952; gap = 0,0186; ROC-AUC = 0,9287.
-- Random Forest optimizado (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
+- Random Forest intermedio (`max_depth=16`, `min_samples_leaf=8`): F1 = 0,8042; gap = 0,0242; ROC-AUC = 0,9347.
+- Random Forest final (`max_depth=18`, `min_samples_leaf=6`): F1 = 0,8105; gap = 0,0345; ROC-AUC = 0,9391.
 
 Decision actual:
 
-- La configuracion optimizada mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
+- La configuracion final mejora el F1 de validacion y mantiene overfitting inferior a 0,05.
 - La configuracion esta aplicada en `src/models/train_challengers.py`, el artefacto esta regenerado en `models/challengers/random_forest_challenger.pkl` y la verificacion queda cubierta por `tests/unit/test_challenger_training.py`.
 
 ## Metricas obligatorias

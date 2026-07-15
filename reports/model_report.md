@@ -15,7 +15,7 @@ Este reporte registra el primer baseline reproducible del proyecto. El objetivo 
 - Target: `booking_status`.
 - Clase positiva para metricas principales: `Canceled`.
 - Split usado: train 70%, validacion 15%, test 15%.
-- El test queda reservado para una evaluacion posterior mas imparcial.
+- Durante entrenamiento, tuning y seleccion, el test permanecio reservado; su evaluacion final se documenta en la seccion del Champion.
 
 ### Metricas train/validacion
 
@@ -154,6 +154,29 @@ Se selecciona `random_forest_champion_v0.1.0` como Champion Model del proyecto.
 - La validacion cruzada confirma estabilidad razonable: F1 medio 0.8160 con desviacion 0.0071.
 - La API ya carga este Champion desde `models/champion/random_forest_champion.pkl` usando la metadata versionada.
 
+### Evaluacion final sobre test reservado
+
+El holdout final se abrio una unica vez el 15 de julio de 2026, despues de congelar el Champion y declarar previamente los criterios de aceptacion en `docs/champion_holdout_protocol.md`.
+
+| metrica test | resultado |
+| --- | ---: |
+| Accuracy | 0.8855 |
+| Precision `Canceled` | 0.8233 |
+| Recall `Canceled` | 0.8284 |
+| F1 `Canceled` | 0.8258 |
+| ROC-AUC | 0.9499 |
+| True negative | 3342 |
+| False positive | 317 |
+| False negative | 306 |
+| True positive | 1477 |
+
+- Filas de test: 5442, equivalentes al 15 % del dataset.
+- Gap absoluto F1 validacion-test: 0.0153.
+- Criterio F1 test >= 0.80: cumple.
+- Criterio gap validacion-test <= 0.05: cumple.
+- Evidencia reproducible: `reports/champion_test_metrics.json` y `models/champion/champion_metadata.json`.
+- El test queda cerrado y no se utilizara para tuning o seleccion posterior.
+
 ### Tabla de experimentos y decision
 
 Esta tabla resume los modelos evaluados durante el proyecto y la decision tomada sobre cada uno. La metrica principal es el F1-score de la clase `Canceled`, porque el objetivo de negocio es anticipar cancelaciones sin depender solo de la clase mayoritaria.
@@ -236,6 +259,6 @@ Interpretacion de negocio:
 
 ### Limitaciones y siguientes mejoras
 
-- El test split sigue reservado para una comprobacion final imparcial antes de defender el resultado como definitivo.
+- El test split se evaluo una unica vez; cualquier modelo posterior necesitara datos futuros o un nuevo protocolo independiente.
 - La importancia de variables es global; para explicar casos individuales convendria anadir explicabilidad local en una fase posterior.
 - Como siguiente mejora, el equipo puede ajustar el umbral de decision si quiere priorizar mas recall de `Canceled` o mas precision de las alertas.
