@@ -127,7 +127,7 @@ Estado actual:
 - `GET /reservations/demo` sirve reservas candidatas desde el CSV real para alimentar el frontend principal.
 - El frontend principal consume reservas reales, predicciones reales y feedback real.
 - Informe tecnico disponible en `reports/model_report.md` con metricas, overfitting, curva ROC, matriz de confusion, feature importance y analisis de errores del Champion.
-- Docker local inicial preparado para frontend y backend.
+- Docker validado en local y desplegado en Amazon EC2 para frontend y backend.
 - Nivel Esencial cubierto; validacion manual funcional documentada en `reports/manual_app_validation.md`.
 
 ## 6. Fase 3 - Nivel medio
@@ -166,7 +166,7 @@ Estado actual:
 - Validacion cruzada estratificada de 3 folds documentada con F1 medio `0.8160`.
 - Tuning de hiperparametros consolidado en script reproducible.
 - Feedback implementado con `POST /feedback` y `GET /feedback/summary`.
-- Recogida de datos nuevos para futuros reentrenamientos cubierta con CSV local e ingesta en `src/data/feedback_ingestion.py`.
+- Recogida de datos nuevos para futuros reentrenamientos cubierta con SQLAlchemy, SQLite local, PostgreSQL RDS e ingesta en `src/data/feedback_ingestion.py`.
 - Estado: Nivel Medio cubierto.
 
 ## 7. Fase 4 - Nivel avanzado operativo
@@ -182,6 +182,7 @@ Incluye:
 - GitHub Actions.
 - Persistencia más robusta.
 - Smoke test documentado.
+- Despliegue web reproducible.
 
 Entregables:
 
@@ -193,6 +194,8 @@ Entregables:
 - Workflow de CI para Python.
 - Workflow de CI para frontend.
 - Checklist de validación manual.
+- PostgreSQL administrado.
+- Despliegue HTTPS y entrega automática desde `develop`.
 
 Criterio de cierre:
 
@@ -200,6 +203,16 @@ Criterio de cierre:
 - La app puede arrancar con comandos documentados.
 - GitHub Actions verifica cambios básicos.
 - Docker queda funcional o documentado como limitación.
+
+Estado actual:
+
+- Tests backend y build frontend verificados por GitHub Actions.
+- Docker Compose validado en local y en EC2.
+- PostgreSQL desplegado en Amazon RDS privado.
+- CloudFront publica la app mediante HTTPS.
+- GitHub Actions despliega automáticamente en EC2 mediante OIDC y SSM.
+- Guía operativa disponible en `docs/aws_deployment.md`.
+- Estado: Nivel Avanzado cubierto.
 
 ## 8. Fase 5 - Nivel experto / MLOps
 
@@ -267,18 +280,15 @@ Criterio de cierre:
 
 ## 10. Orden recomendado de próximos PRs
 
-Después de esta propuesta, se recomienda avanzar en PRs pequeños:
+Con los niveles Esencial, Medio y Avanzado cubiertos, se recomienda cerrar el proyecto con PRs pequeños:
 
 ```text
-feature/backend-health-api
-feature/ml-baseline-pipeline
-feature/backend-predict-api
-feature/frontend-api-integration
-test/minimal-ci
-ci/frontend-build
-ci/python-tests
-docs/final-report-structure
 docs/ux-ui-visual-identity
+docs/business-presentation
+docs/technical-presentation
+docs/final-delivery-checklist
 ```
+
+Las tareas de Nivel Experto deben ir en ramas separadas y solo se incorporarán si no comprometen la demo estable ni el cierre documental.
 
 Cada PR debe tener una verificación clara y no mezclar responsabilidades.

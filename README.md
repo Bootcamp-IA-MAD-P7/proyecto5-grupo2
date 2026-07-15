@@ -10,12 +10,14 @@ Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 ![Scikit-learn](https://img.shields.io/badge/ML-Scikit--learn-F7931E)
 ![Docker](https://img.shields.io/badge/Docker-validated%20with%20Champion-2496ED)
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF)
-![Milestone](https://img.shields.io/badge/tag-v0.4.0--essential--mvp-2E7D32)
+![AWS](https://img.shields.io/badge/AWS-EC2%20%2B%20RDS%20%2B%20CloudFront-FF9900)
+![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1)
+![Milestone](https://img.shields.io/badge/tag-v0.6.0--aws--deployment-2E7D32)
 
 | Producto | Modelo | Entrega |
 | --- | --- | --- |
-| Web React + API FastAPI | Champion Random Forest integrado | Nivel Esencial cubierto |
-| Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | Tests, CI, Docker, feedback y smoke test |
+| Web React + API FastAPI | Champion Random Forest integrado | Niveles Esencial, Medio y Avanzado cubiertos |
+| Predicción real en `POST /predict` | F1 de `Canceled` como métrica principal | AWS, PostgreSQL, CI/CD, Docker y tests |
 
 ---
 
@@ -105,11 +107,16 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
-- Workflows de GitHub Actions creados para tests backend y build frontend.
+- Suite Python de 23 tests disponible en `tests/`.
+- Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
+- Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
 - Configuración Docker validada para frontend, backend y Champion Random Forest.
 - Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
+- Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
+- Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
+- URL pública HTTPS disponible en `https://d3lxpalnzir74p.cloudfront.net`.
+- Despliegue automático desde `develop` mediante GitHub Actions, OIDC y AWS Systems Manager.
 - Metodología SPEC creada en `.specify/`.
 - Documentos de organización creados en `docs/project_management/`.
 - Jira definido como herramienta oficial de gestión.
@@ -122,6 +129,7 @@ Pendiente principal:
 - Revisar capturas finales de la app si se incorporan a la presentacion.
 - Revisar el informe técnico final antes de la entrega.
 - Mantener evidencia visual de la demo si se requiere para la presentacion.
+- Preparar las presentaciones finales y el checklist de entrega.
 
 ---
 
@@ -143,7 +151,8 @@ Pendiente principal:
 | Machine Learning | Scikit-learn, Pandas | Preprocesamiento, baseline, challenger, métricas y análisis. |
 | Aplicación web | React, Vite, FastAPI | Interfaz de predicción y API de inferencia. |
 | Calidad | Pytest, GitHub Actions | Tests backend, preprocessing, baseline y checks de PR. |
-| Operación | Docker, Docker Compose | Contenedores validados para frontend, backend y Champion. |
+| Operación | Docker, Docker Compose, AWS | Contenedores desplegados en EC2, HTTPS con CloudFront y PostgreSQL en RDS. |
+| Entrega | GitHub Actions, OIDC, AWS SSM | CI para backend/frontend y CD automático desde `develop`. |
 | Gestión | Git, GitHub, Jira | Ramas, PRs, changelog, tags, issues/historias y seguimiento. |
 
 ---
@@ -156,6 +165,7 @@ Pendiente principal:
 |   |-- pull_request_template.md
 |   `-- workflows/
 |       |-- backend-tests.yml
+|       |-- deploy-aws-ec2.yml
 |       `-- frontend-build.yml
 |-- .specify/
 |   |-- 1_intent.md
@@ -183,6 +193,7 @@ Pendiente principal:
 |   `-- raw/
 |-- docs/
 |   |-- assets/
+|   |-- aws_deployment.md
 |   |-- business_presentation/
 |   |-- project_management/
 |   `-- technical_presentation/
@@ -191,8 +202,11 @@ Pendiente principal:
 |-- reports/
 |   `-- data_dictionary.md
 |-- src/
+|-- scripts/
+|   `-- deploy_ec2.sh
 |-- tests/
 |-- CHANGELOG.md
+|-- docker-compose.ec2.yml
 |-- docker-compose.yml
 |-- requirements.txt
 `-- README.md
@@ -204,6 +218,9 @@ El backend actual es una API FastAPI con endpoints:
 GET /health
 GET /model/info
 POST /predict
+POST /feedback
+GET /feedback/summary
+GET /reservations/demo
 ```
 
 `GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
@@ -288,6 +305,8 @@ Instalar dependencias:
 pip install -r requirements.txt
 ```
 
+Las dependencias directas tienen versiones exactas para que desarrollo, CI y Docker utilicen un entorno reproducible. La imagen del backend instala el subconjunto de producción definido en `requirements-backend.txt`.
+
 Comprobar Python activo:
 
 ```bash
@@ -369,6 +388,24 @@ GET http://localhost:8000/feedback/summary
 
 Nota: el backend actual carga el Champion Random Forest. Si se promociona un nuevo modelo, el servicio de inferencia deberá apuntar al nuevo artefacto versionado y actualizar `models/champion/champion_metadata.json`.
 
+### Despliegue AWS
+
+La misma solución Docker está desplegada en AWS:
+
+```text
+https://d3lxpalnzir74p.cloudfront.net
+```
+
+Arquitectura operativa:
+
+- CloudFront publica la aplicación mediante HTTPS.
+- EC2 ejecuta nginx, frontend React y backend FastAPI con `docker-compose.ec2.yml`.
+- RDS PostgreSQL conserva feedback y datos operativos.
+- GitHub Actions despliega automáticamente cada merge en `develop` mediante OIDC y SSM.
+- El acceso directo al puerto HTTP de EC2 está limitado a los servidores de origen de CloudFront.
+
+La instalación, operación, seguridad, verificación y retirada están documentadas en [`docs/aws_deployment.md`](docs/aws_deployment.md).
+
 ---
 
 ## 10. Metodología SPEC / SDD
@@ -423,16 +460,19 @@ Estado actual destacado:
 [x] T-2.3 Calcular metricas obligatorias
 [x] T-2.4 Revisar overfitting inferior al 5%
 [x] T-2.5 Crear app minima de prediccion
+[x] T-2.6 Validacion manual de app
 [x] T-3.1 Entrenar modelo ensemble
 [x] T-3.2 Aplicar validacion cruzada
 [x] T-3.3 Optimizar hiperparametros
 [x] T-3.4 Seleccionar Champion Model
 [x] T-3.5 Crear tabla de experimentos
 [x] T-3.6 Implementar feedback
+[x] T-4.1 Crear tests minimos de preprocessing
 [x] T-4.2 Crear tests minimos de metricas
 [x] T-4.3 Dockerizar app
 [x] T-4.4 Conectar almacenamiento persistente
-[~] T-4.5 Documentar instalacion y ejecucion
+[x] T-4.5 Documentar instalacion y ejecucion
+[x] T-4.6 Desplegar app y automatizar entrega
 [x] T-6.1 Smoke test completo
 [x] T-6.2 Revisar metricas finales y overfitting
 ```
@@ -549,6 +589,8 @@ Tags creados:
 v0.1.0-docs-foundation
 v0.2.0-frontend-mock
 v0.4.0-essential-mvp
+v0.5.0-operational-mvp
+v0.6.0-aws-deployment
 ```
 
 Significado:
@@ -556,13 +598,12 @@ Significado:
 - `v0.1.0-docs-foundation`: base documental, SPEC, roadmap, flujo Git, README inicial, PR template y changelog.
 - `v0.2.0-frontend-mock`: frontend React + Vite con mock funcional de predicción.
 - `v0.4.0-essential-mvp`: Nivel Esencial cubierto con EDA, baseline, overfitting, API con inferencia real e informe técnico.
+- `v0.5.0-operational-mvp`: Champion integrado, Docker, feedback y smoke test operativo.
+- `v0.6.0-aws-deployment`: despliegue HTTPS en AWS, PostgreSQL RDS y entrega automática desde `develop`.
 
-Hitos previstos:
+Siguiente hito previsto:
 
 ```text
-v0.5.0-api
-v0.6.0-champion
-v0.7.0-operational
 v1.0.0-final
 ```
 
@@ -618,7 +659,7 @@ Leyenda:
 | [x] | Modelo funcional de clasificación | Baseline Logistic Regression entrenado y Champion Random Forest seleccionado con Pipeline reproducible. Artefacto en `models/champion/random_forest_champion.pkl`. | Mantener test reservado para una revisión final imparcial. |
 | [x] | EDA con visualizaciones relevantes para clasificación | `notebooks/02_eda_exploratory.ipynb` incluye target, desbalance, distribuciones, relación con target, matriz de correlación y conclusiones. | Exportar figuras solo si se necesitan para presentación. |
 | [x] | Overfitting inferior al 5% | Baseline gap F1 `0.0079`; Champion Random Forest gap F1 `0.0345`, ambos bajo el límite `0.05`. | Mantener control si se reentrena el Champion. |
-| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, contrato `POST /predict`, endpoint `GET /model/info`, endpoint `GET /reservations/demo`, Docker validado, Champion real integrado y validacion funcional documentada. | Despliegue posterior si se aborda cloud. |
+| [x] | Solución productivizada | Frontend React + Vite, backend FastAPI, Champion real, Docker y despliegue HTTPS en AWS verificados. | Mantener disponible hasta la entrega o demostración final. |
 | [x] | Informe técnico de rendimiento | Métricas, matriz de confusión, curva ROC, overfitting, feature importance y análisis de errores documentados en `reports/model_report.md`. | Revisar redacción final antes de la entrega. |
 
 ### Nivel Medio
@@ -629,16 +670,16 @@ Leyenda:
 | [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8160`. | Ampliar folds solo si el equipo lo considera necesario. |
 | [x] | Optimización de hiperparámetros | Configuración optimizada aplicada en `src/models/train_challengers.py`, artefacto regenerado, verificado por `tests/unit/test_challenger_training.py` y promocionado a Champion. | Revalidar solo si cambia el dataset o los hiperparámetros. |
 | [x] | Recogida de feedback para monitorizar performance | `POST /feedback` persiste predicción, probabilidad, versión de modelo, input validado, feedback y estado real si se conoce. El modal del frontend principal permite registrar feedback. `GET /feedback/summary` permite monitorización básica. | Mejorar visualmente el flujo de feedback en frontend. |
-| [x] | Recogida de datos nuevos para futuros reentrenamientos | `data/feedback/prediction_feedback.csv` y `src/data/feedback_ingestion.py` permiten construir dataset de reentrenamiento con feedback etiquetado. | Evolucionar a SQLite/PostgreSQL si se despliega. |
+| [x] | Recogida de datos nuevos para futuros reentrenamientos | SQLAlchemy persiste feedback en SQLite local o PostgreSQL RDS; `src/data/feedback_ingestion.py` construye el dataset con registros etiquetados. | Definir una política de reentrenamiento si se aborda Nivel Experto. |
 
 ### Nivel Avanzado
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [x] | Versión dockerizada del programa | `docker-compose.yml`, Dockerfile backend, Dockerfile frontend y nginx validados con Champion, feedback y frontend `HTTP 200`. | Optimizar imagen para despliegue si se aborda cloud. |
-| [x] | Guardado en base de datos de datos recogidos | Persistencia CSV local en `data/feedback/prediction_feedback.csv`, ignorada por Git para no subir datos operativos. | Evolucionar a SQLite/PostgreSQL si se despliega. |
-| [ ] | Despliegue web | Preparación local con Docker. | Definir plataforma y variables de entorno de despliegue. |
-| [x] | Tests unitarios | 22 tests activos: API, preprocessing, baseline, challenger tuning, feedback ingestion y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
+| [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS en AWS. | Mantener migraciones controladas si cambia el esquema. |
+| [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
+| [x] | Tests unitarios | 23 tests activos: API, preprocessing, baseline, challenger tuning, persistencia, ingesta y smoke flow completo. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
@@ -674,11 +715,11 @@ docs/project_management/03_delivery_roadmap.md
 Prioridades inmediatas:
 
 1. Preparar presentación de negocio y presentación técnica.
-2. Decidir si se aborda despliegue cloud.
-3. Revisar frontend actual ya conectado a datos reales y, si procede, construir una beta alternativa con flujo de usuario claro.
-4. Mantener capturas finales de la demo si se requieren evidencias visuales.
-5. Evolucionar persistencia CSV a SQLite/PostgreSQL si el alcance lo requiere.
-6. Decidir siguiente capa experta: drift, A/B testing o auto-reemplazo condicionado.
+2. Mantener capturas finales de la demo si se requieren evidencias visuales.
+3. Revisar frontend y narrativa comercial antes de la presentación.
+4. Alinear Jira con las tareas cerradas en SPEC.
+5. Decidir si se aborda una capa experta: drift, A/B testing o auto-reemplazo condicionado.
+6. Planificar la retirada de recursos AWS cuando termine la demostración.
 
 ---
 
@@ -702,15 +743,23 @@ Sprint 1 se considera orientado a dejar preparada la base del proyecto:
 - Plantilla de PR creada.
 - Changelog y tags iniciales creados.
 
-Queda para Sprint 2:
+Avances completados después de Sprint 1:
 
 - Validación manual de la demo completa.
-- Validación Docker con modelo real completada.
+- Validación Docker con modelo real.
 - Champion Model seleccionado e integrado en API.
-- Consolidación de tuning reproducible si se mantiene en alcance.
+- Consolidación de tuning reproducible.
 - Tests de métricas mínimas y smoke test completo de demo.
-- Feedback y persistencia CSV implementados.
-- Preparación de despliegue.
+- Feedback con SQLite local y PostgreSQL RDS.
+- Despliegue HTTPS en AWS.
+- Entrega automática desde `develop`.
+
+Pendiente de cierre final:
+
+- Presentación de negocio.
+- Presentación técnica.
+- Alineación final de Jira, SPEC y evidencias.
+- Checklist de entrega y retirada posterior de recursos temporales de AWS.
 
 ---
 

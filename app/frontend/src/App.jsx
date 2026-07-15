@@ -11,6 +11,7 @@ import {
   Sparkles
 } from "lucide-react";
 import AlertsPanel from "./components/AlertsPanel";
+import FeedbackHistory from "./components/FeedbackHistory";
 import GuidedReservationFlow from "./components/GuidedReservationFlow";
 import HomePage from "./components/HomePage";
 import ReservationDetailModal from "./components/ReservationDetailModal";
@@ -196,6 +197,14 @@ function App() {
               <Sparkles size={18} />
               Evaluar reserva
             </button>
+            <button
+              type="button"
+              className={activeSection === "feedback" ? "active" : ""}
+              onClick={() => showSection("feedback")}
+            >
+              <ClipboardCheck size={18} />
+              Feedback
+            </button>
           </nav>
 
           <div className="system-status" aria-label="Estado del sistema">
@@ -206,10 +215,6 @@ function App() {
             <span className="status-badge" title={modelInfo?.model_version || "Versión no disponible"}>
               <Activity size={16} />
               {modelInfo?.model_version || "Sin versión"}
-            </span>
-            <span className="status-badge">
-              <ClipboardCheck size={16} />
-              {feedbackSummary?.total_records ?? 0} feedbacks
             </span>
           </div>
         </div>
@@ -338,6 +343,8 @@ function App() {
               <p className="data-source">Fuente de datos: {datasetMeta.source}</p>
             )}
           </section>
+        ) : activeSection === "feedback" ? (
+          <FeedbackHistory onFeedbackChanged={refreshFeedbackSummary} />
         ) : (
           <ReservationEvaluation
             reservation={evaluationReservation}

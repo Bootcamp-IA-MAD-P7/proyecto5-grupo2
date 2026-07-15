@@ -6,6 +6,55 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+### Changed
+
+- Backend CI now runs the complete Python test suite instead of API tests only.
+- AWS deployment now waits for successful backend and frontend quality gates before updating EC2.
+- Python development and production dependencies now use exact versions for reproducible CI and Docker builds.
+
+### Removed
+
+- Legacy `apprunner.yaml`; the supported AWS runtime is CloudFront, EC2, Docker Compose and RDS.
+
+### Pending
+
+- Final business and technical presentations.
+- Final Jira, SPEC and delivery checklist alignment.
+- Optional expert MLOps work: neural network, A/B testing, drift and conditional model promotion.
+
+## [v0.6.0-aws-deployment] - 2026-07-14
+
+### Added
+
+- AWS runtime architecture with CloudFront, EC2 and Amazon RDS for PostgreSQL.
+- Stable public HTTPS URL for the deployed application.
+- Production Compose file in `docker-compose.ec2.yml`.
+- Private EC2 environment template in `.env.ec2.example`.
+- EC2 deployment script with configuration validation, container rebuild and health checks.
+- GitHub Actions continuous deployment workflow for merges into `develop`.
+- GitHub-to-AWS authentication through OIDC without permanent AWS access keys.
+- AWS Systems Manager deployment execution without CI SSH credentials.
+- Operational AWS guide in `docs/aws_deployment.md`.
+
+### Changed
+
+- Feedback persistence now uses SQLAlchemy with SQLite locally and PostgreSQL in AWS.
+- nginx routes `/api/` to the internal FastAPI container for same-origin frontend requests.
+- EC2 HTTP access is restricted to the AWS-managed CloudFront origin-facing prefix list.
+- README, SPEC, roadmap, API contract and validation evidence now reflect the deployed architecture.
+- The legacy `apprunner.yaml` configuration is documented as inactive; the supported AWS runtime is CloudFront, EC2 and RDS.
+
+### Verified
+
+- Public frontend and API available through CloudFront over HTTPS.
+- Champion `random_forest_champion_v0.1.0` loaded in the deployed API.
+- PostgreSQL feedback records persist after backend restart.
+- Backend and frontend containers healthy on EC2.
+- Automatic deployment from `develop` completed successfully.
+- Direct HTTP access to the EC2 origin blocked after CloudFront security hardening.
+
+## [v0.5.0-operational-mvp] - 2026-07-13
+
 ### Added
 
 - Unit tests for the optimized Random Forest challenger tuning, including selected hyperparameters, minimum validation F1 and overfitting rule checks.
@@ -40,11 +89,6 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Removed the frontend mock prediction mode from production service configuration.
 - Updated SPEC tasks to close `T-3.5 Crear tabla de experimentos`.
 - Updated SPEC tasks to close `T-4.1 Crear tests minimos de preprocessing`.
-
-### Pending
-
-- Cloud deployment decision.
-- Frontend UX review or alternative beta flow.
 
 ## [v0.4.0-essential-mvp] - 2026-07-09
 
@@ -129,31 +173,6 @@ pnpm build
 - Local `develop` checked clean after merges.
 
 ## Planned Milestones
-
-### v0.5.0-api
-
-Next API/product increment:
-
-- Manual validation evidence.
-- Frontend UX evidence.
-- Optional cloud deployment preparation.
-
-### v0.6.0-champion
-
-Champion model:
-
-- Champion validation evidence.
-- Docker validation with Champion inference.
-- Model report and README final alignment.
-
-### v0.7.0-operational
-
-Operational layer:
-
-- Tests.
-- GitHub Actions.
-- Docker.
-- Feedback persistence.
 
 ### v1.0.0-final
 

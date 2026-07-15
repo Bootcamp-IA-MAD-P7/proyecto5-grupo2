@@ -1,20 +1,28 @@
 from contextlib import asynccontextmanager
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .schemas import (
     FeedbackRequest,
+    FeedbackHistoryResponse,
+    FeedbackRecordResponse,
     FeedbackResponse,
     FeedbackSummaryResponse,
+    FeedbackUpdateRequest,
     DemoReservationsResponse,
     HealthResponse,
     ModelInfoResponse,
     PredictionRequest,
     PredictionResponse,
 )
-from .services.feedback_service import get_feedback_summary, save_feedback
+from .services.feedback_service import (
+    get_feedback_history,
+    get_feedback_summary,
+    save_feedback,
+    update_feedback_record,
+)
 from .services.model_service import get_model_info, predict_cancellation
 from .services.reservation_service import get_demo_reservations
 from src.data.database import create_database_schema
@@ -89,3 +97,19 @@ def feedback(payload: FeedbackRequest) -> FeedbackResponse:
 @app.get("/feedback/summary", response_model=FeedbackSummaryResponse)
 def feedback_summary() -> FeedbackSummaryResponse:
     return get_feedback_summary()
+
+
+@app.get("/feedback", response_model=FeedbackHistoryResponse)
+def feedback_history() -> FeedbackHistoryResponse:
+    return get_feedback_history()
+
+
+@app.patch("/feedback/{record_id}", response_model=FeedbackRecordResponse)
+def update_feedback(
+    record_id: str,
+    payload: FeedbackUpdateRequest,
+) -> FeedbackRecordResponse:
+    updated_record = update_feedback_record(record_id, payload)
+    if updated_record is None:
+        raise HTTPException(status_code=404, detail="Feedback no encontrado.")
+    return updated_record

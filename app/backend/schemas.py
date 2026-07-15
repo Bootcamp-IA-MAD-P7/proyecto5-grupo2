@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class HealthResponse(BaseModel):
@@ -88,3 +89,30 @@ class FeedbackResponse(BaseModel):
 class FeedbackSummaryResponse(BaseModel):
     total_records: int
     storage: str
+
+
+class FeedbackRecordResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    record_id: str
+    created_at: datetime
+    model_version: str
+    prediction: Literal["Canceled", "Not_Canceled"]
+    probability: float = Field(..., ge=0, le=1)
+    risk_level: Literal["low", "medium", "high"]
+    user_feedback: Literal["correct", "incorrect", "unknown"]
+    actual_status: Literal["Canceled", "Not_Canceled"] | None = None
+    comments: str | None = None
+    source: str
+    input_data: PredictionRequest
+
+
+class FeedbackHistoryResponse(BaseModel):
+    total_records: int
+    records: list[FeedbackRecordResponse]
+
+
+class FeedbackUpdateRequest(BaseModel):
+    user_feedback: Literal["correct", "incorrect", "unknown"]
+    actual_status: Literal["Canceled", "Not_Canceled"] | None = None
+    comments: str | None = Field(default=None, max_length=500)
