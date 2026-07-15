@@ -4,9 +4,7 @@ on:
   pull_request:
     branches:
       - develop
-  push:
-    branches:
-      - develop
+  workflow_call:
 
 jobs:
   backend-tests:
@@ -26,5 +24,5 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run backend API tests
-        run: python -m pytest tests/test_backend_api.py
+      - name: Run full Python test suite
+        run: python -m pytest

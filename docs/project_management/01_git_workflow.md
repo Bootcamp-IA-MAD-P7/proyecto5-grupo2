@@ -267,6 +267,7 @@ Reglas:
 
 - No mergear si fallan los checks obligatorios.
 - No hacer `push` directo a `develop` para evitar despliegues sin revisión.
+- El despliegue de `develop` depende de la suite Python completa y del build frontend mediante quality gates reutilizables.
 - GitHub usa OIDC para obtener credenciales temporales de AWS; no se guardan claves permanentes.
 - AWS Systems Manager ejecuta el despliegue en EC2.
 - El workflow falla si el script no levanta los contenedores o la API no supera el health check.

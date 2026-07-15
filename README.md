@@ -107,8 +107,9 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Tests iniciales de API backend disponibles en `tests/test_backend_api.py`.
-- Workflows de GitHub Actions creados para tests backend y build frontend.
+- Suite Python de 23 tests disponible en `tests/`.
+- Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
+- Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
 - Configuración Docker validada para frontend, backend y Champion Random Forest.
 - Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.

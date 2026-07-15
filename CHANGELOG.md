@@ -6,6 +6,11 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+### Changed
+
+- Backend CI now runs the complete Python test suite instead of API tests only.
+- AWS deployment now waits for successful backend and frontend quality gates before updating EC2.
+
 ### Pending
 
 - Final business and technical presentations.
