@@ -43,6 +43,18 @@ export function fetchFeedbackSummary() {
   return requestJson("/feedback/summary");
 }
 
+export function fetchFeedbackHistory() {
+  return requestJson("/feedback");
+}
+
+export function updateFeedbackRecord(recordId, payload) {
+  return requestJson(`/feedback/${recordId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
 export function fetchModelInfo() {
   return requestJson("/model/info");
 }
