@@ -19,7 +19,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con tabla, alertas, modal, formulario y feedback conectados al backend real.
-- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
+- Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
 
@@ -678,6 +678,7 @@ Tecnologia de app definida: frontend React + Vite y backend de inferencia con Fa
 Backend inicial disponible:
 
 - `GET /health`.
+- `GET /health/ready` comprueba que el Champion y la base de datos estan disponibles.
 - `GET /model/info`.
 - `GET /reservations/demo` con reservas reales derivadas del CSV de `data/raw/`.
 - `POST /predict` con inferencia del Champion Random Forest.
@@ -694,11 +695,18 @@ Docker inicial disponible:
 - Backend expuesto en `http://localhost:8000`.
 - Frontend expuesto en `http://localhost:8080`.
 - Validado con Champion Random Forest `random_forest_champion_v0.1.0`.
-- Validado con endpoints `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
+- Validado con endpoints `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary` y `GET /monitoring/drift`.
 - Frontend validado con `curl.exe -I http://localhost:8080/` y respuesta `HTTP/1.1 200 OK`.
 - `docker-compose.ec2.yml` disponible para la ejecución en AWS con PostgreSQL externo.
-- `scripts/deploy_ec2.sh` valida configuración, reconstruye servicios y ejecuta health checks.
+- `scripts/deploy_ec2.sh` valida configuracion, reconstruye servicios y espera el readiness check antes de completar el despliegue.
 - `scripts/start_backend.sh` ejecuta las migraciones Alembic antes de iniciar Uvicorn.
+
+Observabilidad operativa:
+
+- Cada respuesta incluye `X-Request-ID`; se conserva un identificador seguro del cliente o se genera un UUID.
+- FastAPI emite logs JSON de solicitud con metodo, ruta, estado y duracion, sin payloads ni credenciales.
+- Cada inferencia correcta emite un evento correlacionado por `request_id` y `prediction_id`.
+- `GET /health` se usa como liveness y `GET /health/ready` como readiness para Docker y AWS.
 
 ## Despliegue web y CI/CD
 

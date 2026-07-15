@@ -70,7 +70,7 @@ El script:
 2. Valida la configuración de Docker Compose.
 3. Reconstruye y levanta los contenedores.
 4. El backend ejecuta `alembic upgrade head`; si falla, FastAPI no arranca.
-5. Espera a que `GET /api/health` responda correctamente.
+5. Espera a que `GET /api/health/ready` confirme Champion y base de datos.
 6. Comprueba `GET /api/model/info`.
 7. Muestra el estado de los servicios y limpia imágenes no utilizadas.
 
@@ -86,7 +86,7 @@ Flujo:
 4. GitHub Actions asume un rol IAM sin almacenar claves de acceso permanentes.
 5. AWS Systems Manager envía el comando de despliegue a EC2.
 6. EC2 actualiza `develop` con `--ff-only` y ejecuta `scripts/deploy_ec2.sh`.
-7. El workflow espera el resultado y falla si el despliegue o el health check no terminan correctamente.
+7. El workflow espera el resultado y falla si el despliegue o el readiness check no terminan correctamente.
 
 Variables de repositorio requeridas:
 
@@ -115,6 +115,7 @@ Comprobaciones públicas:
 ```text
 GET https://d3lxpalnzir74p.cloudfront.net/
 GET https://d3lxpalnzir74p.cloudfront.net/api/health
+GET https://d3lxpalnzir74p.cloudfront.net/api/health/ready
 GET https://d3lxpalnzir74p.cloudfront.net/api/model/info
 GET https://d3lxpalnzir74p.cloudfront.net/api/feedback/summary
 ```
@@ -122,7 +123,7 @@ GET https://d3lxpalnzir74p.cloudfront.net/api/feedback/summary
 Resultado validado el 14 de julio de 2026:
 
 - Frontend accesible desde escritorio y móvil.
-- API saludable.
+- API disponible y readiness confirmado con Champion y PostgreSQL.
 - Champion `random_forest_champion_v0.1.0` cargado.
 - Persistencia identificada como `postgresql`.
 - Feedback conservado después de reiniciar el backend.
@@ -138,9 +139,12 @@ En EC2:
 docker compose --env-file .env.ec2 -f docker-compose.ec2.yml ps
 docker compose --env-file .env.ec2 -f docker-compose.ec2.yml logs --tail=100
 curl --fail http://localhost/api/health
+curl --fail http://localhost/api/health/ready
 curl --fail http://localhost/api/model/info
 curl --fail http://localhost/api/feedback/summary
 ```
+
+Los logs del backend se emiten como eventos JSON e incluyen `request_id`, metodo, ruta, estado y duracion. Los eventos de inferencia añaden `prediction_id` y version del modelo. No se registran payloads ni credenciales. Consulte `docs/observability.md` para el contrato operativo.
 
 En GitHub:
 

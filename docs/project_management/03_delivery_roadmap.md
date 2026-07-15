@@ -122,7 +122,7 @@ Estado actual:
 - Frontend React + Vite integrado en `app/frontend`.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
-- Endpoint `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary` disponibles.
+- Endpoints de liveness `GET /health` y readiness `GET /health/ready`, inferencia, reservas, feedback y monitorizacion disponibles.
 - `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
 - `GET /reservations/demo` sirve reservas candidatas desde el CSV real para alimentar el frontend principal.
 - El frontend principal consume reservas reales, predicciones reales y feedback real.
@@ -210,6 +210,7 @@ Estado actual:
 - Docker Compose validado en local y en EC2.
 - PostgreSQL desplegado en Amazon RDS privado.
 - Esquema SQLite/PostgreSQL versionado con Alembic y migrado antes del arranque de la API.
+- Observabilidad operativa con readiness, logs JSON y correlacion mediante `X-Request-ID`.
 - CloudFront publica la app mediante HTTPS.
 - GitHub Actions despliega automáticamente en EC2 mediante OIDC y SSM.
 - Guía operativa disponible en `docs/aws_deployment.md`.

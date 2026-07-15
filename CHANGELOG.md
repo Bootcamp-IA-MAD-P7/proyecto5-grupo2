@@ -24,6 +24,9 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Operational drift sampling from the latest audited predictions instead of feedback-only rows.
 - Prediction source tracking for API, manual frontend and historical demo-queue inference.
 - Drift sample filtering that preserves demo predictions for audit while excluding them from PSI.
+- `GET /health/ready` readiness endpoint for Champion and database availability.
+- Structured JSON runtime logs and `X-Request-ID` correlation across API requests and prediction events.
+- Automated readiness and observability tests without logging request payloads or credentials.
 
 ### Changed
 
@@ -33,6 +36,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Python development and production dependencies now use exact versions for reproducible CI and Docker builds.
 - Champion metadata, technical report, SPEC and README now record the closed final holdout evaluation.
 - Database tables are no longer created implicitly during FastAPI startup; Alembic owns schema changes.
+- Docker health checks and AWS deployment verification now use readiness instead of liveness.
+- Shell scripts now enforce LF line endings for reproducible Linux and Docker startup from Windows workstations.
 
 ### Removed
 

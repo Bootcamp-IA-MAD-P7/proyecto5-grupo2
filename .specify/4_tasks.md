@@ -409,6 +409,19 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Tests: contrato de API, persistencia del payload y ciclo de migracion.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py tests/unit/test_database_migrations.py`.
 
+### [x] T-4.9 Anadir observabilidad operativa
+
+- Archivos afectados: `app/backend/`, `docker-compose.yml`, `docker-compose.ec2.yml`, `scripts/`, `.gitattributes`, `tests/`, `docs/`.
+- Accion: separar liveness y readiness, emitir logs JSON y correlacionar solicitudes e inferencias sin registrar datos sensibles.
+- Responsable sugerido: I3.
+- Dificultad: media.
+- Dependencias: T-4.6, T-4.7, T-4.8.
+- Criterio de verificacion: `GET /health/ready` solo responde `200` con Champion y base de datos disponibles; todas las respuestas incluyen `X-Request-ID`.
+- Evidencia: Docker y el despliegue AWS esperan el readiness check; `prediction_completed` relaciona `request_id`, `prediction_id` y version del modelo.
+- Privacidad: los logs no incluyen payloads de reserva, credenciales ni cadenas de conexion.
+- Documentacion: `docs/observability.md`, `docs/api_contract.md` y `docs/aws_deployment.md`.
+- Comando de verificacion: `python -m pytest tests/test_backend_api.py tests/unit/test_observability.py tests/integration/test_prediction_feedback_smoke.py`.
+
 ## Fase 5 - Nivel Experto
 
 ### [ ] T-5.1 Entrenar red neuronal experimental

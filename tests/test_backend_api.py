@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from app.backend import main as backend_main
 from app.backend.main import LOCAL_CORS_ORIGINS, app, get_cors_origins
-from app.backend.services import feedback_service
+from app.backend.services import feedback_service, health_service
 from src.data.models import PredictionLog
 
 
@@ -56,6 +56,43 @@ def test_health_returns_ok() -> None:
     }
 
 
+def test_readiness_confirms_model_and_database() -> None:
+    response = client.get("/health/ready")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "ready"
+    assert body["model_loaded"] is True
+    assert body["model_version"] == "random_forest_champion_v0.1.0"
+    assert body["database_connected"] is True
+    assert body["storage"] == "sqlite"
+
+
+def test_readiness_returns_503_when_database_is_unavailable(monkeypatch) -> None:
+    def unavailable_session():
+        raise RuntimeError("database unavailable")
+
+    monkeypatch.setattr(health_service, "SessionLocal", unavailable_session)
+
+    response = client.get("/health/ready")
+
+    assert response.status_code == 503
+    body = response.json()
+    assert body["status"] == "not_ready"
+    assert body["model_loaded"] is True
+    assert body["database_connected"] is False
+
+
+def test_request_id_is_returned_to_the_caller() -> None:
+    response = client.get(
+        "/health",
+        headers={"X-Request-ID": "presentation-check-001"},
+    )
+
+    assert response.status_code == 200
+    assert response.headers["X-Request-ID"] == "presentation-check-001"
+
+
 def test_model_info_returns_loaded_champion_state() -> None:
     response = client.get("/model/info")
 
@@ -72,11 +109,20 @@ def test_model_info_returns_loaded_champion_state() -> None:
     assert isinstance(body["notes"], list)
 
 
-def test_predict_returns_contract_shape(operational_database) -> None:
+def test_predict_returns_contract_shape(operational_database, monkeypatch) -> None:
+    emitted_events = []
+    monkeypatch.setattr(
+        backend_main,
+        "emit_log_event",
+        lambda event, **fields: emitted_events.append({"event": event, **fields}),
+    )
     response = client.post(
         "/predict",
         json=valid_prediction_payload(),
-        headers={"X-Prediction-Source": "frontend_manual"},
+        headers={
+            "X-Prediction-Source": "frontend_manual",
+            "X-Request-ID": "prediction-check-001",
+        },
     )
 
     assert response.status_code == 200
@@ -120,6 +166,13 @@ def test_predict_returns_contract_shape(operational_database) -> None:
     assert stored_prediction.risk_level == body["risk_level"]
     assert stored_prediction.source == "frontend_manual"
     assert stored_prediction.input_data == valid_prediction_payload()
+
+    prediction_event = next(
+        event for event in emitted_events if event["event"] == "prediction_completed"
+    )
+    assert prediction_event["request_id"] == "prediction-check-001"
+    assert prediction_event["prediction_id"] == body["prediction_id"]
+    assert "input_data" not in prediction_event
 
 
 def test_predict_rejects_unknown_prediction_source() -> None:
