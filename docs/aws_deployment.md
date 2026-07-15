@@ -36,7 +36,7 @@ Componentes:
 - **RDS PostgreSQL** persiste feedback y resultados operativos fuera del ciclo de vida de los contenedores.
 - **GitHub Actions** despliega automáticamente cada merge en `develop` mediante OIDC y AWS Systems Manager.
 
-El archivo `apprunner.yaml` procede de una evaluación anterior y no forma parte del despliegue activo. La arquitectura vigente es CloudFront + EC2 + RDS.
+La configuración antigua de AWS App Runner se retiró del repositorio para evitar rutas de despliegue ambiguas. La arquitectura vigente es CloudFront + EC2 + RDS.
 
 ## 3. Configuración de ejecución
 

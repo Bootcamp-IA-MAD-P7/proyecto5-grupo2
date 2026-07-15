@@ -305,6 +305,8 @@ Instalar dependencias:
 pip install -r requirements.txt
 ```
 
+Las dependencias directas tienen versiones exactas para que desarrollo, CI y Docker utilicen un entorno reproducible. La imagen del backend instala el subconjunto de producción definido en `requirements-backend.txt`.
+
 Comprobar Python activo:
 
 ```bash

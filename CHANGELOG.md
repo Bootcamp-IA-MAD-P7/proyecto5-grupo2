@@ -10,6 +10,11 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 - Backend CI now runs the complete Python test suite instead of API tests only.
 - AWS deployment now waits for successful backend and frontend quality gates before updating EC2.
+- Python development and production dependencies now use exact versions for reproducible CI and Docker builds.
+
+### Removed
+
+- Legacy `apprunner.yaml`; the supported AWS runtime is CloudFront, EC2, Docker Compose and RDS.
 
 ### Pending
 
