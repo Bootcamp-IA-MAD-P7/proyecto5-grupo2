@@ -436,18 +436,19 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 ### [x] T-5.3 Medir Data Drift
 
 - Archivos afectados: `src/mlops/`, `models/monitoring/`, `app/backend/`, `tests/`, `docs/`.
-- Accion: calcular PSI entre el perfil congelado de entrenamiento y los inputs nuevos persistidos mediante feedback.
+- Accion: calcular PSI entre el perfil congelado de entrenamiento y las predicciones operativas persistidas en `prediction_logs`.
 - Responsable sugerido: I3.
 - Dificultad: alta.
 - Apto junior: no.
 - Dependencias: T-3.6.
 - Criterio de verificacion: reporte de drift con umbrales.
-- Evidencia: `models/monitoring/training_reference_profile.json` contiene el perfil versionado del split de entrenamiento y `GET /monitoring/drift` devuelve el estado global y el PSI por variable cuando existen al menos 100 registros validos.
+- Evidencia: `models/monitoring/training_reference_profile.json` contiene el perfil versionado del split de entrenamiento y `GET /monitoring/drift` analiza las 1.000 predicciones operativas mas recientes cuando existen al menos 100 registros validos.
+- Control de muestra: `X-Prediction-Source` distingue llamadas `api`, evaluaciones `frontend_manual` y calculos historicos `frontend_demo_queue`; la cola demo y el origen heredado `prediction_api` se conservan en auditoria pero se excluyen del PSI.
 - Umbrales: PSI menor de 0.10 estable; entre 0.10 y 0.25 aviso; desde 0.25 drift alto.
 - Comportamiento seguro: con menos de 100 registros devuelve `insufficient_data` y nunca promociona modelos automaticamente.
-- Tests: casos de muestra insuficiente, distribucion estable, drift alto, transformacion de feedback y contrato API.
+- Tests: casos de muestra insuficiente, distribucion estable, drift alto, transformacion de predicciones, filtrado por origen, limite de muestra reciente y contrato API.
 - Documentacion: `docs/data_drift_monitoring.md` y `docs/api_contract.md`.
-- Comando de verificacion: `python -m pytest tests/unit/test_data_drift.py tests/test_backend_api.py`.
+- Comando de verificacion: `python -m pytest tests/unit/test_data_drift.py tests/unit/test_prediction_ingestion.py tests/test_backend_api.py`.
 
 ### [ ] T-5.4 Auto-reemplazo condicionado
 

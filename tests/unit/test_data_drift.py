@@ -2,11 +2,12 @@ import json
 
 import pandas as pd
 
+from app.backend.services import drift_service
 from src.features.preprocessing import FEATURE_COLUMNS, load_dataset, prepare_data_splits
 from src.mlops.data_drift import (
     build_reference_profile,
     calculate_drift_report,
-    feedback_records_to_features,
+    prediction_records_to_features,
 )
 
 
@@ -51,11 +52,11 @@ def test_shifted_distribution_detects_high_drift() -> None:
     assert {result["feature"] for result in report["features"]} == set(FEATURE_COLUMNS)
 
 
-def test_feedback_records_extract_only_complete_model_inputs() -> None:
+def test_prediction_records_extract_only_complete_model_inputs() -> None:
     valid_payload = training_features().iloc[0].to_dict()
     incomplete_payload = valid_payload.copy()
     incomplete_payload.pop("lead_time")
-    feedback = pd.DataFrame(
+    predictions = pd.DataFrame(
         {
             "input_data": [
                 valid_payload,
@@ -67,7 +68,7 @@ def test_feedback_records_extract_only_complete_model_inputs() -> None:
         }
     )
 
-    features = feedback_records_to_features(feedback)
+    features = prediction_records_to_features(predictions)
 
     assert len(features) == 2
     assert features.columns.tolist() == FEATURE_COLUMNS
@@ -75,3 +76,22 @@ def test_feedback_records_extract_only_complete_model_inputs() -> None:
         valid_payload["lead_time"],
         valid_payload["lead_time"],
     ]
+
+
+def test_operational_drift_service_uses_prediction_audit_rows(monkeypatch) -> None:
+    prediction_records = pd.DataFrame(
+        {"input_data": training_features().head(20).to_dict(orient="records")}
+    )
+    monkeypatch.setattr(
+        drift_service,
+        "load_prediction_records",
+        lambda: prediction_records,
+    )
+
+    report = drift_service.get_data_drift_report()
+
+    assert report.data_source == "prediction_logs"
+    assert report.sample_limit == 1000
+    assert report.excluded_sources == ["frontend_demo_queue", "prediction_api"]
+    assert report.current_rows == 20
+    assert report.status == "insufficient_data"

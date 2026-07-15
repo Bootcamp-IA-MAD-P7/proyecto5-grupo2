@@ -132,14 +132,14 @@ def load_reference_profile(path: Path = PROFILE_PATH) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def feedback_records_to_features(feedback_records: pd.DataFrame) -> pd.DataFrame:
-    """Extract valid model inputs from persisted prediction feedback rows."""
+def prediction_records_to_features(prediction_records: pd.DataFrame) -> pd.DataFrame:
+    """Extract valid model inputs from persisted prediction audit rows."""
 
-    if feedback_records.empty or "input_data" not in feedback_records.columns:
+    if prediction_records.empty or "input_data" not in prediction_records.columns:
         return pd.DataFrame(columns=FEATURE_COLUMNS)
 
     rows = []
-    for payload in feedback_records["input_data"]:
+    for payload in prediction_records["input_data"]:
         if isinstance(payload, str):
             try:
                 payload = json.loads(payload)

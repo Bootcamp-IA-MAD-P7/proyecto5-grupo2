@@ -1,6 +1,7 @@
 import os
+from typing import Annotated, Literal
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 
 from .schemas import (
@@ -66,9 +67,15 @@ def model_info() -> ModelInfoResponse:
 
 
 @app.post("/predict", response_model=PredictionResponse)
-def predict(payload: PredictionRequest) -> PredictionResponse:
+def predict(
+    payload: PredictionRequest,
+    prediction_source: Annotated[
+        Literal["api", "frontend_manual", "frontend_demo_queue"],
+        Header(alias="X-Prediction-Source"),
+    ] = "api",
+) -> PredictionResponse:
     prediction = predict_cancellation(payload)
-    save_prediction_log(payload, prediction)
+    save_prediction_log(payload, prediction, source=prediction_source)
     return prediction
 
 

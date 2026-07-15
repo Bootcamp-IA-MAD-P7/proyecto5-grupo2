@@ -468,7 +468,9 @@ Objetivo: detectar si los datos nuevos se alejan de los datos de entrenamiento.
 Contrato implementado:
 
 - El perfil de referencia se genera exclusivamente con el split de entrenamiento estratificado y queda versionado en `models/monitoring/training_reference_profile.json`.
-- Los datos actuales proceden de los inputs persistidos mediante `POST /feedback`; no requieren que el resultado real este etiquetado.
+- Los datos actuales proceden de las inferencias persistidas en `prediction_logs`; no requieren que el resultado real este etiquetado.
+- Cada llamada registra origen mediante `X-Prediction-Source`: `api`, `frontend_manual` o `frontend_demo_queue`.
+- El calculo usa las 1.000 predicciones operativas mas recientes y excluye `frontend_demo_queue` y el origen heredado sin clasificar `prediction_api`.
 - Se calcula PSI para todas las variables del contrato de entrada.
 - El calculo requiere al menos 100 registros actuales validos; con menos datos devuelve `insufficient_data`.
 - `GET /monitoring/drift` publica estado global, PSI maximo, variables alertadas y detalle por variable.
@@ -491,7 +493,7 @@ Estados globales:
 - `warning`: existe drift moderado y no existe drift alto.
 - `drift_detected`: al menos una variable tiene PSI igual o superior a 0.25.
 
-Limitacion actual: aunque todas las llamadas correctas a `POST /predict` ya se persisten, Data Drift todavia consume reservas cuyo feedback fue guardado. El punto operativo siguiente cambiara la fuente a `prediction_logs`. El drift por si solo no autoriza auto-reemplazo; solo indica que se debe evaluar un nuevo modelo.
+El drift por si solo no autoriza auto-reemplazo; solo indica que se debe evaluar un nuevo modelo. Todas las inferencias siguen auditadas aunque una fuente quede excluida de la muestra PSI.
 
 ## Reglas de auto-reemplazo
 

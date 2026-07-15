@@ -106,6 +106,9 @@ class DriftFeatureResponse(BaseModel):
 class DriftReportResponse(BaseModel):
     profile_version: str
     generated_at: str
+    data_source: Literal["prediction_logs"]
+    sample_limit: int = Field(..., ge=1)
+    excluded_sources: list[str]
     reference_rows: int
     current_rows: int
     minimum_current_rows: int

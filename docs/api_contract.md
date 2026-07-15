@@ -164,6 +164,12 @@ Calcula el riesgo de cancelacion de una reserva.
 
 El endpoint acepta un JSON con los campos del formulario y las features requeridas por el Champion Random Forest.
 
+Cabecera operativa opcional:
+
+| Cabecera | Valores | Valor por defecto | Descripcion |
+| --- | --- | --- | --- |
+| `X-Prediction-Source` | `api`, `frontend_manual`, `frontend_demo_queue` | `api` | Distingue inferencia operativa de calculos automaticos sobre la cola historica. |
+
 ## 7. Request JSON
 
 ```json
@@ -355,7 +361,7 @@ Devuelve un resumen minimo de registros de feedback persistidos.
 
 ### `GET /monitoring/drift`
 
-Compara los inputs persistidos mediante feedback con el perfil versionado del conjunto de entrenamiento. No necesita conocer todavía el resultado real de la reserva.
+Compara las predicciones operativas persistidas en `prediction_logs` con el perfil versionado del conjunto de entrenamiento. No necesita conocer todavía el resultado real de la reserva.
 
 #### Response `200 OK` con muestra insuficiente
 
@@ -363,6 +369,9 @@ Compara los inputs persistidos mediante feedback con el perfil versionado del co
 {
   "profile_version": "training_reference_v1",
   "generated_at": "2026-07-15T10:00:00+00:00",
+  "data_source": "prediction_logs",
+  "sample_limit": 1000,
+  "excluded_sources": ["frontend_demo_queue", "prediction_api"],
   "reference_rows": 25391,
   "current_rows": 2,
   "minimum_current_rows": 100,
@@ -378,7 +387,7 @@ Compara los inputs persistidos mediante feedback con el perfil versionado del co
 }
 ```
 
-Con al menos 100 registros validos, `features` incluye el nombre, tipo, PSI y estado de cada variable. Los estados globales posibles son:
+`current_rows` cuenta predicciones operativas validas despues de excluir la cola historica, los registros heredados sin origen clasificable y aplicar el limite de las 1.000 mas recientes. Con al menos 100 registros validos, `features` incluye el nombre, tipo, PSI y estado de cada variable. Los estados globales posibles son:
 
 - `insufficient_data`: no existe una muestra minima fiable.
 - `stable`: todas las variables tienen PSI inferior a `0.10`.
@@ -423,4 +432,3 @@ Formato esperado:
 - Confirmar estrategia de categorias no vistas.
 - Confirmar si la probabilidad corresponde siempre a la clase `Canceled`.
 - Mantener sincronizada la capa SQLAlchemy si cambia el esquema de feedback.
-- Cambiar la fuente de Data Drift desde feedback a `prediction_logs` para observar todo el trafico de inferencia.

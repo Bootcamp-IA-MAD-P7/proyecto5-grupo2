@@ -21,9 +21,13 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Unique `prediction_id` in the `POST /predict` response contract.
 - Alembic revision `0002_prediction_logs` with date and model-version indexes.
 - API persistence assertions covering prediction inputs and outputs.
+- Operational drift sampling from the latest audited predictions instead of feedback-only rows.
+- Prediction source tracking for API, manual frontend and historical demo-queue inference.
+- Drift sample filtering that preserves demo predictions for audit while excluding them from PSI.
 
 ### Changed
 
+- `GET /monitoring/drift` now reports its data source, sample limit and excluded sources.
 - Backend CI now runs the complete Python test suite instead of API tests only.
 - AWS deployment now waits for successful backend and frontend quality gates before updating EC2.
 - Python development and production dependencies now use exact versions for reproducible CI and Docker builds.

@@ -73,7 +73,11 @@ def test_model_info_returns_loaded_champion_state() -> None:
 
 
 def test_predict_returns_contract_shape(operational_database) -> None:
-    response = client.post("/predict", json=valid_prediction_payload())
+    response = client.post(
+        "/predict",
+        json=valid_prediction_payload(),
+        headers={"X-Prediction-Source": "frontend_manual"},
+    )
 
     assert response.status_code == 200
     body = response.json()
@@ -103,8 +107,18 @@ def test_predict_returns_contract_shape(operational_database) -> None:
     assert stored_prediction.prediction_label == body["prediction_label"]
     assert stored_prediction.probability == body["probability"]
     assert stored_prediction.risk_level == body["risk_level"]
-    assert stored_prediction.source == "prediction_api"
+    assert stored_prediction.source == "frontend_manual"
     assert stored_prediction.input_data == valid_prediction_payload()
+
+
+def test_predict_rejects_unknown_prediction_source() -> None:
+    response = client.post(
+        "/predict",
+        json=valid_prediction_payload(),
+        headers={"X-Prediction-Source": "untrusted_source"},
+    )
+
+    assert response.status_code == 422
 
 
 def test_predict_model_version_matches_model_info() -> None:
@@ -188,6 +202,9 @@ def test_data_drift_returns_monitoring_contract(monkeypatch) -> None:
         lambda: {
             "profile_version": "training_reference_v1",
             "generated_at": "2026-07-15T10:00:00+00:00",
+            "data_source": "prediction_logs",
+            "sample_limit": 1000,
+            "excluded_sources": ["frontend_demo_queue", "prediction_api"],
             "reference_rows": 25391,
             "current_rows": 2,
             "minimum_current_rows": 100,
@@ -206,6 +223,8 @@ def test_data_drift_returns_monitoring_contract(monkeypatch) -> None:
     body = response.json()
     assert body["status"] == "insufficient_data"
     assert body["profile_version"] == "training_reference_v1"
+    assert body["data_source"] == "prediction_logs"
+    assert body["excluded_sources"] == ["frontend_demo_queue", "prediction_api"]
     assert body["current_rows"] == 2
     assert body["minimum_current_rows"] == 100
     assert body["features"] == []
