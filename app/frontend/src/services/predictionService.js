@@ -79,6 +79,7 @@ export function applyPredictionToReservation(reservation, inputData, prediction)
     inputData,
     prediction,
     mainFactors: prediction.main_factors,
+    riskFactors: prediction.risk_factors || [],
     recommendation: prediction.recommendation
   };
 }

@@ -87,6 +87,17 @@ def test_predict_returns_contract_shape(operational_database) -> None:
     assert body["risk_label"] in {"Bajo", "Medio", "Alto"}
     assert isinstance(body["model_version"], str)
     assert isinstance(body["main_factors"], list)
+    assert isinstance(body["risk_factors"], list)
+    for factor in body["risk_factors"]:
+        assert set(factor) == {
+            "feature",
+            "label",
+            "current_value",
+            "reference_value",
+            "impact_percentage_points",
+            "action",
+        }
+        assert factor["impact_percentage_points"] >= 0
     assert isinstance(body["recommendation"], str)
 
     _, session_factory = operational_database
