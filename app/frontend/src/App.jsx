@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
   AlertTriangle,
+  BrainCircuit,
   ChevronLeft,
   ChevronRight,
   ClipboardCheck,
@@ -18,6 +19,7 @@ import EducationalFooter from "./components/EducationalFooter";
 import FeedbackHistory from "./components/FeedbackHistory";
 import GuidedReservationFlow from "./components/GuidedReservationFlow";
 import HomePage from "./components/HomePage";
+import ModelPage from "./components/ModelPage";
 import ReservationDetailModal from "./components/ReservationDetailModal";
 import ReservationEvaluation from "./components/ReservationEvaluation";
 import ReservationsTable from "./components/ReservationsTable";
@@ -258,7 +260,6 @@ function App() {
             <img src="/logo.png" alt="" />
             <span>
               <strong>Hotel Insights</strong>
-              <small>Control de cancelaciones</small>
             </span>
           </button>
 
@@ -295,6 +296,14 @@ function App() {
             >
               <ClipboardCheck size={18} />
               Feedback
+            </button>
+            <button
+              type="button"
+              className={activeSection === "model" ? "active" : ""}
+              onClick={() => showSection("model")}
+            >
+              <BrainCircuit size={18} />
+              Modelo
             </button>
           </nav>
 
@@ -492,6 +501,8 @@ function App() {
               <p className="data-source">Fuente de datos: {datasetMeta.source}</p>
             )}
           </section>
+        ) : activeSection === "model" ? (
+          <ModelPage modelInfo={modelInfo} />
         ) : activeSection === "feedback" ? (
           <FeedbackHistory onFeedbackChanged={refreshFeedbackSummary} />
         ) : (
