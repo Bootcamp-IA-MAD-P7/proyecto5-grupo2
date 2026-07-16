@@ -1,0 +1,70 @@
+{
+  "experiment": "mlp_neural_network_challenger",
+  "model_type": "MLPClassifier",
+  "random_state": 42,
+  "split_policy": {
+    "training": "train",
+    "evaluation": "validation",
+    "final_test_used": false
+  },
+  "class_balance": "balanced sample weights on training rows",
+  "hyperparameters": {
+    "hidden_layer_sizes": [
+      64,
+      32
+    ],
+    "activation": "relu",
+    "solver": "adam",
+    "alpha": 0.001,
+    "batch_size": 256,
+    "learning_rate_init": 0.001,
+    "max_iter": 250,
+    "early_stopping": true,
+    "validation_fraction": 0.1,
+    "n_iter_no_change": 15,
+    "random_state": 42
+  },
+  "training_iterations": 100,
+  "metrics": {
+    "train": {
+      "model_name": "mlp_neural_network_challenger",
+      "split": "train",
+      "accuracy": 0.8716474341302036,
+      "precision_canceled": 0.770068317677199,
+      "recall_canceled": 0.8671715350402692,
+      "f1_canceled": 0.8157403742861989,
+      "roc_auc": 0.9455943780472047,
+      "true_negative": 14918,
+      "false_positive": 2154,
+      "false_negative": 1105,
+      "true_positive": 7214
+    },
+    "validation": {
+      "model_name": "mlp_neural_network_challenger",
+      "split": "validation",
+      "accuracy": 0.844542447629548,
+      "precision_canceled": 0.738665308201732,
+      "recall_canceled": 0.8132361189007291,
+      "f1_canceled": 0.7741591030432461,
+      "roc_auc": 0.9193080560889282,
+      "true_negative": 3146,
+      "false_positive": 513,
+      "false_negative": 333,
+      "true_positive": 1450
+    }
+  },
+  "comparison": {
+    "champion_model_version": "random_forest_champion_v0.1.0",
+    "champion_validation_f1_canceled": 0.8104939994418086,
+    "challenger_validation_f1_canceled": 0.7741591030432461,
+    "f1_difference_vs_champion": -0.036334896398562466,
+    "train_validation_f1_gap": 0.041581271242952855,
+    "passes_under_5_percent_overfitting_rule": true,
+    "improves_champion_f1": false
+  },
+  "decision": "retain_champion",
+  "notes": [
+    "The final test split remains closed and was not used.",
+    "This experiment never replaces or modifies the deployed Champion."
+  ]
+}
