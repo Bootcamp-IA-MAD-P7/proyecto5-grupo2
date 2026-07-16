@@ -12,7 +12,7 @@ Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF)
 ![AWS](https://img.shields.io/badge/AWS-EC2%20%2B%20RDS%20%2B%20CloudFront-FF9900)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1)
-![Milestone](https://img.shields.io/badge/tag-v0.6.0--aws--deployment-2E7D32)
+![Release](https://img.shields.io/badge/release-v1.0.0-2E7D32)
 
 ## Acceso a la demo
 
@@ -646,6 +646,7 @@ v0.4.0-essential-mvp
 v0.5.0-operational-mvp
 v0.6.0-aws-deployment
 v0.7.0-mlops-monitoring
+v1.0.0
 ```
 
 Significado:
@@ -656,12 +657,7 @@ Significado:
 - `v0.5.0-operational-mvp`: Champion integrado, Docker, feedback y smoke test operativo.
 - `v0.6.0-aws-deployment`: despliegue HTTPS en AWS, PostgreSQL RDS y entrega automática desde `develop`.
 - `v0.7.0-mlops-monitoring`: holdout final, Alembic, auditoría de predicciones, Data Drift, observabilidad y quality gates de despliegue.
-
-Siguiente hito previsto:
-
-```text
-v1.0.0-final
-```
+- `v1.0.0`: release estable en `main` con frontend definitivo, Champion, niveles Esencial/Medio/Avanzado, alcance Experto, CI/CD y despliegue AWS validados.
 
 ---
 
@@ -774,8 +770,7 @@ Prioridades inmediatas:
 2. Mantener capturas finales de la demo si se requieren evidencias visuales.
 3. Revisar frontend y narrativa comercial antes de la presentación.
 4. Alinear Jira con las tareas cerradas en SPEC.
-5. Preparar el release `develop -> main`, validar el despliegue final y crear el tag `v1.0.0`.
-6. Planificar la retirada de recursos AWS cuando termine la demostración.
+5. Planificar la retirada de recursos AWS cuando termine la demostración.
 
 ---
 

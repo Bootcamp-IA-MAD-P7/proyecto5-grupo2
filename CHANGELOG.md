@@ -6,6 +6,10 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [v1.0.0] - 2026-07-16
+
 ### Added
 
 - Separate MLOps monitoring dashboard at `/monitoring`, backed exclusively by readiness, Champion metadata, feedback and Data Drift APIs.
@@ -37,13 +41,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Full Docker stack built and reported healthy with Champion and database readiness.
 - Model-page dataset and EDA figures matched the source CSV; holdout metrics matched the versioned Champion evidence.
 - Python and frontend production dependencies reported no known vulnerabilities.
-- Public AWS routes for the business app, monitoring dashboard, readiness and Champion metadata returned `200 OK` on commit `d752892`.
-
-### Pending
-
-- Final business and technical presentations.
-- Final Jira and delivery checklist alignment.
-- Final `develop` to `main` release, production validation and `v1.0.0` tag.
+- Public AWS routes for the business app, monitoring dashboard, readiness and Champion metadata returned `200 OK` on release commit `ac68ca1`.
+- Production quality gates and the automatic AWS deployment from `main` completed successfully.
 
 ## [v0.7.0-mlops-monitoring] - 2026-07-15
 
@@ -239,9 +238,9 @@ pnpm build
 - Documentation merged through Pull Requests into `develop`.
 - Local `develop` checked clean after merges.
 
-## Planned Milestones
+## Final Release Scope
 
-### v1.0.0-final
+### v1.0.0
 
 Final delivery:
 

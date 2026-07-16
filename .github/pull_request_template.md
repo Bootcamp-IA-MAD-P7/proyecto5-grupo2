@@ -32,7 +32,7 @@
 ## Checklist
 
 - [ ] I have worked from an updated `develop` branch.
-- [ ] This PR targets `develop`, unless it is the approved release PR from `develop` to `main`.
+- [ ] This PR targets `develop`, or is an approved release or hotfix PR targeting `main`.
 - [ ] The change is scoped and does not mix unrelated work.
 - [ ] I have updated documentation if behavior or usage changed.
 - [ ] I have included verification steps or evidence.

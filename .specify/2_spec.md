@@ -5,6 +5,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 ## Estado actual
 
 - Repositorio: `proyecto5-grupo2`.
+- Rama de produccion: `main`, publicada y desplegada en AWS mediante el release `v1.0.0`.
 - README inicial: actualizado con descripcion del proyecto, estructura, ejecucion del frontend, metodologia SPEC, flujo Git, roles y roadmap.
 - Dataset: Hotel Reservations Classification Dataset.
 - Archivo incorporado: `data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv`.

@@ -143,6 +143,14 @@ Validación final del commit `d752892` el 16 de julio de 2026:
 - Página `Modelo` publicada con cifras contrastadas contra el CSV y los artefactos del Champion.
 - Auditorías de dependencias Python y frontend sin vulnerabilidades conocidas.
 
+Release de producción `ac68ca1` validado el 16 de julio de 2026:
+
+- PR final de `develop` a `main` mergeado sin divergencias.
+- Backend quality gate, frontend quality gate y despliegue de producción completados correctamente.
+- EC2 cambió a `main`, aplicó el avance rápido y reconstruyó el stack mediante SSM.
+- Smoke test público superado en aplicación, dashboard MLOps, readiness, Champion, feedback, experimentos y paginación.
+- `main` establecida como rama predeterminada y única rama autorizada por la política OIDC de producción.
+
 ## 8. Diagnóstico
 
 En EC2:
