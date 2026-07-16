@@ -233,9 +233,11 @@ Incluye:
 Estado actual:
 
 - Data Drift completado con perfil versionado, PSI, auditoria de predicciones, filtrado por origen, endpoint operativo y dashboard independiente en `/monitoring`.
-- El dashboard deja preparados modulos de estado para red neuronal, A/B Testing y promocion condicionada, sin publicar resultados simulados.
-- Red neuronal experimental, A/B Testing y auto-reemplazo condicionado quedan pendientes de evaluacion en la proxima sesion.
-- Ninguno de esos tres puntos se ha descartado; cualquier implementacion se realizara en una rama independiente y sin alterar el Champion estable.
+- Red neuronal MLP entrenada y comparada con el Champion: cumple overfitting, pero obtiene menor F1 y permanece como Challenger.
+- A/B Testing offline estratificado 80/20 completado con intervalo bootstrap y decision reproducible de conservar el Champion.
+- Promocion condicionada implementada con gates de metricas, compatibilidad, evidencia A/B, aplicacion explicita y backup.
+- El dashboard consulta `GET /monitoring/experiments` y muestra evidencia real de red neuronal, A/B Testing y promocion condicionada.
+- La capa experta queda cerrada con un alcance proporcional al proyecto y sin alterar el Champion estable.
 
 Entregables:
 

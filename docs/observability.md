@@ -43,6 +43,18 @@ En EC2:
 docker compose --env-file .env.ec2 -f docker-compose.ec2.yml logs backend --tail=100
 ```
 
+## Panel interno
+
+La ruta independiente `/monitoring` reúne el estado de readiness, Champion, feedback, Data Drift y experimentos expertos sin entrar en la navegación comercial. Consume:
+
+- `GET /health/ready`.
+- `GET /model/info`.
+- `GET /feedback/summary`.
+- `GET /monitoring/drift`.
+- `GET /monitoring/experiments`.
+
+La evidencia de red neuronal, A/B Testing y promoción condicionada procede de artefactos versionados del repositorio. La vista es de solo lectura y no ejecuta entrenamientos, promociones ni cambios de configuración.
+
 ## Verificacion
 
 ```bash

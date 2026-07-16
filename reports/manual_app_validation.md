@@ -2,7 +2,7 @@
 
 ## Fecha
 
-2026-07-14
+2026-07-16
 
 ## Objetivo
 
@@ -19,11 +19,13 @@ Esta validacion no evalua el acabado visual definitivo de UX/UI. Su objetivo es 
 - Endpoint de disponibilidad `GET /health`.
 - Endpoint de metadatos `GET /model/info`.
 - Endpoint de reservas reales de demo `GET /reservations/demo`.
+- Paginacion y busqueda determinista de reservas mediante `limit`, `offset` y metadatos de pagina.
 - Endpoint de feedback `POST /feedback`.
 - Endpoint de resumen de feedback `GET /feedback/summary`.
 - Persistencia PostgreSQL en Amazon RDS.
 - Despliegue HTTPS mediante CloudFront y EC2.
 - Despliegue automático desde `develop` mediante GitHub Actions.
+- Dashboard MLOps independiente `/monitoring` y evidencia `GET /monitoring/experiments`.
 
 ## Flujo funcional revisado
 
@@ -56,6 +58,9 @@ La validacion operativa en AWS confirma además:
 - `GET /api/feedback/summary` identifica el almacenamiento como `postgresql`.
 - Los registros permanecen después de reiniciar el backend.
 - La IP directa de EC2 no es accesible por HTTP después de limitar el origen a CloudFront.
+- `/monitoring`, `/api/health/ready`, `/api/monitoring/experiments` y la paginacion de reservas responden publicamente con `200 OK`.
+- La suite final ejecuta 76 tests y el build de frontend transforma 1.603 modulos correctamente.
+- El stack Docker completo queda saludable con Champion y PostgreSQL disponibles.
 
 ## Evidencia documental
 
@@ -69,6 +74,6 @@ La validacion operativa en AWS confirma además:
 
 ## Pendiente fuera de esta validacion
 
-- Mejoras visuales y de UX/UI del frontend.
 - Preparacion de capturas finales para presentacion.
 - Preparacion de las presentaciones finales.
+- Release final de `develop` a `main` y tag `v1.0.0`.

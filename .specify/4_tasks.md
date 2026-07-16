@@ -425,7 +425,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 
 ## Fase 5 - Nivel Experto
 
-### [ ] T-5.1 Entrenar red neuronal experimental
+### [x] T-5.1 Entrenar red neuronal experimental
 
 - Archivos afectados: `src/models/`, `models/challengers/`, `reports/model_report.md`.
 - Accion: entrenar red neuronal comparable contra Champion.
@@ -434,10 +434,11 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.4.
 - Criterio de verificacion: metricas comparables documentadas.
-- Estado actual: pendiente de evaluacion en la proxima sesion; no descartada.
-- Comando de verificacion: TODO.
+- Evidencia: `src/models/train_neural_network.py`, `models/challengers/mlp_neural_network_challenger.pkl` y `reports/neural_network_experiment.json`. El MLP obtiene F1 de validacion `0.7742`, gap `0.0416` y no mejora el Champion.
+- Estado actual: completada como experimento comparable; decision `retain_champion`.
+- Comando de verificacion: `python -m pytest tests/unit/test_neural_network_experiment.py`.
 
-### [ ] T-5.2 Implementar o simular A/B Testing
+### [x] T-5.2 Implementar o simular A/B Testing
 
 - Archivos afectados: `src/mlops/`, `app/`, `reports/model_report.md`.
 - Accion: enrutar o simular trafico entre Champion y Challenger registrando `model_version`.
@@ -446,8 +447,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.4, T-5.1.
 - Criterio de verificacion: comparacion Champion vs Challenger reproducible.
-- Estado actual: pendiente de decidir en la proxima sesion si el experimento sera online, simulado u offline; no descartado.
-- Comando de verificacion: TODO.
+- Evidencia: `src/mlops/offline_ab_test.py`, `reports/offline_ab_test_results.json` y `reports/offline_ab_test_assignments.csv`. La simulacion offline estratificada 80/20 obtiene F1 `0.8113` para Champion y `0.7858` para MLP, con intervalo bootstrap `[-0.0620, 0.0135]`.
+- Estado actual: completada; no existe victoria estadisticamente respaldada del Challenger y se conserva el Champion.
+- Comando de verificacion: `python -m pytest tests/unit/test_offline_ab_testing.py`.
 
 ### [x] T-5.3 Medir Data Drift
 
@@ -468,7 +470,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Estado actual: implementacion tecnica completa. La acumulacion de 100 predicciones operativas reales es una condicion de ejecucion para obtener un resultado concluyente, no una tarea de desarrollo pendiente.
 - Comando de verificacion: `python -m pytest tests/unit/test_data_drift.py tests/unit/test_prediction_ingestion.py tests/unit/test_monitoring_frontend_entry.py tests/test_backend_api.py`.
 
-### [ ] T-5.4 Auto-reemplazo condicionado
+### [x] T-5.4 Auto-reemplazo condicionado
 
 - Archivos afectados: `src/mlops/`, `models/`, `reports/model_report.md`.
 - Accion: crear logica que promueva un Challenger solo si supera reglas de metricas y overfitting.
@@ -477,10 +479,12 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-5.2, T-5.3.
 - Criterio de verificacion: un modelo inferior no reemplaza al Champion en prueba controlada.
-- Estado actual: pendiente de evaluacion en la proxima sesion; no descartada. Data Drift solo genera alertas y nunca promociona modelos por si solo.
-- Comando de verificacion: TODO.
+- Evidencia: `src/mlops/conditional_promotion.py` y `reports/conditional_promotion_decision.json`. La politica exige mejora F1 `+0.02`, gap inferior a `0.05`, degradacion critica maxima `0.02`, evidencia A/B positiva y artefacto compatible.
+- Seguridad: Data Drift nunca promociona modelos; la aplicacion requiere `--apply`, crea backup y el MLP actual es rechazado por tres gates.
+- Estado actual: completada como promocion controlada; un modelo inferior no sustituye al Champion.
+- Comando de verificacion: `python -m pytest tests/unit/test_conditional_promotion.py`.
 
-### [ ] T-5.5 Documentar ciclo MLOps para defensa
+### [x] T-5.5 Documentar ciclo MLOps para defensa
 
 - Archivos afectados: `docs/technical_presentation/`, `reports/model_report.md`.
 - Accion: explicar Champion/Challenger, A/B, drift y auto-reemplazo con diagrama simple.
@@ -489,8 +493,9 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si con plantilla.
 - Dependencias: T-5.2, T-5.3, T-5.4.
 - Criterio de verificacion: la presentacion explica reglas y limitaciones sin prometer mas de lo implementado.
-- Estado actual: pendiente de cerrar despues de decidir el alcance de T-5.1, T-5.2 y T-5.4.
-- Comando de verificacion: no aplica.
+- Evidencia: `reports/model_report.md`, `docs/data_drift_monitoring.md`, `docs/technical_presentation/model_metrics_review.md`, `GET /monitoring/experiments` y dashboard `/monitoring`.
+- Estado actual: completada con resultados reales, reglas, decisiones y limitaciones del ciclo Champion/Challenger.
+- Comando de verificacion: `python -m pytest tests/unit/test_monitoring_frontend_entry.py tests/test_backend_api.py`.
 
 ## Fase 6 - Cierre
 

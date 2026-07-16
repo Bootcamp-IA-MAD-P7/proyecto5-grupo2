@@ -262,3 +262,43 @@ Interpretacion de negocio:
 - El test split se evaluo una unica vez; cualquier modelo posterior necesitara datos futuros o un nuevo protocolo independiente.
 - La importancia de variables es global; para explicar casos individuales convendria anadir explicabilidad local en una fase posterior.
 - Como siguiente mejora, el equipo puede ajustar el umbral de decision si quiere priorizar mas recall de `Canceled` o mas precision de las alertas.
+
+## Experimentos de Nivel Experto
+
+### Red neuronal Challenger
+
+Se entreno un `MLPClassifier` con capas `(64, 32)`, activacion ReLU, optimizador Adam, parada temprana y pesos de muestra balanceados. El experimento reutiliza train y validacion, pero no abre de nuevo el holdout final.
+
+| metrica | train | validacion |
+| --- | ---: | ---: |
+| F1 `Canceled` | 0.8157 | 0.7742 |
+| Recall `Canceled` | 0.8672 | 0.8132 |
+| ROC-AUC | 0.9456 | 0.9193 |
+
+- Gap F1 train-validacion: `0.0416`, inferior al limite `0.05`.
+- Diferencia F1 frente al Champion en validacion: `-0.0363`.
+- Decision: conservar `random_forest_champion_v0.1.0`.
+- Evidencia: `reports/neural_network_experiment.json`.
+
+### A/B Testing offline
+
+El protocolo asigna de forma estratificada y reproducible el 80% de validacion al Champion y el 20% al MLP. Cada fila pertenece a un unico brazo y el holdout final permanece cerrado.
+
+| brazo | modelo | filas | F1 `Canceled` |
+| --- | --- | ---: | ---: |
+| A | Champion Random Forest | 4353 | 0.8113 |
+| B | Challenger MLP | 1089 | 0.7858 |
+
+- Diferencia Challenger-Champion: `-0.0255`.
+- Intervalo bootstrap del 95%: `[-0.0620, 0.0135]`.
+- Victoria del Challenger estadisticamente respaldada: no.
+- Decision: conservar el Champion.
+- Evidencia: `reports/offline_ab_test_results.json` y `reports/offline_ab_test_assignments.csv`.
+
+### Promocion condicionada
+
+La politica `conditional_promotion_v1` exige artefacto compatible y cargable, mejora absoluta F1 minima `+0.02`, gap inferior a `0.05`, degradacion maxima de precision o recall `0.02` y limite inferior del intervalo A/B superior a `0`.
+
+El MLP no es elegible: falla los gates de mejora F1, degradacion de metricas criticas y victoria A/B. Data Drift nunca puede promover un modelo; aplicar una promocion exige `--apply` y crea una copia de seguridad del Champion.
+
+Evidencia: `reports/conditional_promotion_decision.json`. Los tres experimentos se exponen en `GET /monitoring/experiments` y se visualizan en `/monitoring`.

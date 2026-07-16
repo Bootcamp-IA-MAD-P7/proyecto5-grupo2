@@ -14,6 +14,16 @@ Proyecto grupal del Bootcamp de Inteligencia Artificial de Factoría F5 Madrid.
 ![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1)
 ![Milestone](https://img.shields.io/badge/tag-v0.6.0--aws--deployment-2E7D32)
 
+## Acceso a la demo
+
+| Aplicación de negocio | Dashboard MLOps |
+| --- | --- |
+| [![Abrir Hotel Insights](https://img.shields.io/badge/ABRIR-HOTEL%20INSIGHTS-00796B?style=for-the-badge)](https://d3lxpalnzir74p.cloudfront.net/) | [![Abrir Dashboard MLOps](https://img.shields.io/badge/ABRIR-DASHBOARD%20MLOPS-1565C0?style=for-the-badge)](https://d3lxpalnzir74p.cloudfront.net/monitoring) |
+| **[https://d3lxpalnzir74p.cloudfront.net/](https://d3lxpalnzir74p.cloudfront.net/)** | **[https://d3lxpalnzir74p.cloudfront.net/monitoring](https://d3lxpalnzir74p.cloudfront.net/monitoring)** |
+| Predicción y gestión operativa de reservas. | Data Drift, experimentos, A/B Testing y promoción condicionada. |
+
+> La aplicación y el dashboard están desplegados en AWS mediante CloudFront, EC2, Docker y PostgreSQL en Amazon RDS.
+
 | Producto | Modelo | Entrega |
 | --- | --- | --- |
 | Web React + API FastAPI | Champion Random Forest integrado | Niveles Esencial, Medio y Avanzado cubiertos |
@@ -108,7 +118,7 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 52 tests disponible en `tests/`.
+- Suite Python de 76 tests disponible en `tests/`.
 - Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
@@ -117,6 +127,7 @@ Estado actual:
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
 - Monitorización PSI operativa disponible en `GET /monitoring/drift`, alimentada por las predicciones auditadas y con exclusión de la cola histórica de demostración. La implementación está cerrada; hasta reunir 100 predicciones operativas reales, el estado esperado es `insufficient_data`.
 - Dashboard MLOps independiente disponible en `/monitoring`; consulta exclusivamente endpoints reales y no altera ni aparece en la navegación de la aplicación de negocio.
+- Experimento neuronal MLP, A/B Testing offline y política de promoción condicionada completados; sus evidencias versionadas se publican mediante `GET /monitoring/experiments` y se visualizan en `/monitoring`.
 - Observabilidad proporcionada con logs JSON, identificadores `X-Request-ID` y eventos de predicción correlacionados sin registrar payloads ni credenciales.
 - Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0002_prediction_logs`.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
@@ -132,10 +143,9 @@ Estado actual:
 
 Pendiente principal:
 
-- Revisar capturas finales de la app si se incorporan a la presentacion.
-- Revisar el informe técnico final antes de la entrega.
-- Mantener evidencia visual de la demo si se requiere para la presentacion.
-- Preparar las presentaciones finales y el checklist de entrega.
+- Preparar las presentaciones finales y sus capturas.
+- Alinear Jira y el checklist de entrega con el estado cerrado de SPEC.
+- Publicar el release final en `main`, validar producción y crear el tag `v1.0.0`.
 
 ---
 
@@ -299,7 +309,7 @@ http://localhost:5173/
 http://localhost:5173/monitoring
 ```
 
-La segunda URL abre el dashboard interno de monitorización. Es una entrada independiente del frontend de negocio y queda preparada para incorporar evidencia real de futuros experimentos de red neuronal, A/B Testing y promoción condicionada.
+La segunda URL abre el dashboard interno de monitorización. Es una entrada independiente del frontend de negocio y presenta evidencia real de readiness, Champion, feedback, Data Drift, red neuronal, A/B Testing y promoción condicionada.
 
 Crear build:
 
@@ -511,6 +521,11 @@ Estado actual destacado:
 [x] T-4.7 Versionar el esquema de base de datos
 [x] T-4.8 Auditar todas las predicciones
 [x] T-4.9 Añadir observabilidad operativa
+[x] T-5.1 Entrenar red neuronal experimental
+[x] T-5.2 Implementar A/B Testing offline
+[x] T-5.3 Medir Data Drift
+[x] T-5.4 Implementar promoción condicionada
+[x] T-5.5 Documentar ciclo MLOps para defensa
 [x] T-6.1 Smoke test completo
 [x] T-6.2 Revisar metricas finales y overfitting
 ```
@@ -719,16 +734,16 @@ Leyenda:
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. `prediction_logs` audita todas las inferencias correctas y `prediction_feedback` conserva el aprendizaje aportado por usuarios. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 52 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, data drift, observabilidad y contrato de entrada del dashboard. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 76 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, Data Drift, experimentos MLOps, observabilidad y contratos frontend. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [ ] | Experimentos con redes neuronales | Requisito y reglas comparables definidos en SPEC; implementación no iniciada. | Evaluar su alcance en la próxima sesión antes de decidir la implementación. |
-| [ ] | A/B Testing para comparar modelos | Contrato mínimo documentado; cada predicción ya registra `model_version` y `prediction_id`. | Evaluar en la próxima sesión si se realiza online, simulado u offline. |
+| [x] | Experimentos con redes neuronales | MLP `(64, 32)` entrenado y comparado en validación: F1 `0.7742`, ROC-AUC `0.9193` y gap `0.0416`. No mejora el Champion y queda como Challenger experimental. | Reentrenar únicamente con nuevos datos o una hipótesis justificada. |
+| [x] | A/B Testing para comparar modelos | Simulación offline estratificada 80/20: Champion F1 `0.8113`, MLP F1 `0.7858` e intervalo bootstrap 95% `[-0.0620, 0.0135]`. | Un A/B online requeriría tráfico y resultados reales suficientes; no es necesario para esta entrega. |
 | [x] | Monitorización de Data Drift | Perfil versionado, PSI para todas las variables, muestra de las 1.000 predicciones operativas más recientes y dashboard independiente en `/monitoring`. La cola demo y los registros heredados sin origen clasificable se conservan en auditoría, pero se excluyen del cálculo. | Acumular al menos 100 predicciones operativas reales; hasta entonces el dashboard muestra correctamente `insufficient_data`. |
-| [ ] | Auto-reemplazo condicionado de modelos | Reglas de seguridad iniciales documentadas; Data Drift no provoca promociones automáticas. | Evaluar su alcance en la próxima sesión y, si se aprueba, fijar el margen mínimo de mejora. |
+| [x] | Auto-reemplazo condicionado de modelos | Script controlado con gates de F1, overfitting, métricas críticas, A/B y compatibilidad. Requiere `--apply`, conserva backup y rechaza correctamente el MLP actual. | Mantener aprobación humana y versionar cualquier política futura. |
 
 ---
 
@@ -758,7 +773,7 @@ Prioridades inmediatas:
 2. Mantener capturas finales de la demo si se requieren evidencias visuales.
 3. Revisar frontend y narrativa comercial antes de la presentación.
 4. Alinear Jira con las tareas cerradas en SPEC.
-5. Evaluar en la próxima sesión el alcance de red neuronal, A/B testing y promoción condicionada, sin descartar todavía ninguna opción.
+5. Preparar el release `develop -> main`, validar el despliegue final y crear el tag `v1.0.0`.
 6. Planificar la retirada de recursos AWS cuando termine la demostración.
 
 ---

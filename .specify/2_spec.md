@@ -423,6 +423,14 @@ Debe cumplir:
 - Documentar si mejora o no mejora al Champion.
 - No bloquear la entrega esencial.
 
+Estado implementado:
+
+- Challenger `MLPClassifier` con capas ocultas `(64, 32)`, activacion ReLU, optimizador Adam y parada temprana.
+- Entrenamiento sobre el split de train y evaluacion sobre validacion; el holdout final no se reutiliza.
+- F1 `Canceled` de train `0.8157`, F1 de validacion `0.7742`, ROC-AUC de validacion `0.9193` y gap `0.0416`.
+- Cumple la regla de overfitting inferior a `0.05`, pero no mejora el F1 del Champion Random Forest (`0.8105`).
+- Decision: conservar el Champion. Evidencia en `reports/neural_network_experiment.json`.
+
 ## Reglas de seleccion del Champion
 
 Un modelo puede ser Champion si:
@@ -460,7 +468,7 @@ Regla inicial sugerida:
 - 80% Champion.
 - 20% Challenger.
 
-Estado actual: pendiente de evaluacion en la proxima sesion. El equipo debe decidir si el A/B sera real en app, simulado con un conjunto de evaluacion o documentado como experimento offline. Ninguna alternativa queda descartada todavia.
+Estado implementado: experimento A/B offline reproducible sobre validacion, con asignacion estratificada y determinista 80/20. El brazo A usa el Champion sobre 4.353 registros y obtiene F1 `0.8113`; el brazo B usa el MLP sobre 1.089 registros y obtiene F1 `0.7858`. La diferencia Challenger-Champion es `-0.0255` y su intervalo bootstrap del 95% es `[-0.0620, 0.0135]`, por lo que no existe una mejora estadisticamente respaldada. El holdout final permanece cerrado y la decision es conservar el Champion. Evidencia en `reports/offline_ab_test_results.json` y `reports/offline_ab_test_assignments.csv`.
 
 ## Reglas de Data Drift
 
@@ -509,9 +517,15 @@ Un modelo nuevo solo puede reemplazar al Champion si:
 - Tiene version, fecha y artefacto guardado.
 - Queda documentado en la tabla de experimentos.
 
-Estado actual: pendiente de evaluacion en la proxima sesion. Si se aprueba su implementacion, debe fijarse el margen minimo de mejora; la sugerencia inicial es +0.02 absoluto en la metrica principal.
+Estado implementado mediante `src/mlops/conditional_promotion.py` como promocion controlada y segura. Un Challenger solo es elegible si cumple simultaneamente:
 
-Para entrega academica, el auto-reemplazo puede implementarse como script controlado y documentado, no necesariamente como servicio autonomo permanente.
+- Mejora absoluta minima de F1 `Canceled` de `+0.02`.
+- Gap train-validacion inferior a `0.05`.
+- Degradacion maxima de precision o recall de `0.02`.
+- Limite inferior del intervalo A/B del 95% superior a `0`.
+- Artefacto cargable, mismo contrato de entrada, version registrada y evidencia comparable.
+
+La aplicacion del cambio nunca es implicita: exige la opcion explicita `--apply`, conserva copia de seguridad y Data Drift no puede activar una promocion. El MLP actual fue rechazado por no superar F1, degradar precision por encima del limite y no demostrar una victoria A/B. Evidencia en `reports/conditional_promotion_decision.json`.
 
 ## Estructura de carpetas recomendada
 
@@ -801,6 +815,8 @@ El nivel esta cerrado si:
 Estado actual:
 
 - Data Drift esta implementado, probado y documentado mediante perfil versionado, PSI, auditoria de predicciones y `GET /monitoring/drift`.
-- El reporte de monitorizacion se visualiza en `/monitoring`; la vista muestra el estado real y reserva modulos sin metricas simuladas para red neuronal, A/B Testing y promocion condicionada.
-- Red neuronal experimental, A/B Testing y auto-reemplazo condicionado siguen pendientes y se evaluaran en la proxima sesion; no se descarta ninguno de los tres requisitos.
-- La documentacion final del ciclo MLOps se cerrara cuando el equipo decida el alcance de esos tres experimentos.
+- La red neuronal MLP se entreno y comparo con el Champion usando el mismo protocolo; no lo mejora y queda como Challenger experimental.
+- El A/B Testing offline 80/20 se ejecuto de forma reproducible y conserva el Champion.
+- La promocion condicionada esta implementada como script controlado con gates, aplicacion explicita y copias de seguridad; el Challenger actual no es elegible.
+- `GET /monitoring/experiments` expone la evidencia versionada y `/monitoring` presenta resultados reales de red neuronal, A/B, drift y promocion sin alterar la aplicacion de negocio.
+- El Nivel Experto queda implementado y documentado con alcance academico proporcional: experimento neuronal, A/B offline, Data Drift operativo y promocion segura controlada.
