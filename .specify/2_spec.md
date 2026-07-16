@@ -18,7 +18,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Tecnologia de app: frontend web con React + Vite y backend de inferencia con FastAPI.
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
-- Frontend actual: existe en `app/frontend` con tabla, alertas, modal, formulario y feedback conectados al backend real.
+- Frontend actual: versión definitiva en `app/frontend` con portada, operación paginada, evaluación guiada, histórico de feedback y página explicativa del modelo, todo conectado al backend real.
 - Dashboard MLOps: entrada React independiente en `/monitoring`, sin enlace desde la app de negocio y alimentada exclusivamente por endpoints reales de readiness, modelo, feedback y Data Drift.
 - Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `GET /feedback`, `PATCH /feedback/{record_id}` y `GET /monitoring/drift`.
 - Contrato API actual: `docs/api_contract.md`.

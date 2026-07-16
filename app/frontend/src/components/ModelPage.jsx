@@ -62,7 +62,7 @@ function ModelPage({ modelInfo }) {
             <BrainCircuit size={18} />
             {modelReady ? "Modelo desplegado y cargado" : "Modelo no disponible"}
           </span>
-          <a href="/monitoring.html" target="_blank" rel="noreferrer">
+          <a href="/monitoring" target="_blank" rel="noreferrer">
             Ver monitorización MLOps <ExternalLink size={16} />
           </a>
         </div>

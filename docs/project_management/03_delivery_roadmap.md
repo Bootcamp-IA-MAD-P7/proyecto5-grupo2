@@ -119,13 +119,14 @@ Criterio de cierre:
 
 Estado actual:
 
-- Frontend React + Vite integrado en `app/frontend`.
+- Frontend definitivo React + Vite integrado en `app/frontend`, con portada, operación de reservas, evaluación guiada, feedback y página explicativa del modelo.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
 - Endpoints de liveness `GET /health` y readiness `GET /health/ready`, inferencia, reservas, feedback y monitorizacion disponibles.
 - `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
 - `GET /reservations/demo` sirve reservas candidatas desde el CSV real para alimentar el frontend principal.
 - El frontend principal consume reservas reales, predicciones reales y feedback real.
+- La página `Modelo` presenta evidencia coherente con el dataset, el EDA y el Champion desplegado.
 - Informe tecnico disponible en `reports/model_report.md` con metricas, overfitting, curva ROC, matriz de confusion, feature importance y analisis de errores del Champion.
 - Docker validado en local y desplegado en Amazon EC2 para frontend y backend.
 - Nivel Esencial cubierto; validacion manual funcional documentada en `reports/manual_app_validation.md`.

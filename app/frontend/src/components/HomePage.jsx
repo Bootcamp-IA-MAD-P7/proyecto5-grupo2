@@ -14,6 +14,10 @@ function HomePage({
           className="home-hero-image"
           src="/luxury-hotel-hero.jpg"
           alt="Piscina infinita de un resort de lujo frente al océano"
+          width="2200"
+          height="2756"
+          fetchPriority="high"
+          decoding="async"
         />
         <div className="home-hero-overlay" />
 

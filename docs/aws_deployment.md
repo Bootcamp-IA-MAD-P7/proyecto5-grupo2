@@ -135,11 +135,13 @@ Resultado validado el 14 de julio de 2026:
 - Despliegue automático desde `develop` completado correctamente.
 - Acceso HTTP directo a la IP de EC2 bloqueado después de restringir el origen a CloudFront.
 
-Validación final del commit `641d18d` el 16 de julio de 2026:
+Validación final del commit `d752892` el 16 de julio de 2026:
 
 - 76 tests Python superados y build de frontend completado.
 - Stack Docker completo saludable con readiness de Champion y PostgreSQL.
-- Aplicación de negocio, dashboard `/monitoring`, evidencia de experimentos y paginación de reservas disponibles públicamente con respuesta `200 OK`.
+- Aplicación de negocio definitiva, dashboard `/monitoring`, readiness y metadatos del Champion disponibles públicamente con respuesta `200 OK`.
+- Página `Modelo` publicada con cifras contrastadas contra el CSV y los artefactos del Champion.
+- Auditorías de dependencias Python y frontend sin vulnerabilidades conocidas.
 
 ## 8. Diagnóstico
 
