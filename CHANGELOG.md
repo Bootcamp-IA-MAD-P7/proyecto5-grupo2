@@ -16,6 +16,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Responsive monitoring view presenting real neural-network, A/B testing and conditional-promotion evidence.
 - Frontend entrypoint contract test covering the Vite build, nginx route and Docker image input.
 - Deterministic reservation pagination and search over the complete dataset with compatible API metadata.
+- Final model showcase covering dataset composition, EDA findings, training process, holdout metrics, feature importance and limitations.
+- Credited hospitality hero image for the definitive business frontend.
 
 ### Changed
 
@@ -23,13 +25,17 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Business frontend reservation workflow consolidated around real paginated data, prediction and feedback services.
 - Python test suite expanded to 76 tests and validated as the final code quality gate.
 - Python dependencies and nginx runtime hardened after dependency and frontend security audits.
+- Business home, model showcase and MLOps dashboard visually consolidated for the final presentation.
+- Model showcase now links to the canonical `/monitoring` route.
 
 ### Verified
 
 - Complete Python suite: 76 tests passed.
-- Frontend production build completed successfully with 1,603 transformed modules.
+- Frontend production build completed successfully with 1,605 transformed modules.
 - Full Docker stack built and reported healthy with Champion and database readiness.
-- Public AWS routes for the business app, monitoring dashboard, readiness, experiments and reservation pagination returned `200 OK` on commit `641d18d`.
+- Model-page dataset and EDA figures matched the source CSV; holdout metrics matched the versioned Champion evidence.
+- Python and frontend production dependencies reported no known vulnerabilities.
+- Public AWS routes for the business app, monitoring dashboard, readiness and Champion metadata returned `200 OK` on commit `d752892`.
 
 ### Pending
 

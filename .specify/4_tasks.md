@@ -511,6 +511,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Evidencia: `tests/integration/test_prediction_feedback_smoke.py` valida flujo completo de API con health, metadata de modelo, prediccion, feedback y resumen de feedback.
 - Evidencia Docker: flujo validado manualmente con `docker compose build`, `docker compose up -d`, endpoints backend y frontend nginx.
 - Evidencia frontend: `pnpm build` valida el frontend principal conectado al servicio real de prediccion y reservas.
+- Evidencia final de producto: la navegación definitiva incluye portada, operación, evaluación, feedback y explicación del modelo; sus cifras se contrastaron con el CSV y los artefactos finales.
 - Comando de verificacion: `python -m pytest tests/integration/test_prediction_feedback_smoke.py`.
 
 ### [x] T-6.2 Revision final de overfitting y metricas

@@ -104,8 +104,8 @@ Estado actual:
 - Métrica principal definida: F1-score de la clase `Canceled`.
 - Diccionario de datos consolidado disponible en `reports/data_dictionary.md`.
 - Notebooks de inspección y EDA completados en `notebooks/`.
-- Frontend React + Vite integrado en `app/frontend`.
-- Prototipo visual de producto disponible para validar la experiencia.
+- Frontend definitivo React + Vite integrado en `app/frontend`, con portada de producto, operación de reservas, evaluación guiada, histórico de feedback y página explicativa del modelo.
+- Identidad visual consolidada con recurso fotográfico acreditado en `docs/image_credits.md`.
 - Backend FastAPI operativo integrado en `app/backend`.
 - Contrato API vigente documentado en `docs/api_contract.md`.
 - Endpoints operativos disponibles: `GET /health` para liveness y `GET /health/ready` para comprobar Champion y base de datos.
@@ -114,6 +114,7 @@ Estado actual:
 - Auditoría de todas las predicciones correctas mediante `prediction_id` y la tabla `prediction_logs`.
 - Endpoint de reservas reales disponible en `GET /reservations/demo`, alimentado desde el CSV de `data/raw/`.
 - Frontend principal conectado a reservas reales, predicciones reales y feedback real.
+- Página `Modelo` alineada con el dataset y los artefactos finales: composición, EDA, proceso de entrenamiento, métricas de test, importancia de variables y limitaciones.
 - Baseline reproducible guardado en `models/baseline/logistic_regression_baseline.pkl`.
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.

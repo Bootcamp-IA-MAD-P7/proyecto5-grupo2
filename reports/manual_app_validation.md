@@ -8,7 +8,7 @@
 
 Validar manualmente que la aplicacion funciona de punta a punta con frontend, backend, modelo Champion y flujo de feedback.
 
-Esta validacion no evalua el acabado visual definitivo de UX/UI. Su objetivo es confirmar que la demo integrada funciona como producto: carga datos reales, consulta el modelo, muestra una prediccion y permite registrar aprendizaje operativo.
+Esta validacion confirma tanto el flujo integrado como la coherencia del frontend definitivo: carga datos reales, consulta el modelo, muestra una prediccion, registra aprendizaje operativo y presenta evidencia analitica consistente.
 
 ## Alcance validado
 
@@ -26,6 +26,7 @@ Esta validacion no evalua el acabado visual definitivo de UX/UI. Su objetivo es 
 - Despliegue HTTPS mediante CloudFront y EC2.
 - Despliegue automático desde `develop` mediante GitHub Actions.
 - Dashboard MLOps independiente `/monitoring` y evidencia `GET /monitoring/experiments`.
+- Portada visual, navegación de producto y página `Modelo` con evidencia del dataset, EDA, entrenamiento, métricas y limitaciones.
 
 ## Flujo funcional revisado
 
@@ -59,7 +60,11 @@ La validacion operativa en AWS confirma además:
 - Los registros permanecen después de reiniciar el backend.
 - La IP directa de EC2 no es accesible por HTTP después de limitar el origen a CloudFront.
 - `/monitoring`, `/api/health/ready`, `/api/monitoring/experiments` y la paginacion de reservas responden publicamente con `200 OK`.
-- La suite final ejecuta 76 tests y el build de frontend transforma 1.603 modulos correctamente.
+- La app principal, `/monitoring`, `/monitoring.html`, `/api/health/ready` y `/api/model/info` responden públicamente con `200 OK` sobre el commit `d752892`.
+- La suite final ejecuta 76 tests y el build de frontend transforma 1.605 modulos correctamente.
+- Las cifras de la página `Modelo` se contrastaron con el CSV: 36.275 reservas, 32,76% canceladas, medianas de `lead_time` 122/39 y tasas segmentadas coincidentes.
+- Las métricas de test mostradas coinciden con `reports/champion_test_metrics.json` y los metadatos del Champion.
+- `pip-audit` y `pnpm audit --prod` no detectaron vulnerabilidades conocidas.
 - El stack Docker completo queda saludable con Champion y PostgreSQL disponibles.
 
 ## Evidencia documental
