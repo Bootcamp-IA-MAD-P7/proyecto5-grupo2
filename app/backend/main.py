@@ -20,6 +20,7 @@ from .schemas import (
     DemoReservationsResponse,
     HealthResponse,
     ModelInfoResponse,
+    MonitoringExperimentsResponse,
     PredictionRequest,
     PredictionResponse,
     ReadinessResponse,
@@ -31,6 +32,7 @@ from .services.feedback_service import (
     save_feedback,
     update_feedback_record,
 )
+from .services.experiment_service import get_experiment_overview
 from .services.health_service import get_readiness
 from .services.model_service import get_model_info, predict_cancellation
 from .services.prediction_log_service import save_prediction_log
@@ -184,3 +186,8 @@ def update_feedback(
 @app.get("/monitoring/drift", response_model=DriftReportResponse)
 def data_drift() -> DriftReportResponse:
     return get_data_drift_report()
+
+
+@app.get("/monitoring/experiments", response_model=MonitoringExperimentsResponse)
+def monitoring_experiments() -> MonitoringExperimentsResponse:
+    return get_experiment_overview()

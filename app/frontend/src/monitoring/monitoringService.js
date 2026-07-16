@@ -31,7 +31,8 @@ export async function fetchMonitoringOverview() {
     settle("readiness", "/health/ready"),
     settle("model", "/model/info"),
     settle("drift", "/monitoring/drift"),
-    settle("feedback", "/feedback/summary")
+    settle("feedback", "/feedback/summary"),
+    settle("experiments", "/monitoring/experiments")
   ]);
 
   return Object.fromEntries(responses);

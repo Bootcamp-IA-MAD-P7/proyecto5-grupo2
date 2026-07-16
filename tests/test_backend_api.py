@@ -307,3 +307,17 @@ def test_data_drift_returns_monitoring_contract(monkeypatch) -> None:
     assert body["current_rows"] == 2
     assert body["minimum_current_rows"] == 100
     assert body["features"] == []
+
+
+def test_monitoring_experiments_returns_versioned_evidence() -> None:
+    response = client.get("/monitoring/experiments")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["evidence_source"] == "versioned_repository_artifacts"
+    assert body["neural_network"]["status"] == "completed"
+    assert body["neural_network"]["validation_f1"] > 0
+    assert body["ab_testing"]["champion_rows"] == 4353
+    assert body["ab_testing"]["challenger_rows"] == 1089
+    assert body["conditional_promotion"]["eligible"] is False
+    assert body["conditional_promotion"]["decision"] == "retain_champion"

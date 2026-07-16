@@ -21,30 +21,6 @@ const DRIFT_LABELS = {
   insufficient_data: "Muestra insuficiente"
 };
 
-const MODULES = [
-  {
-    key: "neural",
-    icon: BrainCircuit,
-    title: "Red neuronal",
-    status: "Pendiente de evaluacion",
-    detail: "Sin experimento registrado"
-  },
-  {
-    key: "ab",
-    icon: GitCompareArrows,
-    title: "Comparacion A/B",
-    status: "Pendiente de evaluacion",
-    detail: "Sin reparto de evaluacion definido"
-  },
-  {
-    key: "promotion",
-    icon: Replace,
-    title: "Promocion condicionada",
-    status: "Pendiente de evaluacion",
-    detail: "El Champion no se reemplaza automaticamente"
-  }
-];
-
 function formatDate(value) {
   if (!value) return "Sin datos";
   return new Intl.DateTimeFormat("es-ES", {
@@ -74,6 +50,44 @@ function driftTone(status) {
   }
   if (status === "drift_detected" || status === "high") return "danger";
   return "neutral";
+}
+
+function formatF1(value) {
+  return value == null ? "--" : value.toFixed(3).replace(".", ",");
+}
+
+function experimentModules(experiments) {
+  if (!experiments) return [];
+
+  const neural = experiments.neural_network;
+  const ab = experiments.ab_testing;
+  const promotion = experiments.conditional_promotion;
+
+  return [
+    {
+      key: "neural",
+      icon: BrainCircuit,
+      title: "Red neuronal",
+      status: neural.decision === "retain_champion" ? "Experimento completado" : "Candidata valida",
+      detail: `F1 validacion ${formatF1(neural.validation_f1)} · gap ${formatF1(neural.overfitting_gap)}`
+    },
+    {
+      key: "ab",
+      icon: GitCompareArrows,
+      title: "Comparacion A/B",
+      status: ab.decision === "retain_champion" ? "Champion retenido" : "Challenger superior",
+      detail: `Champion ${formatF1(ab.champion_f1)} · Challenger ${formatF1(ab.challenger_f1)}`
+    },
+    {
+      key: "promotion",
+      icon: Replace,
+      title: "Promocion condicionada",
+      status: promotion.eligible ? "Promocion autorizada" : "Champion protegido",
+      detail: promotion.eligible
+        ? "Todas las reglas de promocion superadas"
+        : `${promotion.failed_gates.length} reglas impiden el reemplazo`
+    }
+  ];
 }
 
 function StatusMark({ tone = "neutral", children }) {
@@ -160,6 +174,8 @@ function MonitoringDashboard() {
   const model = overview?.model?.data;
   const drift = overview?.drift?.data;
   const feedback = overview?.feedback?.data;
+  const experiments = overview?.experiments?.data;
+  const modules = experimentModules(experiments);
   const errors = useMemo(
     () =>
       Object.entries(overview || {})
@@ -308,15 +324,15 @@ function MonitoringDashboard() {
             <CheckCircle2 size={20} className="monitor-module__check" aria-hidden="true" />
           </article>
 
-          {MODULES.map(({ key, icon: Icon, title, status, detail }) => (
-            <article className="monitor-module" key={key}>
+          {modules.map(({ key, icon: Icon, title, status, detail }) => (
+            <article className="monitor-module monitor-module--active" key={key}>
               <div className="monitor-module__icon"><Icon size={21} aria-hidden="true" /></div>
               <div>
                 <span>{title}</span>
                 <strong>{status}</strong>
                 <p>{detail}</p>
               </div>
-              <Clock3 size={20} className="monitor-module__pending" aria-hidden="true" />
+              <CheckCircle2 size={20} className="monitor-module__check" aria-hidden="true" />
             </article>
           ))}
         </div>

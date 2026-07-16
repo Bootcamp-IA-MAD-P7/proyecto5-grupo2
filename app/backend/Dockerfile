@@ -17,6 +17,9 @@ COPY scripts/start_backend.sh ./scripts/start_backend.sh
 COPY data/raw ./data/raw
 COPY models/champion ./models/champion
 COPY models/monitoring ./models/monitoring
+COPY reports/neural_network_experiment.json ./reports/neural_network_experiment.json
+COPY reports/offline_ab_test_results.json ./reports/offline_ab_test_results.json
+COPY reports/conditional_promotion_decision.json ./reports/conditional_promotion_decision.json
 RUN chmod +x ./scripts/start_backend.sh
 
 EXPOSE 8000
