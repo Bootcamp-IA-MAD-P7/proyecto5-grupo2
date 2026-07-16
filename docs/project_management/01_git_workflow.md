@@ -222,12 +222,13 @@ v0.2.0-frontend-mock
 v0.4.0-essential-mvp
 v0.5.0-operational-mvp
 v0.6.0-aws-deployment
+v0.7.0-mlops-monitoring
 ```
 
-Siguiente tag previsto:
+Tag final de release:
 
 ```text
-v1.0.0-final
+v1.0.0
 ```
 
 Crear tag:

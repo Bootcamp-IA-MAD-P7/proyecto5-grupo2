@@ -81,4 +81,10 @@ La validacion operativa en AWS confirma además:
 
 - Preparacion de capturas finales para presentacion.
 - Preparacion de las presentaciones finales.
-- Release final de `develop` a `main` y tag `v1.0.0`.
+
+## Release de produccion
+
+- `develop` se publico en `main` mediante el PR #67.
+- El commit `ac68ca1` supero los quality gates y el despliegue automatico desde `main`.
+- El smoke test publico final confirmo respuesta `200 OK` en aplicacion, dashboard, readiness, Champion, feedback, experimentos y paginacion.
+- La rama predeterminada de GitHub y la autorizacion OIDC de AWS quedaron limitadas a `main`.

@@ -559,4 +559,6 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si.
 - Dependencias: todas las tareas de cierre.
 - Criterio de verificacion: no quedan requisitos obligatorios sin evidencia.
+- Evidencia tecnica cerrada: release de `develop` a `main`, quality gates, despliegue AWS y smoke test publico completados sobre `ac68ca1`.
+- Pendiente de equipo: confirmar presentaciones finales y alineacion de Jira antes de marcar la tarea completa.
 - Comando de verificacion: no aplica.

@@ -281,7 +281,7 @@ Entregables:
 - Presentación técnica.
 - Capturas de app.
 - Checklist de consigna.
-- Tag `v1.0.0-final`.
+- Tag `v1.0.0`.
 
 Criterio de cierre:
 
