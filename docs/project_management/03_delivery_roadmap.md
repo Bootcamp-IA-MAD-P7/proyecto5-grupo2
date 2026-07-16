@@ -232,7 +232,8 @@ Incluye:
 
 Estado actual:
 
-- Data Drift completado con perfil versionado, PSI, auditoria de predicciones, filtrado por origen y endpoint operativo.
+- Data Drift completado con perfil versionado, PSI, auditoria de predicciones, filtrado por origen, endpoint operativo y dashboard independiente en `/monitoring`.
+- El dashboard deja preparados modulos de estado para red neuronal, A/B Testing y promocion condicionada, sin publicar resultados simulados.
 - Red neuronal experimental, A/B Testing y auto-reemplazo condicionado quedan pendientes de evaluacion en la proxima sesion.
 - Ninguno de esos tres puntos se ha descartado; cualquier implementacion se realizara en una rama independiente y sin alterar el Champion estable.
 
@@ -241,6 +242,7 @@ Entregables:
 - Modelo Challenger.
 - Comparación Champion vs Challenger.
 - Script y endpoint de reporte de drift.
+- Dashboard interno de monitorizacion separado de la aplicacion de negocio.
 - Reglas de promoción de modelos.
 - Diagrama de ciclo MLOps.
 - Documentación de limitaciones.

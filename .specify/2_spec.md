@@ -19,6 +19,7 @@ Este archivo es la Single Source of Truth del proyecto. Toda implementacion debe
 - Sistema de gestion: Jira.
 - Tablero Jira: `https://miguel-redondo.atlassian.net/jira/software/projects/G2PC/boards/100/backlog`.
 - Frontend actual: existe en `app/frontend` con tabla, alertas, modal, formulario y feedback conectados al backend real.
+- Dashboard MLOps: entrada React independiente en `/monitoring`, sin enlace desde la app de negocio y alimentada exclusivamente por endpoints reales de readiness, modelo, feedback y Data Drift.
 - Backend actual: existe API FastAPI en `app/backend` con `GET /health`, `GET /health/ready`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `GET /feedback`, `PATCH /feedback/{record_id}` y `GET /monitoring/drift`.
 - Contrato API actual: `docs/api_contract.md`.
 - Documentacion de organizacion: existe en `docs/project_management/`.
@@ -800,5 +801,6 @@ El nivel esta cerrado si:
 Estado actual:
 
 - Data Drift esta implementado, probado y documentado mediante perfil versionado, PSI, auditoria de predicciones y `GET /monitoring/drift`.
+- El reporte de monitorizacion se visualiza en `/monitoring`; la vista muestra el estado real y reserva modulos sin metricas simuladas para red neuronal, A/B Testing y promocion condicionada.
 - Red neuronal experimental, A/B Testing y auto-reemplazo condicionado siguen pendientes y se evaluaran en la proxima sesion; no se descarta ninguno de los tres requisitos.
 - La documentacion final del ciclo MLOps se cerrara cuando el equipo decida el alcance de esos tres experimentos.

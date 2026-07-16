@@ -108,7 +108,7 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 51 tests disponible en `tests/`.
+- Suite Python de 52 tests disponible en `tests/`.
 - Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
@@ -116,6 +116,7 @@ Estado actual:
 - Flujo de feedback disponible mediante `POST /feedback`, `GET /feedback/summary`, `GET /feedback` y `PATCH /feedback/{record_id}`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
 - Monitorización PSI operativa disponible en `GET /monitoring/drift`, alimentada por las predicciones auditadas y con exclusión de la cola histórica de demostración. La implementación está cerrada; hasta reunir 100 predicciones operativas reales, el estado esperado es `insufficient_data`.
+- Dashboard MLOps independiente disponible en `/monitoring`; consulta exclusivamente endpoints reales y no altera ni aparece en la navegación de la aplicación de negocio.
 - Observabilidad proporcionada con logs JSON, identificadores `X-Request-ID` y eventos de predicción correlacionados sin registrar payloads ni credenciales.
 - Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0002_prediction_logs`.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
@@ -295,7 +296,10 @@ Abrir en navegador:
 
 ```text
 http://localhost:5173/
+http://localhost:5173/monitoring
 ```
+
+La segunda URL abre el dashboard interno de monitorización. Es una entrada independiente del frontend de negocio y queda preparada para incorporar evidencia real de futuros experimentos de red neuronal, A/B Testing y promoción condicionada.
 
 Crear build:
 
@@ -715,7 +719,7 @@ Leyenda:
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. `prediction_logs` audita todas las inferencias correctas y `prediction_feedback` conserva el aprendizaje aportado por usuarios. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 51 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, data drift y observabilidad. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 52 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, data drift, observabilidad y contrato de entrada del dashboard. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
@@ -723,7 +727,7 @@ Leyenda:
 | --- | --- | --- | --- |
 | [ ] | Experimentos con redes neuronales | Requisito y reglas comparables definidos en SPEC; implementación no iniciada. | Evaluar su alcance en la próxima sesión antes de decidir la implementación. |
 | [ ] | A/B Testing para comparar modelos | Contrato mínimo documentado; cada predicción ya registra `model_version` y `prediction_id`. | Evaluar en la próxima sesión si se realiza online, simulado u offline. |
-| [x] | Monitorización de Data Drift | Perfil versionado, PSI para todas las variables y muestra de las 1.000 predicciones operativas más recientes. La cola demo y los registros heredados sin origen clasificable se conservan en auditoría, pero se excluyen del cálculo. | Acumular al menos 100 predicciones operativas reales; hasta entonces el estado esperado es `insufficient_data`. |
+| [x] | Monitorización de Data Drift | Perfil versionado, PSI para todas las variables, muestra de las 1.000 predicciones operativas más recientes y dashboard independiente en `/monitoring`. La cola demo y los registros heredados sin origen clasificable se conservan en auditoría, pero se excluyen del cálculo. | Acumular al menos 100 predicciones operativas reales; hasta entonces el dashboard muestra correctamente `insufficient_data`. |
 | [ ] | Auto-reemplazo condicionado de modelos | Reglas de seguridad iniciales documentadas; Data Drift no provoca promociones automáticas. | Evaluar su alcance en la próxima sesión y, si se aprueba, fijar el margen mínimo de mejora. |
 
 ---
