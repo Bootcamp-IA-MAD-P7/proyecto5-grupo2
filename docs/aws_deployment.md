@@ -120,6 +120,8 @@ GET https://d3lxpalnzir74p.cloudfront.net/api/health
 GET https://d3lxpalnzir74p.cloudfront.net/api/health/ready
 GET https://d3lxpalnzir74p.cloudfront.net/api/model/info
 GET https://d3lxpalnzir74p.cloudfront.net/api/feedback/summary
+GET https://d3lxpalnzir74p.cloudfront.net/api/monitoring/experiments
+GET https://d3lxpalnzir74p.cloudfront.net/api/reservations/demo?limit=4&offset=4
 ```
 
 Resultado validado el 14 de julio de 2026:
@@ -132,6 +134,12 @@ Resultado validado el 14 de julio de 2026:
 - Esquema gestionado por Alembic; el despliegue aplica `0002_prediction_logs` antes de iniciar la API.
 - Despliegue automático desde `develop` completado correctamente.
 - Acceso HTTP directo a la IP de EC2 bloqueado después de restringir el origen a CloudFront.
+
+Validación final del commit `641d18d` el 16 de julio de 2026:
+
+- 76 tests Python superados y build de frontend completado.
+- Stack Docker completo saludable con readiness de Champion y PostgreSQL.
+- Aplicación de negocio, dashboard `/monitoring`, evidencia de experimentos y paginación de reservas disponibles públicamente con respuesta `200 OK`.
 
 ## 8. Diagnóstico
 

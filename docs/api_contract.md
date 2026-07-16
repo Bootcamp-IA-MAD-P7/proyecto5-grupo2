@@ -519,7 +519,53 @@ Compara las predicciones operativas persistidas en `prediction_logs` con el perf
 
 Este endpoint es informativo. Una alerta nunca promociona ni reemplaza automaticamente el modelo Champion.
 
-## 17. Error Response
+## 17. MLOps Experiment Evidence
+
+### `GET /monitoring/experiments`
+
+Expone una vista estable de los artefactos versionados de red neuronal, A/B Testing offline y promocion condicionada. No ejecuta entrenamientos ni modifica el Champion.
+
+#### Response `200 OK`
+
+```json
+{
+  "evidence_source": "versioned_repository_artifacts",
+  "neural_network": {
+    "status": "completed",
+    "model_type": "MLPClassifier",
+    "train_f1": 0.8157,
+    "validation_f1": 0.7742,
+    "overfitting_gap": 0.0416,
+    "decision": "retain_champion"
+  },
+  "ab_testing": {
+    "status": "completed",
+    "experiment_id": "offline_ab_champion_vs_mlp_v1",
+    "champion_rows": 4353,
+    "challenger_rows": 1089,
+    "champion_f1": 0.8113,
+    "challenger_f1": 0.7858,
+    "ci_lower": -0.062,
+    "ci_upper": 0.0135,
+    "decision": "retain_champion"
+  },
+  "conditional_promotion": {
+    "status": "completed",
+    "policy_version": "conditional_promotion_v1",
+    "eligible": false,
+    "failed_gates": [
+      "minimum_f1_improvement",
+      "critical_metrics_within_limit",
+      "ab_win_statistically_supported"
+    ],
+    "decision": "retain_champion"
+  }
+}
+```
+
+`evidence_source` confirma que la respuesta procede de artefactos del repositorio y no de valores simulados por el frontend.
+
+## 18. Error Response
 
 FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
 
@@ -537,7 +583,7 @@ Formato esperado:
 }
 ```
 
-## 18. Reglas De Compatibilidad
+## 19. Reglas De Compatibilidad
 
 - La forma de la respuesta no debe cambiar sin actualizar este contrato.
 - El frontend no debe depender de campos no definidos aqui.
@@ -548,8 +594,9 @@ Formato esperado:
 - `GET /reservations/demo` debe devolver `input_data` compatible con `POST /predict`.
 - Cada respuesta `200 OK` de `POST /predict` debe tener un registro con el mismo `prediction_id`.
 - `GET /monitoring/drift` debe usar el perfil versionado y declarar `insufficient_data` cuando no alcance la muestra minima.
+- `GET /monitoring/experiments` debe reflejar los artefactos versionados sin ejecutar promociones ni entrenamientos.
 
-## 19. Mantenimiento Del Contrato
+## 20. Mantenimiento Del Contrato
 
 - Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.
 - Mantener sincronizada la version del Champion si se promociona un nuevo modelo.

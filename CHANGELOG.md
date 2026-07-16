@@ -9,18 +9,33 @@ This project follows an incremental delivery approach. Versions and tags will be
 ### Added
 
 - Separate MLOps monitoring dashboard at `/monitoring`, backed exclusively by readiness, Champion metadata, feedback and Data Drift APIs.
-- Responsive monitoring view prepared to incorporate neural-network, A/B testing and conditional-promotion evidence without simulated metrics.
+- Neural-network Challenger experiment using a reproducible `MLPClassifier` pipeline and validation-only evaluation.
+- Reproducible offline A/B simulation with stratified 80/20 cohorts, bootstrap confidence interval and row-level assignments.
+- Controlled conditional-promotion policy with metric gates, explicit apply mode and Champion backup.
+- `GET /monitoring/experiments` endpoint backed by versioned neural-network, A/B and promotion artifacts.
+- Responsive monitoring view presenting real neural-network, A/B testing and conditional-promotion evidence.
 - Frontend entrypoint contract test covering the Vite build, nginx route and Docker image input.
+- Deterministic reservation pagination and search over the complete dataset with compatible API metadata.
 
 ### Changed
 
 - MLOps dashboard styling aligned with the business frontend typography, logo, spacing, color tokens and responsive proportions.
+- Business frontend reservation workflow consolidated around real paginated data, prediction and feedback services.
+- Python test suite expanded to 76 tests and validated as the final code quality gate.
+- Python dependencies and nginx runtime hardened after dependency and frontend security audits.
+
+### Verified
+
+- Complete Python suite: 76 tests passed.
+- Frontend production build completed successfully with 1,603 transformed modules.
+- Full Docker stack built and reported healthy with Champion and database readiness.
+- Public AWS routes for the business app, monitoring dashboard, readiness, experiments and reservation pagination returned `200 OK` on commit `641d18d`.
 
 ### Pending
 
 - Final business and technical presentations.
 - Final Jira and delivery checklist alignment.
-- Expert-scope evaluation for neural network, A/B testing and conditional model promotion; none of these items has been discarded.
+- Final `develop` to `main` release, production validation and `v1.0.0` tag.
 
 ## [v0.7.0-mlops-monitoring] - 2026-07-15
 

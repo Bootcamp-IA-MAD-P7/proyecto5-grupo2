@@ -68,9 +68,9 @@ Local:      http://localhost:5173/monitoring
 Desplegado: https://d3lxpalnzir74p.cloudfront.net/monitoring
 ```
 
-El dashboard consulta `GET /health/ready`, `GET /model/info`, `GET /feedback/summary` y `GET /monitoring/drift`. No fabrica metricas: mientras no existan 100 predicciones operativas validas muestra `Muestra insuficiente` y el progreso real de la muestra.
+El dashboard consulta `GET /health/ready`, `GET /model/info`, `GET /feedback/summary`, `GET /monitoring/drift` y `GET /monitoring/experiments`. No fabrica metricas: mientras no existan 100 predicciones operativas validas muestra `Muestra insuficiente` y el progreso real de la muestra.
 
-La vista incluye modulos reservados para red neuronal, A/B Testing y promocion condicionada. Permanecen como `Pendiente de evaluacion` hasta que exista evidencia reproducible; el dashboard no enlaza desde la navegacion comercial ni modifica su flujo.
+La vista presenta resultados versionados del MLP experimental, el A/B offline y la decision de promocion condicionada. Estos datos proceden de artefactos reproducibles del repositorio; el dashboard no enlaza desde la navegacion comercial ni modifica su flujo.
 
 ## Operacion
 

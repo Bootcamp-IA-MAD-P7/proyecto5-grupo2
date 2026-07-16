@@ -56,3 +56,14 @@ El test reservado se evaluo una unica vez sobre 5442 registros. Cumple los crite
 ## Conclusion para defensa
 
 El Champion Random Forest mejora claramente el F1 de la clase `Canceled`, mantiene el gap de overfitting por debajo del limite del proyecto, muestra estabilidad en validacion cruzada y confirma su rendimiento en el holdout final. El test queda cerrado y no se utilizara para nuevos ajustes.
+
+## Evidencia MLOps experta
+
+| componente | resultado | decision |
+| --- | --- | --- |
+| Red neuronal MLP | F1 validacion `0.7742`; gap `0.0416` | No mejora el Champion. |
+| A/B offline 80/20 | Champion `0.8113`; MLP `0.7858`; IC 95% `[-0.0620, 0.0135]` | No existe victoria respaldada del MLP. |
+| Data Drift | PSI versionado sobre predicciones operativas; minimo 100 registros | Genera alertas, nunca promociones. |
+| Promocion condicionada | Gates de F1, gap, metricas criticas, A/B y compatibilidad | MLP rechazado; Champion conservado. |
+
+La evidencia se consulta mediante `GET /monitoring/experiments` y en el dashboard independiente `/monitoring`. La promocion requiere ejecucion explicita, conserva backup y nunca se activa solo por una alerta de drift.

@@ -233,8 +233,10 @@ Sumar red neuronal, A/B Testing, Data Drift y auto-reemplazo sin romper el Champ
 ### Estado actual
 
 - Data Drift esta implementado, probado y documentado con perfil de entrenamiento versionado, PSI y datos operativos auditados.
-- Red neuronal experimental, A/B Testing y auto-reemplazo condicionado se mantienen en el plan y se evaluaran en la proxima sesion.
-- Ninguno de esos tres experimentos esta descartado ni debe comprometer la aplicacion estable ya desplegada.
+- Red neuronal MLP entrenada y comparada: cumple overfitting, pero no mejora el Champion.
+- A/B Testing offline 80/20 completado con bootstrap; no demuestra una victoria del Challenger.
+- Promocion condicionada implementada con gates, aplicacion explicita y backup; el Challenger actual es rechazado.
+- Dashboard y endpoint de experimentos exponen evidencia real sin comprometer la aplicacion estable desplegada.
 
 ### Responsables
 
@@ -245,10 +247,10 @@ Sumar red neuronal, A/B Testing, Data Drift y auto-reemplazo sin romper el Champ
 
 ### Tareas paralelas
 
-- ML Core: preparar comparacion final de modelos.
-- App / Producto: adaptar app para registrar `model_version`.
-- MLOps / Experto: implementar o simular A/B, drift y auto-reemplazo.
-- QA / Docs: preparar explicacion visual del ciclo MLOps.
+- ML Core: comparacion final de modelos completada.
+- App / Producto: `model_version` y `prediction_id` registrados en la operacion.
+- MLOps / Experto: red neuronal, A/B offline, drift y promocion condicionada completados.
+- QA / Docs: explicacion visual y evidencias del ciclo MLOps consolidadas.
 
 ### Entregables
 
