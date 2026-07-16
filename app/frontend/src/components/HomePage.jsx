@@ -12,8 +12,8 @@ function HomePage({
       <div className="home-hero">
         <img
           className="home-hero-image"
-          src="/hotel-bg.jpg"
-          alt="Piscina y terraza de un hotel frente al mar"
+          src="/luxury-hotel-hero.jpg"
+          alt="Piscina infinita de un resort de lujo frente al océano"
         />
         <div className="home-hero-overlay" />
 
@@ -47,6 +47,14 @@ function HomePage({
 
           </div>
         </div>
+        <a
+          className="home-photo-credit"
+          href="https://unsplash.com/photos/a-large-swimming-pool-surrounded-by-palm-trees-I26mw3wrvdA"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Foto: Shing · Unsplash
+        </a>
       </div>
 
     </section>

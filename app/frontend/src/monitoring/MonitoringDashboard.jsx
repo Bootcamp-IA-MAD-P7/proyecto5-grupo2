@@ -1,22 +1,25 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
+  ArrowLeft,
   BrainCircuit,
   CheckCircle2,
   Clock3,
   Database,
   GitCompareArrows,
+  Info,
   RefreshCw,
   Replace,
   Server,
   ShieldCheck,
   TriangleAlert
 } from "lucide-react";
+import EducationalFooter from "../components/EducationalFooter.jsx";
 import { fetchMonitoringOverview } from "./monitoringService.js";
 
 const DRIFT_LABELS = {
   stable: "Estable",
-  warning: "En observacion",
+  warning: "En observación",
   drift_detected: "Drift detectado",
   insufficient_data: "Muestra insuficiente"
 };
@@ -33,7 +36,7 @@ function formatModelType(value) {
   if (!value) return "Sin respuesta";
   return value
     .replace("RandomForestClassifier", "Random Forest")
-    .replace("LogisticRegression", "Regresion logistica");
+    .replace("LogisticRegression", "Regresión logística");
 }
 
 function formatDriftMessage(drift, currentRows, minimumRows) {
@@ -68,23 +71,23 @@ function experimentModules(experiments) {
       key: "neural",
       icon: BrainCircuit,
       title: "Red neuronal",
-      status: neural.decision === "retain_champion" ? "Experimento completado" : "Candidata valida",
-      detail: `F1 validacion ${formatF1(neural.validation_f1)} · gap ${formatF1(neural.overfitting_gap)}`
+      status: neural.decision === "retain_champion" ? "Experimento completado" : "Candidata válida",
+      detail: `F1 validación ${formatF1(neural.validation_f1)} · gap ${formatF1(neural.overfitting_gap)}`
     },
     {
       key: "ab",
       icon: GitCompareArrows,
-      title: "Comparacion A/B",
+      title: "Comparación A/B",
       status: ab.decision === "retain_champion" ? "Champion retenido" : "Challenger superior",
       detail: `Champion ${formatF1(ab.champion_f1)} · Challenger ${formatF1(ab.challenger_f1)}`
     },
     {
       key: "promotion",
       icon: Replace,
-      title: "Promocion condicionada",
-      status: promotion.eligible ? "Promocion autorizada" : "Champion protegido",
+      title: "Promoción condicionada",
+      status: promotion.eligible ? "Promoción autorizada" : "Champion protegido",
       detail: promotion.eligible
-        ? "Todas las reglas de promocion superadas"
+        ? "Todas las reglas de promoción superadas"
         : `${promotion.failed_gates.length} reglas impiden el reemplazo`
     }
   ];
@@ -96,7 +99,7 @@ function StatusMark({ tone = "neutral", children }) {
 
 function Metric({ label, value, supporting, icon: Icon, tone = "neutral" }) {
   return (
-    <article className="monitor-metric">
+    <article className={`monitor-metric monitor-metric--${tone}`}>
       <div className={`monitor-metric__icon monitor-metric__icon--${tone}`}>
         <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
       </div>
@@ -115,8 +118,8 @@ function FeatureBars({ features, thresholds }) {
       <div className="monitor-empty">
         <Clock3 size={24} strokeWidth={1.6} aria-hidden="true" />
         <div>
-          <strong>Aun no hay una muestra concluyente</strong>
-          <p>Las variables apareceran aqui cuando el monitor alcance el minimo operativo.</p>
+          <strong>Aún no hay una muestra concluyente</strong>
+          <p>Las variables aparecerán aquí cuando el monitor alcance el mínimo operativo.</p>
         </div>
       </div>
     );
@@ -191,20 +194,28 @@ function MonitoringDashboard() {
   const systemReady = readiness?.status === "ready";
 
   return (
-    <main className="monitor-page">
+    <div className="monitor-page">
       <header className="monitor-header">
         <div className="monitor-header__inner">
-          <div className="monitor-brand">
+          <a className="monitor-brand" href="/" aria-label="Volver al inicio de Hotel Insights">
             <img className="monitor-brand__mark" src="/logo.png" alt="" />
             <div>
               <strong>Hotel Insights</strong>
-              <span>Control operativo MLOps</span>
             </div>
+          </a>
+          <div className="monitor-header__context" aria-current="page">
+            <Activity size={18} aria-hidden="true" />
+            Monitorización
           </div>
           <div className="monitor-header__actions">
             <span className="monitor-updated">
               Actualizado {updatedAt ? formatDate(updatedAt) : "ahora"}
             </span>
+            <a className="monitor-back-link" href="/">
+              <ArrowLeft size={17} aria-hidden="true" />
+              <span className="monitor-back-label monitor-back-label--long">Volver a la aplicación</span>
+              <span className="monitor-back-label monitor-back-label--short">Volver a la app</span>
+            </a>
             <button type="button" onClick={loadOverview} disabled={loading} title="Actualizar datos">
               <RefreshCw size={18} className={loading ? "is-spinning" : ""} aria-hidden="true" />
               <span>Actualizar</span>
@@ -213,25 +224,29 @@ function MonitoringDashboard() {
         </div>
       </header>
 
-      <section className="monitor-intro">
-        <div>
-          <p className="monitor-eyebrow">ESTADO DEL SISTEMA</p>
-          <h1>Monitorizacion del modelo</h1>
-        </div>
-        <StatusMark tone={systemReady ? "success" : "danger"}>
-          {systemReady ? "Servicios disponibles" : "Revision necesaria"}
-        </StatusMark>
-      </section>
-
-      {errors.length > 0 && (
-        <section className="monitor-alert" role="alert">
-          <TriangleAlert size={20} aria-hidden="true" />
+      <main className="monitor-content">
+        <section className="monitor-intro">
           <div>
-            <strong>Algunas fuentes no respondieron</strong>
-            <p>{errors.join(" | ")}</p>
+            <p className="monitor-eyebrow">ESTADO DEL SISTEMA</p>
+            <h1>Monitorización del modelo</h1>
+            <p className="monitor-intro__copy">
+              Seguimiento técnico del servicio, la calidad de los datos y la evolución del modelo.
+            </p>
           </div>
+          <StatusMark tone={systemReady ? "success" : "danger"}>
+            {systemReady ? "Servicios disponibles" : "Revisión necesaria"}
+          </StatusMark>
         </section>
-      )}
+
+        {errors.length > 0 && (
+          <section className="monitor-alert" role="alert">
+            <TriangleAlert size={20} aria-hidden="true" />
+            <div>
+              <strong>Algunas fuentes no respondieron</strong>
+              <p>{errors.join(" | ")}</p>
+            </div>
+          </section>
+        )}
 
       <section className="monitor-metrics" aria-label="Resumen operativo">
         <Metric
@@ -244,14 +259,14 @@ function MonitoringDashboard() {
         <Metric
           label="Modelo en servicio"
           value={formatModelType(model?.model_type)}
-          supporting={model?.model_version || "Version no disponible"}
+          supporting={model?.model_version || "Versión no disponible"}
           icon={ShieldCheck}
           tone="teal"
         />
         <Metric
-          label="Muestra de drift"
+          label="Predicciones reales para drift"
           value={`${currentRows} / ${minimumRows}`}
-          supporting={currentRows >= minimumRows ? "Muestra suficiente" : "Predicciones operativas"}
+          supporting={currentRows >= minimumRows ? "Muestra suficiente" : "Sin incluir la cola histórica"}
           icon={Activity}
           tone={currentRows >= minimumRows ? "success" : "warning"}
         />
@@ -267,7 +282,7 @@ function MonitoringDashboard() {
       <section className="monitor-section monitor-drift">
         <div className="monitor-section__heading">
           <div>
-            <p className="monitor-eyebrow">DISTRIBUCION DE ENTRADA</p>
+            <p className="monitor-eyebrow">DISTRIBUCIÓN DE ENTRADA</p>
             <h2>Data Drift</h2>
           </div>
           <StatusMark tone={driftTone(driftStatus)}>
@@ -277,13 +292,13 @@ function MonitoringDashboard() {
 
         <div className="monitor-drift__layout">
           <div className="monitor-drift__summary">
-            <span>PSI maximo</span>
+            <span>PSI máximo</span>
             <strong>{drift?.max_psi == null ? "--" : drift.max_psi.toFixed(3)}</strong>
             <p>{formatDriftMessage(drift, currentRows, minimumRows)}</p>
             <div className="monitor-progress" aria-label={`Muestra ${currentRows} de ${minimumRows}`}>
               <span style={{ width: `${progress}%` }} />
             </div>
-            <small>{Math.round(progress)}% de la muestra minima</small>
+            <small>{Math.round(progress)}% de la muestra mínima</small>
           </div>
 
           <div className="monitor-drift__features">
@@ -293,13 +308,20 @@ function MonitoringDashboard() {
               <span><i className="threshold-dot threshold-dot--danger" />Drift &gt;= 0,25</span>
             </div>
             <FeatureBars features={drift?.features} thresholds={drift?.thresholds} />
+            <div className="monitor-drift__notice">
+              <Info size={18} aria-hidden="true" />
+              <p>
+                Solo se cuentan predicciones operativas nuevas. La cola histórica y sus
+                evaluaciones automáticas se excluyen para no distorsionar el análisis.
+              </p>
+            </div>
           </div>
         </div>
 
         <dl className="monitor-details">
           <div><dt>Perfil</dt><dd>{drift?.profile_version || "--"}</dd></div>
           <div><dt>Fuente</dt><dd>{drift?.data_source || "--"}</dd></div>
-          <div><dt>Limite</dt><dd>{drift?.sample_limit || "--"}</dd></div>
+          <div><dt>Límite</dt><dd>{drift?.sample_limit || "--"}</dd></div>
           <div><dt>Generado</dt><dd>{formatDate(drift?.generated_at)}</dd></div>
         </dl>
       </section>
@@ -308,7 +330,7 @@ function MonitoringDashboard() {
         <div className="monitor-section__heading">
           <div>
             <p className="monitor-eyebrow">NIVEL EXPERTO</p>
-            <h2>Ciclo de evolucion del modelo</h2>
+            <h2>Ciclo de evolución del modelo</h2>
           </div>
           <span className="monitor-section__note">Sin datos simulados</span>
         </div>
@@ -338,11 +360,14 @@ function MonitoringDashboard() {
         </div>
       </section>
 
-      <footer className="monitor-footer">
-        <span>Actualizacion automatica cada 60 segundos</span>
-        <span>Las alertas de drift no sustituyen al Champion automaticamente</span>
-      </footer>
-    </main>
+        <aside className="monitor-operational-note" aria-label="Notas de monitorización">
+          <span><RefreshCw size={15} aria-hidden="true" /> Actualización automática cada 60 segundos</span>
+          <span><ShieldCheck size={15} aria-hidden="true" /> Las alertas de drift no reemplazan el modelo automáticamente</span>
+        </aside>
+      </main>
+
+      <EducationalFooter />
+    </div>
   );
 }
 
