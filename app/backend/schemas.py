@@ -176,3 +176,39 @@ class DriftReportResponse(BaseModel):
     drifted_features: list[str]
     features: list[DriftFeatureResponse]
     message: str
+
+
+class NeuralExperimentResponse(BaseModel):
+    status: Literal["completed"]
+    model_type: str
+    train_f1: float = Field(..., ge=0, le=1)
+    validation_f1: float = Field(..., ge=0, le=1)
+    overfitting_gap: float = Field(..., ge=0)
+    decision: str
+
+
+class ABExperimentResponse(BaseModel):
+    status: Literal["completed"]
+    experiment_id: str
+    champion_rows: int = Field(..., ge=1)
+    challenger_rows: int = Field(..., ge=1)
+    champion_f1: float = Field(..., ge=0, le=1)
+    challenger_f1: float = Field(..., ge=0, le=1)
+    ci_lower: float
+    ci_upper: float
+    decision: str
+
+
+class PromotionExperimentResponse(BaseModel):
+    status: Literal["completed"]
+    policy_version: str
+    eligible: bool
+    failed_gates: list[str]
+    decision: str
+
+
+class MonitoringExperimentsResponse(BaseModel):
+    evidence_source: Literal["versioned_repository_artifacts"]
+    neural_network: NeuralExperimentResponse
+    ab_testing: ABExperimentResponse
+    conditional_promotion: PromotionExperimentResponse
