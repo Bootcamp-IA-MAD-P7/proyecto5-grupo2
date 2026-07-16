@@ -1,0 +1,138 @@
+{
+  "model_version": "random_forest_champion_v0.1.0",
+  "model_type": "RandomForestClassifier",
+  "selection_date": "2026-07-13",
+  "primary_metric": "f1_canceled",
+  "positive_class": "Canceled",
+  "source_artifact": "models/challengers/random_forest_challenger.pkl",
+  "champion_artifact": "models/champion/random_forest_champion.pkl",
+  "metadata_artifact": "models/champion/champion_metadata.json",
+  "hyperparameters": {
+    "n_estimators": 200,
+    "max_depth": 18,
+    "min_samples_leaf": 6,
+    "min_samples_split": 12,
+    "class_weight": "balanced_subsample"
+  },
+  "baseline_train_metrics": {
+    "model_name": "logistic_regression_baseline",
+    "split": "train",
+    "accuracy": 0.7792524910401323,
+    "precision_canceled": 0.6349980103461997,
+    "recall_canceled": 0.7672797211203269,
+    "f1_canceled": 0.6948995699744162,
+    "roc_auc": 0.862373150610052,
+    "true_negative": 13403,
+    "false_positive": 3669,
+    "false_negative": 1936,
+    "true_positive": 6383
+  },
+  "baseline_validation_metrics": {
+    "model_name": "logistic_regression_baseline",
+    "split": "validation",
+    "accuracy": 0.7732451304667401,
+    "precision_canceled": 0.6271421954608615,
+    "recall_canceled": 0.759394279304543,
+    "f1_canceled": 0.686960933536276,
+    "roc_auc": 0.8604297334900673,
+    "true_negative": 2854,
+    "false_positive": 805,
+    "false_negative": 429,
+    "true_positive": 1354
+  },
+  "champion_train_metrics": {
+    "model_name": "random_forest_champion",
+    "split": "train",
+    "accuracy": 0.8974439762120436,
+    "precision_canceled": 0.8369296073576229,
+    "recall_canceled": 0.853227551388388,
+    "f1_canceled": 0.845,
+    "roc_auc": 0.9664695358960241,
+    "true_negative": 15689,
+    "false_positive": 1383,
+    "false_negative": 1221,
+    "true_positive": 7098
+  },
+  "champion_validation_metrics": {
+    "model_name": "random_forest_champion",
+    "split": "validation",
+    "accuracy": 0.8752296949650864,
+    "precision_canceled": 0.8066666666666666,
+    "recall_canceled": 0.8143578238923164,
+    "f1_canceled": 0.8104939994418086,
+    "roc_auc": 0.9390729333566523,
+    "true_negative": 3311,
+    "false_positive": 348,
+    "false_negative": 331,
+    "true_positive": 1452
+  },
+  "baseline_overfitting_gap": 0.00793863643814019,
+  "champion_overfitting_gap": 0.03450600055819142,
+  "passes_under_5_percent_rule": true,
+  "cross_validation": {
+    "f1_canceled": {
+      "mean": 0.8159568280638103,
+      "std": 0.0070850303366655236,
+      "splits": 3
+    },
+    "precision_canceled": {
+      "mean": 0.8100766169210986,
+      "std": 0.008286986148812427,
+      "splits": 3
+    },
+    "recall_canceled": {
+      "mean": 0.8219613934838256,
+      "std": 0.007893084024844439,
+      "splits": 3
+    },
+    "roc_auc": {
+      "mean": 0.9425797331809641,
+      "std": 0.0017357154026434952,
+      "splits": 3
+    }
+  },
+  "decision": "Random Forest is selected as Champion because it improves the Canceled-class F1-score versus the Logistic Regression baseline, keeps the overfitting gap below 0.05 and remains reproducible in stratified cross-validation.",
+  "limitations": [
+    "FastAPI loads this Champion through app/backend/services/model_service.py.",
+    "Tree-based feature importance is documented in model diagnostics and should be complemented with monitoring after deployment.",
+    "The reserved test split was evaluated once and is closed for further tuning."
+  ],
+  "champion_test_metrics": {
+    "model_name": "random_forest_champion",
+    "split": "test",
+    "accuracy": 0.8855200294009555,
+    "precision_canceled": 0.8232998885172799,
+    "recall_canceled": 0.8283791362871564,
+    "f1_canceled": 0.8258317025440313,
+    "roc_auc": 0.9499176655047511,
+    "true_negative": 3342,
+    "false_positive": 317,
+    "false_negative": 306,
+    "true_positive": 1477
+  },
+  "final_holdout_evaluation": {
+    "evaluation_date": "2026-07-15",
+    "result_artifact": "reports/champion_test_metrics.json",
+    "model_sha256": "b1b26946153ca1f8fe255cb26a5d53134da83c7a3b7ad73cde849fb954b6c162",
+    "dataset_sha256": "d25e1d4680b2b91bcf5fd0a6b690f26c3bdfd52eb4e434e69018cb7bd60f6782",
+    "split_strategy": {
+      "train_fraction": 0.7,
+      "validation_fraction": 0.15,
+      "test_fraction": 0.15,
+      "random_state": 42,
+      "stratified": true,
+      "train_rows": 25391,
+      "validation_rows": 5442,
+      "test_rows": 5442
+    },
+    "acceptance": {
+      "minimum_f1_canceled": 0.8,
+      "maximum_validation_test_f1_gap": 0.05,
+      "validation_test_f1_gap": 0.01533770310222271,
+      "passes_minimum_f1": true,
+      "passes_stability_gap": true,
+      "passes_all_criteria": true
+    },
+    "policy": "The Champion remains frozen after this evaluation. Test results must not be used for further model tuning."
+  }
+}

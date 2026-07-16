@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local environment variables and credentials
+.env
+.env.ec2
+.kaggle/
+kaggle.json
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# KaggleHub local download metadata
+data/raw/**/.complete/
+
+# Runtime feedback data
+data/feedback/*.csv
+data/app/*.db
+
+# Frontend
+node_modules/
+dist/
+app/frontend/node_modules/
+app/frontend/dist/
+.env.local

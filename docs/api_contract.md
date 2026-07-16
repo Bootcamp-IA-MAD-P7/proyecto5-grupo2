@@ -1,0 +1,605 @@
+# API Contract - Hotel Insights
+
+Este contrato define la comunicacion vigente entre la aplicacion web y el backend de prediccion.
+
+Estado: vigente para la API actual con Champion Random Forest. El contrato debe actualizarse si cambia el pipeline final de preprocesamiento o el formato de entrada/salida.
+
+## 1. Objetivo
+
+El frontend debe enviar los datos de una reserva hotelera al backend y recibir una respuesta consistente con:
+
+- Prediccion de cancelacion.
+- Probabilidad.
+- Nivel de riesgo.
+- Version del modelo.
+- Factores principales y recomendacion operativa.
+
+## 2. Base URL
+
+AWS:
+
+```text
+https://d3lxpalnzir74p.cloudfront.net/api
+```
+
+Backend local:
+
+```text
+http://localhost:8000
+```
+
+El frontend puede configurar esta URL mediante:
+
+```text
+VITE_API_URL
+```
+
+En Docker y AWS se usa `/api` para que nginx reenvie las solicitudes al backend dentro de la red de contenedores.
+
+Ejecutar backend local desde la raiz del repositorio:
+
+```bash
+python -m alembic upgrade head
+python -m uvicorn app.backend.main:app --reload --port 8000
+```
+
+## 3. Health Check
+
+### `GET /health`
+
+Liveness check. Comprueba que el proceso de la API esta disponible sin consultar dependencias externas.
+
+#### Response `200 OK`
+
+```json
+{
+  "status": "ok",
+  "service": "hotel-insights-api",
+  "version": "0.1.0"
+}
+```
+
+### `GET /health/ready`
+
+Readiness check. Comprueba que el Champion puede cargarse y que la base de datos acepta consultas sobre las tablas operativas requeridas.
+
+Devuelve `200 OK` cuando ambas dependencias estan disponibles y `503 Service Unavailable` en caso contrario.
+
+```json
+{
+  "status": "ready",
+  "service": "hotel-insights-api",
+  "version": "0.1.0",
+  "checked_at": "2026-07-15T10:00:00Z",
+  "model_loaded": true,
+  "model_version": "random_forest_champion_v0.1.0",
+  "database_connected": true,
+  "storage": "postgresql"
+}
+```
+
+Todas las respuestas de la API incluyen `X-Request-ID`. Si el cliente envia un identificador seguro en esa cabecera, la API lo conserva; en otro caso genera un UUID.
+
+## 4. Model Info
+
+### `GET /model/info`
+
+Devuelve el estado del modelo que usa la API.
+
+Este endpoint informa del modelo que usa la API para generar predicciones.
+
+#### Response `200 OK`
+
+```json
+{
+  "model_loaded": true,
+  "model_version": "random_forest_champion_v0.1.0",
+  "model_status": "loaded",
+  "model_type": "RandomForestClassifier",
+  "primary_metric": "f1_canceled",
+  "target": "booking_status",
+  "positive_class": "Canceled",
+  "notes": [
+    "Champion Random Forest pipeline loaded from repository artifact.",
+    "The pipeline includes preprocessing and binary cancellation classification.",
+    "Champion selection metadata is stored in models/champion/champion_metadata.json."
+  ]
+}
+```
+
+## 5. Reservation Candidates Endpoint
+
+### `GET /reservations/demo`
+
+Devuelve una lista de reservas candidatas obtenidas desde el CSV real del proyecto.
+
+Uso actual:
+
+- Alimentar la tabla de reservas del frontend principal.
+- Alimentar el panel de alertas del frontend principal.
+- Permitir que la app calcule predicciones reales para reservas reales del dataset.
+
+Query params:
+
+| Parametro | Tipo | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| `limit` | integer | no | Numero maximo de reservas a devolver, entre `1` y `50`. Valor por defecto: `8`. |
+| `offset` | integer | no | Posicion inicial dentro del ranking priorizado. Debe ser mayor o igual que `0`. Valor por defecto: `0`. |
+
+Las reservas se ordenan por `priority_score` descendente y por `Booking_ID`
+ascendente como desempate determinista. El corte de pagina se aplica despues de
+ordenar. Una pagina posterior al final del dataset devuelve `200 OK`, una lista
+vacia y `has_more: false`.
+
+#### Response `200 OK`
+
+```json
+{
+  "total_available": 36275,
+  "returned": 2,
+  "limit": 2,
+  "offset": 0,
+  "has_more": true,
+  "source": "data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv",
+  "reservations": [
+    {
+      "id": "INN02825",
+      "display_name": "Reserva INN02825",
+      "stay_label": "Suite familiar · 7 noches",
+      "status_label": "Conviene confirmar",
+      "image_key": "terrace",
+      "input_data": {
+        "lead_time": 279,
+        "arrival_year": 2018,
+        "arrival_month": 9,
+        "arrival_date": 20,
+        "no_of_special_requests": 0,
+        "avg_price_per_room": 177.3,
+        "market_segment_type": "Online",
+        "no_of_weekend_nights": 2,
+        "no_of_week_nights": 5,
+        "type_of_meal_plan": "Meal Plan 1",
+        "room_type_reserved": "Room_Type 6",
+        "no_of_adults": 2,
+        "no_of_children": 2,
+        "required_car_parking_space": 0,
+        "repeated_guest": 0,
+        "no_of_previous_cancellations": 0,
+        "no_of_previous_bookings_not_canceled": 0
+      }
+    }
+  ]
+}
+```
+
+### Reservation Output Fields
+
+| Campo | Tipo | Descripcion |
+| --- | --- | --- |
+| `total_available` | integer | Numero total de filas disponibles en el CSV real. |
+| `returned` | integer | Numero de reservas devueltas en la respuesta. |
+| `limit` | integer | Tamano maximo solicitado para la pagina. |
+| `offset` | integer | Posicion inicial de la pagina dentro del ranking. |
+| `has_more` | boolean | Indica si existen reservas posteriores: `offset + returned < total_available`. |
+| `source` | string | Ruta relativa del dataset usado por el backend. |
+| `reservations` | array | Lista de reservas candidatas. |
+| `id` | string | Identificador historico de reserva. |
+| `display_name` | string | Nombre visible de la reserva en la app. |
+| `stay_label` | string | Texto de estancia para la interfaz. |
+| `status_label` | string | Etiqueta operativa calculada para priorizacion visual. |
+| `image_key` | string | Clave visual usada por el frontend si necesita imagen asociada. |
+| `input_data` | object | Payload compatible con `POST /predict`. |
+
+### `GET /reservations/demo/{booking_id}`
+
+Recupera una reserva concreta directamente por su `Booking_ID`, sin recorrer
+las paginas del ranking. El identificador debe respetar el formato `INN` seguido
+de cinco digitos, por ejemplo `INN02475`.
+
+- Devuelve `200 OK` y un objeto `DemoReservationResponse` cuando existe.
+- Devuelve `404 Not Found` cuando el formato es valido pero la reserva no existe.
+- Devuelve `422 Unprocessable Entity` cuando el formato no es valido.
+- La reserva devuelta mantiene `input_data` compatible con `POST /predict`.
+
+## 6. Prediction Endpoint
+
+### `POST /predict`
+
+Calcula el riesgo de cancelacion de una reserva.
+
+El endpoint acepta un JSON con los campos del formulario y las features requeridas por el Champion Random Forest.
+
+Cabecera operativa opcional:
+
+| Cabecera | Valores | Valor por defecto | Descripcion |
+| --- | --- | --- | --- |
+| `X-Prediction-Source` | `api`, `frontend_manual`, `frontend_demo_queue` | `api` | Distingue inferencia operativa de calculos automaticos sobre la cola historica. |
+
+## 7. Request JSON
+
+```json
+{
+  "lead_time": 120,
+  "arrival_year": 2018,
+  "arrival_month": 7,
+  "arrival_date": 15,
+  "no_of_special_requests": 0,
+  "avg_price_per_room": 156.0,
+  "market_segment_type": "Online",
+  "no_of_weekend_nights": 1,
+  "no_of_week_nights": 2,
+  "type_of_meal_plan": "Meal Plan 1",
+  "room_type_reserved": "Room_Type 1",
+  "no_of_adults": 2,
+  "no_of_children": 0,
+  "required_car_parking_space": 0,
+  "repeated_guest": 0,
+  "no_of_previous_cancellations": 0,
+  "no_of_previous_bookings_not_canceled": 0
+}
+```
+
+## 8. Input Fields
+
+| Campo | Tipo | Obligatorio | Descripcion |
+| --- | --- | --- | --- |
+| `lead_time` | integer | si | Dias entre reserva y llegada. |
+| `arrival_year` | integer | si | Anio de llegada. |
+| `arrival_month` | integer | si | Mes de llegada, entre 1 y 12. |
+| `arrival_date` | integer | si | Dia de llegada, entre 1 y 31. |
+| `no_of_special_requests` | integer | si | Numero de solicitudes especiales. |
+| `avg_price_per_room` | float | si | Precio medio por habitacion. |
+| `market_segment_type` | string | si | Canal o segmento de mercado. |
+| `no_of_weekend_nights` | integer | si | Noches de fin de semana. |
+| `no_of_week_nights` | integer | si | Noches entre semana. |
+| `type_of_meal_plan` | string | si | Tipo de plan de comidas. |
+| `room_type_reserved` | string | si | Tipo de habitacion reservada. |
+| `no_of_adults` | integer | si | Numero de adultos. |
+| `no_of_children` | integer | si | Numero de ninos. |
+| `required_car_parking_space` | integer | si | Indica si requiere parking: `0` o `1`. |
+| `repeated_guest` | integer | si | Indica si es huesped repetido: `0` o `1`. |
+| `no_of_previous_cancellations` | integer | si | Cancelaciones previas del cliente. |
+| `no_of_previous_bookings_not_canceled` | integer | si | Reservas previas no canceladas. |
+
+## 9. Valores Permitidos
+
+Valores actuales usados por el frontend:
+
+- `market_segment_type`: `Online`, `Offline`, `Corporate`, `Complementary`, `Aviation`.
+- `type_of_meal_plan`: `Meal Plan 1`, `Meal Plan 2`, `Meal Plan 3`, `Not Selected`.
+- `room_type_reserved`: `Room_Type 1` a `Room_Type 7`.
+
+Validacion vigente:
+
+- `PredictionRequest` aplica los limites basicos indicados en la tabla de inputs.
+- Los campos de conteo y precio no admiten valores negativos.
+- Mes, dia y campos binarios tienen limites superiores explicitos.
+- El pipeline usa `OneHotEncoder(handle_unknown="ignore")`; una categoria no vista no rompe la inferencia, aunque debe revisarse como posible senal de drift.
+
+## 10. Response JSON
+
+```json
+{
+  "prediction_id": "uuid-generado",
+  "prediction": "Canceled",
+  "prediction_label": 1,
+  "probability": 0.72,
+  "risk_level": "high",
+  "risk_label": "Alto",
+  "model_version": "random_forest_champion_v0.1.0",
+  "main_factors": [
+    "Solicitudes especiales",
+    "Precio medio por habitacion",
+    "Antelacion de la reserva"
+  ],
+  "risk_factors": [
+    {
+      "feature": "no_of_special_requests",
+      "label": "Solicitudes especiales",
+      "current_value": "0",
+      "reference_value": "1",
+      "impact_percentage_points": 54.7,
+      "action": "Contactar al huesped para personalizar la estancia y reforzar su compromiso."
+    }
+  ],
+  "recommendation": "Activar contacto proactivo, confirmar intencion de viaje y proteger inventario con lista de espera."
+}
+```
+
+## 11. Output Fields
+
+| Campo | Tipo | Descripcion |
+| --- | --- | --- |
+| `prediction_id` | string | UUID unico del registro de auditoria persistido antes de devolver la respuesta. |
+| `prediction` | string | Clase predicha: `Canceled` o `Not_Canceled`. |
+| `prediction_label` | integer | Codificacion numerica inicial: `1` cancelada, `0` no cancelada. |
+| `probability` | float | Probabilidad estimada de cancelacion entre `0` y `1`. |
+| `risk_level` | string | Nivel tecnico: `low`, `medium` o `high`. |
+| `risk_label` | string | Etiqueta visible: `Bajo`, `Medio` o `Alto`. |
+| `model_version` | string | Version del modelo usado. |
+| `main_factors` | array[string] | Etiquetas de los factores locales ordenados por impacto estimado. |
+| `risk_factors` | array[object] | Hasta tres variables que elevan el riesgo frente a referencias historicas de reservas no canceladas. Incluye valor actual, referencia, impacto en puntos porcentuales y accion sugerida. |
+| `recommendation` | string | Recomendacion operativa para el equipo hotelero. |
+
+`risk_factors` es una explicacion local por contrafactuales: recalcula la probabilidad al sustituir cada variable por un valor de referencia historico. Orienta la priorizacion operativa, pero no implica causalidad.
+
+## 12. Feedback Endpoint
+
+### `POST /feedback`
+
+Guarda feedback de usuario y datos de prediccion para monitorizar performance y preparar futuros reentrenamientos.
+
+#### Request JSON
+
+```json
+{
+  "input_data": {
+    "lead_time": 120,
+    "arrival_year": 2018,
+    "arrival_month": 7,
+    "arrival_date": 15,
+    "no_of_special_requests": 0,
+    "avg_price_per_room": 156.0,
+    "market_segment_type": "Online",
+    "no_of_weekend_nights": 1,
+    "no_of_week_nights": 2,
+    "type_of_meal_plan": "Meal Plan 1",
+    "room_type_reserved": "Room_Type 1",
+    "no_of_adults": 2,
+    "no_of_children": 0,
+    "required_car_parking_space": 0,
+    "repeated_guest": 0,
+    "no_of_previous_cancellations": 0,
+    "no_of_previous_bookings_not_canceled": 0
+  },
+  "prediction": "Canceled",
+  "probability": 0.8338,
+  "risk_level": "high",
+  "model_version": "random_forest_champion_v0.1.0",
+  "user_feedback": "unknown",
+  "actual_status": null,
+  "comments": "Feedback de validacion operativa.",
+  "source": "web_app"
+}
+```
+
+#### Response `200 OK`
+
+```json
+{
+  "status": "stored",
+  "record_id": "uuid-generado",
+  "stored": true
+}
+```
+
+Valores permitidos:
+
+- `prediction`: `Canceled` o `Not_Canceled`.
+- `risk_level`: `low`, `medium` o `high`.
+- `user_feedback`: `correct`, `incorrect` o `unknown`.
+- `actual_status`: `Canceled`, `Not_Canceled` o `null`.
+
+Almacenamiento actual:
+
+```text
+SQLite local mediante SQLAlchemy.
+PostgreSQL en Amazon RDS para el despliegue AWS.
+```
+
+La conexión se configura mediante `DATABASE_URL`. La API nunca devuelve credenciales ni endpoints privados.
+
+## 13. Prediction Audit
+
+Cada respuesta correcta de `POST /predict` queda persistida en `prediction_logs` antes de devolver `200 OK`. El registro incluye:
+
+- `prediction_id` y timestamp UTC.
+- Input validado completo.
+- Prediccion, etiqueta numerica, probabilidad y nivel de riesgo.
+- Version del modelo y fuente de la operacion.
+
+Si la persistencia falla, la API no devuelve una prediccion correcta sin auditar. El campo adicional `prediction_id` es compatible con clientes anteriores que ignoren campos no utilizados.
+
+## 14. Feedback Summary
+
+### `GET /feedback/summary`
+
+Devuelve un resumen minimo de registros de feedback persistidos.
+
+#### Response `200 OK`
+
+```json
+{
+  "total_records": 1,
+  "storage": "postgresql"
+}
+```
+
+`storage` puede ser `sqlite` en local o `postgresql` en AWS.
+
+## 15. Feedback History And Correction
+
+### `GET /feedback`
+
+Devuelve el historico completo de feedback ordenado por fecha. Cada registro incluye su identificador, prediccion, probabilidad, version de modelo, estado de validacion e input original.
+
+#### Response `200 OK`
+
+```json
+{
+  "total_records": 1,
+  "records": [
+    {
+      "record_id": "uuid-generado",
+      "created_at": "2026-07-15T10:00:00Z",
+      "model_version": "random_forest_champion_v0.1.0",
+      "prediction": "Canceled",
+      "probability": 0.8338,
+      "risk_level": "high",
+      "user_feedback": "correct",
+      "actual_status": null,
+      "comments": "Feedback de validacion operativa.",
+      "source": "web_app",
+      "input_data": {
+        "lead_time": 120,
+        "arrival_year": 2018,
+        "arrival_month": 7,
+        "arrival_date": 15,
+        "no_of_special_requests": 0,
+        "avg_price_per_room": 156.0,
+        "market_segment_type": "Online",
+        "no_of_weekend_nights": 1,
+        "no_of_week_nights": 2,
+        "type_of_meal_plan": "Meal Plan 1",
+        "room_type_reserved": "Room_Type 1",
+        "no_of_adults": 2,
+        "no_of_children": 0,
+        "required_car_parking_space": 0,
+        "repeated_guest": 0,
+        "no_of_previous_cancellations": 0,
+        "no_of_previous_bookings_not_canceled": 0
+      }
+    }
+  ]
+}
+```
+
+### `PATCH /feedback/{record_id}`
+
+Permite corregir el feedback cuando se conoce el resultado real de la reserva.
+
+#### Request JSON
+
+```json
+{
+  "user_feedback": "incorrect",
+  "actual_status": "Not_Canceled",
+  "comments": "Resultado real confirmado por operaciones."
+}
+```
+
+Devuelve el registro actualizado con el mismo contrato usado por los elementos de `GET /feedback`. Si `record_id` no existe, responde `404 Not Found`.
+
+## 16. Data Drift Monitoring
+
+### `GET /monitoring/drift`
+
+Compara las predicciones operativas persistidas en `prediction_logs` con el perfil versionado del conjunto de entrenamiento. No necesita conocer todavía el resultado real de la reserva.
+
+#### Response `200 OK` con muestra insuficiente
+
+```json
+{
+  "profile_version": "training_reference_v1",
+  "generated_at": "2026-07-15T10:00:00+00:00",
+  "data_source": "prediction_logs",
+  "sample_limit": 1000,
+  "excluded_sources": ["frontend_demo_queue", "prediction_api"],
+  "reference_rows": 25391,
+  "current_rows": 2,
+  "minimum_current_rows": 100,
+  "thresholds": {
+    "moderate": 0.1,
+    "high": 0.25
+  },
+  "status": "insufficient_data",
+  "max_psi": null,
+  "drifted_features": [],
+  "features": [],
+  "message": "At least 100 current records are required; only 2 are available."
+}
+```
+
+`current_rows` cuenta predicciones operativas validas despues de excluir la cola historica, los registros heredados sin origen clasificable y aplicar el limite de las 1.000 mas recientes. Con al menos 100 registros validos, `features` incluye el nombre, tipo, PSI y estado de cada variable. Los estados globales posibles son:
+
+- `insufficient_data`: no existe una muestra minima fiable.
+- `stable`: todas las variables tienen PSI inferior a `0.10`.
+- `warning`: existe drift moderado y no existe drift alto.
+- `drift_detected`: al menos una variable tiene PSI igual o superior a `0.25`.
+
+Este endpoint es informativo. Una alerta nunca promociona ni reemplaza automaticamente el modelo Champion.
+
+## 17. MLOps Experiment Evidence
+
+### `GET /monitoring/experiments`
+
+Expone una vista estable de los artefactos versionados de red neuronal, A/B Testing offline y promocion condicionada. No ejecuta entrenamientos ni modifica el Champion.
+
+#### Response `200 OK`
+
+```json
+{
+  "evidence_source": "versioned_repository_artifacts",
+  "neural_network": {
+    "status": "completed",
+    "model_type": "MLPClassifier",
+    "train_f1": 0.8157,
+    "validation_f1": 0.7742,
+    "overfitting_gap": 0.0416,
+    "decision": "retain_champion"
+  },
+  "ab_testing": {
+    "status": "completed",
+    "experiment_id": "offline_ab_champion_vs_mlp_v1",
+    "champion_rows": 4353,
+    "challenger_rows": 1089,
+    "champion_f1": 0.8113,
+    "challenger_f1": 0.7858,
+    "ci_lower": -0.062,
+    "ci_upper": 0.0135,
+    "decision": "retain_champion"
+  },
+  "conditional_promotion": {
+    "status": "completed",
+    "policy_version": "conditional_promotion_v1",
+    "eligible": false,
+    "failed_gates": [
+      "minimum_f1_improvement",
+      "critical_metrics_within_limit",
+      "ab_win_statistically_supported"
+    ],
+    "decision": "retain_champion"
+  }
+}
+```
+
+`evidence_source` confirma que la respuesta procede de artefactos del repositorio y no de valores simulados por el frontend.
+
+## 18. Error Response
+
+FastAPI devolvera errores de validacion con status `422` si faltan campos o los tipos no son validos.
+
+Formato esperado:
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "lead_time"],
+      "msg": "Input should be a valid integer",
+      "type": "int_type"
+    }
+  ]
+}
+```
+
+## 19. Reglas De Compatibilidad
+
+- La forma de la respuesta no debe cambiar sin actualizar este contrato.
+- El frontend no debe depender de campos no definidos aqui.
+- El modelo real debe respetar este contrato o proponer una actualizacion documentada.
+- `GET /model/info` debe reflejar la version y estado real del modelo cargado.
+- `GET /health/ready` debe fallar con `503` si el Champion o la base de datos no estan disponibles.
+- Toda respuesta debe incluir `X-Request-ID` para correlacion operativa.
+- `GET /reservations/demo` debe devolver `input_data` compatible con `POST /predict`.
+- Cada respuesta `200 OK` de `POST /predict` debe tener un registro con el mismo `prediction_id`.
+- `GET /monitoring/drift` debe usar el perfil versionado y declarar `insufficient_data` cuando no alcance la muestra minima.
+- `GET /monitoring/experiments` debe reflejar los artefactos versionados sin ejecutar promociones ni entrenamientos.
+
+## 20. Mantenimiento Del Contrato
+
+- Mantener sincronizado el contrato si el pipeline de preprocesamiento cambia.
+- Mantener sincronizada la version del Champion si se promociona un nuevo modelo.
+- Mantener sincronizada la capa SQLAlchemy si cambia el esquema de feedback.
+- Mantener `PredictionRequest` como fuente de verdad para los inputs. El pipeline actual usa `OneHotEncoder(handle_unknown="ignore")` para categorias no vistas.
+- Mantener la probabilidad asociada a la clase positiva `Canceled` (`prediction_label = 1`) mientras siga vigente este contrato.

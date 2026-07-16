@@ -1,0 +1,267 @@
+.reservations-tool {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-toolbar {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(170px, 1fr) minmax(220px, 1.1fr) auto auto;
+  padding: 16px 18px;
+}
+
+.table-heading h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.table-heading span,
+.row-secondary,
+.reservation-identity small {
+  color: var(--text-muted);
+  display: block;
+  font-size: 0.76rem;
+  margin-top: 3px;
+}
+
+.search-field {
+  align-items: center;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  display: flex;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 11px;
+}
+
+.search-field:focus-within {
+  border-color: var(--teal-700);
+  box-shadow: 0 0 0 3px rgba(21, 122, 110, 0.12);
+}
+
+.search-field input {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  min-width: 0;
+  outline: 0;
+  width: 100%;
+}
+
+.risk-filter {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  padding: 3px;
+}
+
+.risk-filter button {
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.risk-filter button.active {
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgba(13, 59, 59, 0.12);
+  color: var(--teal-950);
+  font-weight: 700;
+}
+
+.sort-field {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+}
+
+.sort-field span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.sort-field select {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  color: var(--text);
+  min-height: 40px;
+  padding: 0 28px 0 10px;
+}
+
+.table-scroll {
+  contain: inline-size;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  width: 100%;
+}
+
+.reservations-table {
+  border-collapse: collapse;
+  min-width: 1100px;
+  width: 100%;
+}
+
+.reservations-table th {
+  background: var(--surface-subtle);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 11px 14px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.reservations-table td {
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.86rem;
+  padding: 13px 14px;
+  vertical-align: middle;
+}
+
+.reservations-table tbody tr {
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.reservations-table tbody tr:hover {
+  background: #f4faf8;
+}
+
+.reservation-identity {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.reservation-identity > span {
+  align-items: center;
+  background: var(--mint-100);
+  border-radius: 50%;
+  color: var(--teal-950);
+  display: flex;
+  font-size: 0.78rem;
+  font-weight: 800;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.reservations-table tbody tr:hover .reservation-identity > span {
+  background: var(--teal-950);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.context-label {
+  display: block;
+  max-width: 230px;
+}
+
+.risk-badge {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.76rem;
+  font-weight: 800;
+  justify-content: center;
+  min-width: 104px;
+  padding: 7px 10px;
+}
+
+.risk-badge.high {
+  background: var(--coral-soft);
+  color: var(--coral-dark);
+}
+
+.risk-badge.medium {
+  background: var(--amber-soft);
+  color: var(--amber-dark);
+}
+
+.risk-badge.low {
+  background: var(--green-soft);
+  color: var(--green-dark);
+}
+
+.row-actions {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+  justify-content: flex-end;
+}
+
+.row-icon-button,
+.evaluate-button {
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  min-height: 36px;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease,
+    transform 150ms ease;
+}
+
+.row-icon-button:hover,
+.evaluate-button:hover {
+  transform: translateY(-1px);
+}
+
+.row-icon-button {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--teal-700);
+  width: 36px;
+}
+
+.evaluate-button {
+  background: var(--teal-950);
+  border: 1px solid var(--teal-950);
+  color: #fff;
+  gap: 6px;
+  padding: 0 12px;
+}
+
+.table-state {
+  color: var(--text-muted) !important;
+  cursor: default;
+  padding: 48px 20px !important;
+  text-align: center;
+}
+
+@media (max-width: 1160px) {
+  .table-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .table-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-filter {
+    overflow-x: auto;
+  }
+
+  .sort-field {
+    justify-content: space-between;
+  }
+
+  .sort-field select {
+    flex: 1;
+  }
+}
