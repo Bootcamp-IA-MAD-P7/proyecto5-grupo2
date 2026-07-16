@@ -6,6 +6,16 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ## [Unreleased]
 
+### Added
+
+- Separate MLOps monitoring dashboard at `/monitoring`, backed exclusively by readiness, Champion metadata, feedback and Data Drift APIs.
+- Responsive monitoring view prepared to incorporate neural-network, A/B testing and conditional-promotion evidence without simulated metrics.
+- Frontend entrypoint contract test covering the Vite build, nginx route and Docker image input.
+
+### Changed
+
+- MLOps dashboard styling aligned with the business frontend typography, logo, spacing, color tokens and responsive proportions.
+
 ### Pending
 
 - Final business and technical presentations.

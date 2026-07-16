@@ -59,6 +59,19 @@ Estados posibles:
 
 La respuesta contiene `data_source`, limite de muestra, fuentes excluidas, PSI maximo, variables alertadas y detalle por variable cuando la muestra es suficiente.
 
+## Dashboard
+
+El estado operativo tambien puede consultarse en una entrada web separada de la aplicacion de negocio:
+
+```text
+Local:      http://localhost:5173/monitoring
+Desplegado: https://d3lxpalnzir74p.cloudfront.net/monitoring
+```
+
+El dashboard consulta `GET /health/ready`, `GET /model/info`, `GET /feedback/summary` y `GET /monitoring/drift`. No fabrica metricas: mientras no existan 100 predicciones operativas validas muestra `Muestra insuficiente` y el progreso real de la muestra.
+
+La vista incluye modulos reservados para red neuronal, A/B Testing y promocion condicionada. Permanecen como `Pendiente de evaluacion` hasta que exista evidencia reproducible; el dashboard no enlaza desde la navegacion comercial ni modifica su flujo.
+
 ## Operacion
 
 Regenerar el perfil solo si cambia de forma aprobada el dataset, el contrato de variables o el split de entrenamiento:

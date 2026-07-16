@@ -8,6 +8,7 @@ URL pública estable:
 
 ```text
 https://d3lxpalnzir74p.cloudfront.net
+https://d3lxpalnzir74p.cloudfront.net/monitoring
 ```
 
 ## 2. Arquitectura desplegada
@@ -114,6 +115,7 @@ Comprobaciones públicas:
 
 ```text
 GET https://d3lxpalnzir74p.cloudfront.net/
+GET https://d3lxpalnzir74p.cloudfront.net/monitoring
 GET https://d3lxpalnzir74p.cloudfront.net/api/health
 GET https://d3lxpalnzir74p.cloudfront.net/api/health/ready
 GET https://d3lxpalnzir74p.cloudfront.net/api/model/info
