@@ -11,6 +11,10 @@ def test_prediction_feedback_smoke_flow(feedback_database) -> None:
     health = client.get("/health")
     assert health.status_code == 200
 
+    readiness = client.get("/health/ready")
+    assert readiness.status_code == 200
+    assert readiness.json()["status"] == "ready"
+
     model_info = client.get("/model/info")
     assert model_info.status_code == 200
     assert model_info.json()["model_version"] == "random_forest_champion_v0.1.0"

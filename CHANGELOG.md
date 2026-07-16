@@ -8,6 +8,24 @@ This project follows an incremental delivery approach. Versions and tags will be
 
 ### Added
 
+- Separate MLOps monitoring dashboard at `/monitoring`, backed exclusively by readiness, Champion metadata, feedback and Data Drift APIs.
+- Responsive monitoring view prepared to incorporate neural-network, A/B testing and conditional-promotion evidence without simulated metrics.
+- Frontend entrypoint contract test covering the Vite build, nginx route and Docker image input.
+
+### Changed
+
+- MLOps dashboard styling aligned with the business frontend typography, logo, spacing, color tokens and responsive proportions.
+
+### Pending
+
+- Final business and technical presentations.
+- Final Jira and delivery checklist alignment.
+- Expert-scope evaluation for neural network, A/B testing and conditional model promotion; none of these items has been discarded.
+
+## [v0.7.0-mlops-monitoring] - 2026-07-15
+
+### Added
+
 - One-time final Champion holdout protocol, guarded evaluation script and automated safety tests.
 - Final test evidence for `random_forest_champion_v0.1.0`: F1 `Canceled` 0.8258, ROC-AUC 0.9499 and validation-test F1 gap 0.0153.
 - Versioned training reference profile for production input drift monitoring.
@@ -24,25 +42,29 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Operational drift sampling from the latest audited predictions instead of feedback-only rows.
 - Prediction source tracking for API, manual frontend and historical demo-queue inference.
 - Drift sample filtering that preserves demo predictions for audit while excluding them from PSI.
+- `GET /health/ready` readiness endpoint for Champion and database availability.
+- Structured JSON runtime logs and `X-Request-ID` correlation across API requests and prediction events.
+- Automated readiness and observability tests without logging request payloads or credentials.
+- Local `risk_factors` explanations in `POST /predict`, including impact in percentage points, current value, historical reference and recommended action.
+- Feedback history and correction endpoints: `GET /feedback` and `PATCH /feedback/{record_id}`.
+- Integration tests for listing, editing and handling missing feedback records.
 
 ### Changed
 
 - `GET /monitoring/drift` now reports its data source, sample limit and excluded sources.
+- `GET /health/ready` now validates the required operational tables, not only database connectivity.
 - Backend CI now runs the complete Python test suite instead of API tests only.
 - AWS deployment now waits for successful backend and frontend quality gates before updating EC2.
 - Python development and production dependencies now use exact versions for reproducible CI and Docker builds.
 - Champion metadata, technical report, SPEC and README now record the closed final holdout evaluation.
 - Database tables are no longer created implicitly during FastAPI startup; Alembic owns schema changes.
+- Docker health checks and AWS deployment verification now use readiness instead of liveness.
+- Shell scripts now enforce LF line endings for reproducible Linux and Docker startup from Windows workstations.
+- README, SPEC, roadmap and data dictionary now reflect the real API surface, completed EDA, operational Data Drift and current Expert-level evaluation status.
 
 ### Removed
 
 - Legacy `apprunner.yaml`; the supported AWS runtime is CloudFront, EC2, Docker Compose and RDS.
-
-### Pending
-
-- Final business and technical presentations.
-- Final Jira, SPEC and delivery checklist alignment.
-- Optional expert MLOps work: neural network, A/B testing and conditional model promotion.
 
 ## [v0.6.0-aws-deployment] - 2026-07-14
 

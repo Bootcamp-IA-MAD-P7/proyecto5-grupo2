@@ -92,15 +92,15 @@ Estado actual:
 - Dataset incorporado en `data/raw/`.
 - Target definido como `booking_status`.
 - Métrica principal definida: F1-score de la clase `Canceled`.
-- Diccionario de datos inicial disponible en `reports/data_dictionary.md`.
-- Notebooks iniciales de inspección y EDA disponibles en `notebooks/`.
+- Diccionario de datos consolidado disponible en `reports/data_dictionary.md`.
+- Notebooks de inspección y EDA completados en `notebooks/`.
 - Frontend React + Vite integrado en `app/frontend`.
 - Prototipo visual de producto disponible para validar la experiencia.
-- Backend FastAPI inicial integrado en `app/backend`.
-- Contrato API inicial documentado en `docs/api_contract.md`.
-- Endpoint de salud disponible en `GET /health`.
+- Backend FastAPI operativo integrado en `app/backend`.
+- Contrato API vigente documentado en `docs/api_contract.md`.
+- Endpoints operativos disponibles: `GET /health` para liveness y `GET /health/ready` para comprobar Champion y base de datos.
 - Endpoint de información de modelo disponible en `GET /model/info`.
-- Endpoint de predicción real disponible en `POST /predict` usando el Champion Random Forest.
+- Endpoint de predicción real disponible en `POST /predict` usando el Champion Random Forest, con hasta tres factores locales de riesgo y acciones sugeridas.
 - Auditoría de todas las predicciones correctas mediante `prediction_id` y la tabla `prediction_logs`.
 - Endpoint de reservas reales disponible en `GET /reservations/demo`, alimentado desde el CSV de `data/raw/`.
 - Frontend principal conectado a reservas reales, predicciones reales y feedback real.
@@ -108,14 +108,16 @@ Estado actual:
 - Champion Random Forest seleccionado y guardado en `models/champion/random_forest_champion.pkl`.
 - Metadata del Champion disponible en `models/champion/champion_metadata.json`.
 - Métricas y overfitting documentados en `reports/model_report.md`.
-- Suite Python de 39 tests disponible en `tests/`.
+- Suite Python de 52 tests disponible en `tests/`.
 - Holdout final del Champion completado una unica vez: F1 `Canceled` de `0.8258`, ROC-AUC de `0.9499` y gap validacion-test de `0.0153`.
 - Workflows reutilizables de GitHub Actions para la suite Python completa y el build frontend.
 - Despliegue AWS condicionado a que ambos quality gates terminen correctamente.
 - Configuración Docker validada para frontend, backend y Champion Random Forest.
-- Endpoints de feedback disponibles en `POST /feedback` y `GET /feedback/summary`.
+- Flujo de feedback disponible mediante `POST /feedback`, `GET /feedback/summary`, `GET /feedback` y `PATCH /feedback/{record_id}`.
 - Ingesta de feedback para futuros reentrenamientos disponible en `src/data/feedback_ingestion.py`.
-- Monitorización PSI operativa disponible en `GET /monitoring/drift`, alimentada por las predicciones auditadas y con exclusión de la cola histórica de demostración.
+- Monitorización PSI operativa disponible en `GET /monitoring/drift`, alimentada por las predicciones auditadas y con exclusión de la cola histórica de demostración. La implementación está cerrada; hasta reunir 100 predicciones operativas reales, el estado esperado es `insufficient_data`.
+- Dashboard MLOps independiente disponible en `/monitoring`; consulta exclusivamente endpoints reales y no altera ni aparece en la navegación de la aplicación de negocio.
+- Observabilidad proporcionada con logs JSON, identificadores `X-Request-ID` y eventos de predicción correlacionados sin registrar payloads ni credenciales.
 - Esquema SQLite/PostgreSQL versionado con Alembic; revisión actual `0002_prediction_logs`.
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
 - Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
@@ -226,15 +228,18 @@ El backend actual es una API FastAPI con endpoints:
 
 ```text
 GET /health
+GET /health/ready
 GET /model/info
 POST /predict
 POST /feedback
 GET /feedback/summary
+GET /feedback
+PATCH /feedback/{record_id}
 GET /reservations/demo
 GET /monitoring/drift
 ```
 
-`GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
+`GET /health` confirma que el proceso responde. `GET /health/ready` devuelve `200` solo cuando el Champion y la base de datos están disponibles. `GET /model/info` devuelve la versión y estado del modelo cargado. `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
 
 ---
 
@@ -252,9 +257,9 @@ Tecnologías:
 - Vite.
 - pnpm.
 - CSS custom.
-- Mock service de predicción.
+- Servicio de predicción conectado a la API real.
 
-Actualmente el frontend consulta el backend real por defecto. El mock editorial puede activarse solo para demos aisladas con `VITE_USE_MOCK_API=true`.
+El frontend principal consulta exclusivamente el backend real. Las reservas proceden de `GET /reservations/demo`, las inferencias de `POST /predict` y el aprendizaje operativo de los endpoints de feedback.
 
 ### Ejecutar frontend
 
@@ -291,7 +296,10 @@ Abrir en navegador:
 
 ```text
 http://localhost:5173/
+http://localhost:5173/monitoring
 ```
+
+La segunda URL abre el dashboard interno de monitorización. Es una entrada independiente del frontend de negocio y queda preparada para incorporar evidencia real de futuros experimentos de red neuronal, A/B Testing y promoción condicionada.
 
 Crear build:
 
@@ -323,7 +331,10 @@ Aplicar migraciones antes de arrancar el backend fuera de Docker:
 ```bash
 python -m alembic upgrade head
 python -m alembic current
+python -m uvicorn app.backend.main:app --reload --port 8000
 ```
+
+No se debe iniciar Uvicorn directamente sobre una base local sin migrar. En Docker y AWS, `scripts/start_backend.sh` aplica Alembic automaticamente antes de iniciar la API.
 
 La política completa de migraciones se documenta en [`docs/database_migrations.md`](docs/database_migrations.md).
 
@@ -343,9 +354,9 @@ deactivate
 
 ## 9. Docker
 
-El proyecto incluye una configuración Docker inicial para levantar frontend y backend en local.
+El proyecto incluye una configuración Docker validada para levantar frontend y backend en local.
 
-El contenedor backend ejecuta automáticamente `alembic upgrade head` antes de iniciar FastAPI. Si una migración falla, la API no arranca y el despliegue no supera el health check.
+El contenedor backend ejecuta automáticamente `alembic upgrade head` antes de iniciar FastAPI. Si una migración falla, la API no arranca y el despliegue no supera el readiness check.
 
 Servicios:
 
@@ -381,6 +392,7 @@ Comprobar backend:
 
 ```text
 http://localhost:8000/health
+http://localhost:8000/health/ready
 ```
 
 Comprobar frontend:
@@ -402,6 +414,7 @@ Endpoints verificados:
 
 ```text
 GET http://localhost:8000/health
+GET http://localhost:8000/health/ready
 GET http://localhost:8000/model/info
 POST http://localhost:8000/predict
 POST http://localhost:8000/feedback
@@ -497,6 +510,7 @@ Estado actual destacado:
 [x] T-4.6 Desplegar app y automatizar entrega
 [x] T-4.7 Versionar el esquema de base de datos
 [x] T-4.8 Auditar todas las predicciones
+[x] T-4.9 Añadir observabilidad operativa
 [x] T-6.1 Smoke test completo
 [x] T-6.2 Revisar metricas finales y overfitting
 ```
@@ -615,6 +629,7 @@ v0.2.0-frontend-mock
 v0.4.0-essential-mvp
 v0.5.0-operational-mvp
 v0.6.0-aws-deployment
+v0.7.0-mlops-monitoring
 ```
 
 Significado:
@@ -624,6 +639,7 @@ Significado:
 - `v0.4.0-essential-mvp`: Nivel Esencial cubierto con EDA, baseline, overfitting, API con inferencia real e informe técnico.
 - `v0.5.0-operational-mvp`: Champion integrado, Docker, feedback y smoke test operativo.
 - `v0.6.0-aws-deployment`: despliegue HTTPS en AWS, PostgreSQL RDS y entrega automática desde `develop`.
+- `v0.7.0-mlops-monitoring`: holdout final, Alembic, auditoría de predicciones, Data Drift, observabilidad y quality gates de despliegue.
 
 Siguiente hito previsto:
 
@@ -693,7 +709,7 @@ Leyenda:
 | [x] | Modelo con técnicas de ensemble | Random Forest entrenado, comparado contra baseline y promocionado a Champion en `reports/model_report.md`. | Mantener comparativa si aparece un nuevo Challenger. |
 | [x] | Validación cruzada | Stratified K-Fold de 3 folds documentado para Random Forest; F1 medio `0.8160`. | Ampliar folds solo si el equipo lo considera necesario. |
 | [x] | Optimización de hiperparámetros | Configuración optimizada aplicada en `src/models/train_challengers.py`, artefacto regenerado, verificado por `tests/unit/test_challenger_training.py` y promocionado a Champion. | Revalidar solo si cambia el dataset o los hiperparámetros. |
-| [x] | Recogida de feedback para monitorizar performance | `POST /feedback` persiste predicción, probabilidad, versión de modelo, input validado, feedback y estado real si se conoce. El modal del frontend principal permite registrar feedback. `GET /feedback/summary` permite monitorización básica. | Mejorar visualmente el flujo de feedback en frontend. |
+| [x] | Recogida de feedback para monitorizar performance | `POST /feedback` persiste predicción, probabilidad, versión de modelo, input validado, feedback y estado real si se conoce. `GET /feedback`, `PATCH /feedback/{record_id}` y `GET /feedback/summary` permiten consultar, corregir y resumir el aprendizaje registrado. | Mejorar visualmente el flujo de feedback en frontend. |
 | [x] | Recogida de datos nuevos para futuros reentrenamientos | SQLAlchemy persiste feedback en SQLite local o PostgreSQL RDS; `src/data/feedback_ingestion.py` construye el dataset con registros etiquetados. | Definir una política de reentrenamiento si se aborda Nivel Experto. |
 
 ### Nivel Avanzado
@@ -703,16 +719,16 @@ Leyenda:
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. `prediction_logs` audita todas las inferencias correctas y `prediction_feedback` conserva el aprendizaje aportado por usuarios. | Crear una nueva revisión por cada cambio futuro del esquema. |
 | [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
-| [x] | Tests unitarios | 39 tests activos: API, preprocessing, modelos, holdout, persistencia, migraciones, ingesta, smoke flow y data drift. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
+| [x] | Tests unitarios | 52 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, data drift, observabilidad y contrato de entrada del dashboard. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
 
 | Estado | Requisito | Evidencia actual | Pendiente |
 | --- | --- | --- | --- |
-| [ ] | Experimentos con redes neuronales | No iniciado. | Valorar si aporta frente a modelos clásicos. |
-| [ ] | A/B Testing para comparar modelos | Documentado como posibilidad MLOps. | Definir Champion/Challenger y reparto de tráfico o evaluación offline. |
-| [x] | Monitorización de Data Drift | Perfil versionado, PSI para todas las variables y muestra de las 1.000 predicciones operativas más recientes. La cola demo y los registros heredados sin origen clasificable se conservan en auditoría, pero se excluyen del cálculo. | Acumular al menos 100 predicciones operativas reales; hasta entonces el estado esperado es `insufficient_data`. |
-| [ ] | Auto-reemplazo condicionado de modelos | Documentado como objetivo experto. | Diseñar política de promoción solo si el nuevo modelo supera métricas mínimas. |
+| [ ] | Experimentos con redes neuronales | Requisito y reglas comparables definidos en SPEC; implementación no iniciada. | Evaluar su alcance en la próxima sesión antes de decidir la implementación. |
+| [ ] | A/B Testing para comparar modelos | Contrato mínimo documentado; cada predicción ya registra `model_version` y `prediction_id`. | Evaluar en la próxima sesión si se realiza online, simulado u offline. |
+| [x] | Monitorización de Data Drift | Perfil versionado, PSI para todas las variables, muestra de las 1.000 predicciones operativas más recientes y dashboard independiente en `/monitoring`. La cola demo y los registros heredados sin origen clasificable se conservan en auditoría, pero se excluyen del cálculo. | Acumular al menos 100 predicciones operativas reales; hasta entonces el dashboard muestra correctamente `insufficient_data`. |
+| [ ] | Auto-reemplazo condicionado de modelos | Reglas de seguridad iniciales documentadas; Data Drift no provoca promociones automáticas. | Evaluar su alcance en la próxima sesión y, si se aprueba, fijar el margen mínimo de mejora. |
 
 ---
 
@@ -742,7 +758,7 @@ Prioridades inmediatas:
 2. Mantener capturas finales de la demo si se requieren evidencias visuales.
 3. Revisar frontend y narrativa comercial antes de la presentación.
 4. Alinear Jira con las tareas cerradas en SPEC.
-5. Decidir si se aborda otra capa experta: red neuronal, A/B testing o promoción condicionada.
+5. Evaluar en la próxima sesión el alcance de red neuronal, A/B testing y promoción condicionada, sin descartar todavía ninguna opción.
 6. Planificar la retirada de recursos AWS cuando termine la demostración.
 
 ---

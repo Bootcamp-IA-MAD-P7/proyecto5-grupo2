@@ -296,6 +296,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: feedback queda persistido y se puede abrir.
 - Evidencia: `POST /feedback` guarda prediccion, probabilidad, version de modelo, input validado, feedback de usuario y estado real mediante la capa SQLAlchemy.
 - Evidencia adicional: `GET /feedback/summary` devuelve el numero de registros persistidos y el backend de almacenamiento sin exponer credenciales.
+- Evidencia de gestion: `GET /feedback` devuelve el historico y `PATCH /feedback/{record_id}` permite corregir el resultado real y los comentarios.
 - Evidencia frontend: el modal de detalle del frontend principal registra feedback mediante `POST /feedback`.
 - Evidencia operativa: SQLite se usa por defecto en local y PostgreSQL en Amazon RDS en el despliegue AWS.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py`.
@@ -336,8 +337,8 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-2.5, T-3.4.
 - Criterio de verificacion: app levanta con Docker.
-- Comando de verificacion: `docker compose build`, `docker compose up -d`, `GET /health`, `GET /model/info`, `POST /predict`, `POST /feedback`, `GET /feedback/summary`, `curl.exe -I http://localhost:8080/` y `docker compose down`.
-- Evidencia: Docker validado con frontend nginx, backend FastAPI, Champion Random Forest y endpoints de feedback.
+- Comando de verificacion: `docker compose build`, `docker compose up -d`, `GET /health/ready`, `GET /model/info`, `POST /predict`, `POST /feedback`, `GET /feedback`, `PATCH /feedback/{record_id}`, `GET /feedback/summary`, `GET /monitoring/drift`, `curl.exe -I http://localhost:8080/` y `docker compose down`.
+- Evidencia: Docker validado con frontend nginx, backend FastAPI, Champion Random Forest, esquema migrado, feedback y monitorizacion de drift.
 - Resultado clave: Docker devuelve `random_forest_champion_v0.1.0`, prediccion correcta, feedback persistido y frontend `HTTP/1.1 200 OK`.
 - Evidencia adicional: Docker incluye `data/raw/` en la imagen backend para servir `GET /reservations/demo` y permitir que el frontend principal use reservas reales.
 
@@ -409,6 +410,19 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Tests: contrato de API, persistencia del payload y ciclo de migracion.
 - Comando de verificacion: `python -m pytest tests/test_backend_api.py tests/unit/test_database_migrations.py`.
 
+### [x] T-4.9 Anadir observabilidad operativa
+
+- Archivos afectados: `app/backend/`, `docker-compose.yml`, `docker-compose.ec2.yml`, `scripts/`, `.gitattributes`, `tests/`, `docs/`.
+- Accion: separar liveness y readiness, emitir logs JSON y correlacionar solicitudes e inferencias sin registrar datos sensibles.
+- Responsable sugerido: I3.
+- Dificultad: media.
+- Dependencias: T-4.6, T-4.7, T-4.8.
+- Criterio de verificacion: `GET /health/ready` solo responde `200` con Champion y esquema operativo migrado; todas las respuestas incluyen `X-Request-ID`.
+- Evidencia: Docker y el despliegue AWS esperan el readiness check; `prediction_completed` relaciona `request_id`, `prediction_id` y version del modelo.
+- Privacidad: los logs no incluyen payloads de reserva, credenciales ni cadenas de conexion.
+- Documentacion: `docs/observability.md`, `docs/api_contract.md` y `docs/aws_deployment.md`.
+- Comando de verificacion: `python -m pytest tests/test_backend_api.py tests/unit/test_observability.py tests/integration/test_prediction_feedback_smoke.py`.
+
 ## Fase 5 - Nivel Experto
 
 ### [ ] T-5.1 Entrenar red neuronal experimental
@@ -420,6 +434,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.4.
 - Criterio de verificacion: metricas comparables documentadas.
+- Estado actual: pendiente de evaluacion en la proxima sesion; no descartada.
 - Comando de verificacion: TODO.
 
 ### [ ] T-5.2 Implementar o simular A/B Testing
@@ -431,6 +446,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.4, T-5.1.
 - Criterio de verificacion: comparacion Champion vs Challenger reproducible.
+- Estado actual: pendiente de decidir en la proxima sesion si el experimento sera online, simulado u offline; no descartado.
 - Comando de verificacion: TODO.
 
 ### [x] T-5.3 Medir Data Drift
@@ -442,13 +458,15 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-3.6.
 - Criterio de verificacion: reporte de drift con umbrales.
-- Evidencia: `models/monitoring/training_reference_profile.json` contiene el perfil versionado del split de entrenamiento y `GET /monitoring/drift` analiza las 1.000 predicciones operativas mas recientes cuando existen al menos 100 registros validos.
+- Evidencia: `models/monitoring/training_reference_profile.json` contiene el perfil versionado del split de entrenamiento, `GET /monitoring/drift` analiza las 1.000 predicciones operativas mas recientes cuando existen al menos 100 registros validos y `/monitoring` presenta el estado en un dashboard interno independiente.
 - Control de muestra: `X-Prediction-Source` distingue llamadas `api`, evaluaciones `frontend_manual` y calculos historicos `frontend_demo_queue`; la cola demo y el origen heredado `prediction_api` se conservan en auditoria pero se excluyen del PSI.
 - Umbrales: PSI menor de 0.10 estable; entre 0.10 y 0.25 aviso; desde 0.25 drift alto.
 - Comportamiento seguro: con menos de 100 registros devuelve `insufficient_data` y nunca promociona modelos automaticamente.
 - Tests: casos de muestra insuficiente, distribucion estable, drift alto, transformacion de predicciones, filtrado por origen, limite de muestra reciente y contrato API.
 - Documentacion: `docs/data_drift_monitoring.md` y `docs/api_contract.md`.
-- Comando de verificacion: `python -m pytest tests/unit/test_data_drift.py tests/unit/test_prediction_ingestion.py tests/test_backend_api.py`.
+- Contrato frontend: `tests/unit/test_monitoring_frontend_entry.py` protege la entrada Vite, la ruta nginx y su inclusion en la imagen Docker.
+- Estado actual: implementacion tecnica completa. La acumulacion de 100 predicciones operativas reales es una condicion de ejecucion para obtener un resultado concluyente, no una tarea de desarrollo pendiente.
+- Comando de verificacion: `python -m pytest tests/unit/test_data_drift.py tests/unit/test_prediction_ingestion.py tests/unit/test_monitoring_frontend_entry.py tests/test_backend_api.py`.
 
 ### [ ] T-5.4 Auto-reemplazo condicionado
 
@@ -459,6 +477,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: no.
 - Dependencias: T-5.2, T-5.3.
 - Criterio de verificacion: un modelo inferior no reemplaza al Champion en prueba controlada.
+- Estado actual: pendiente de evaluacion en la proxima sesion; no descartada. Data Drift solo genera alertas y nunca promociona modelos por si solo.
 - Comando de verificacion: TODO.
 
 ### [ ] T-5.5 Documentar ciclo MLOps para defensa
@@ -470,6 +489,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Apto junior: si con plantilla.
 - Dependencias: T-5.2, T-5.3, T-5.4.
 - Criterio de verificacion: la presentacion explica reglas y limitaciones sin prometer mas de lo implementado.
+- Estado actual: pendiente de cerrar despues de decidir el alcance de T-5.1, T-5.2 y T-5.4.
 - Comando de verificacion: no aplica.
 
 ## Fase 6 - Cierre

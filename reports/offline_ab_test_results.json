@@ -1,0 +1,72 @@
+{
+  "experiment_id": "offline_ab_champion_vs_mlp_v1",
+  "experiment_type": "offline_ab_simulation",
+  "random_state": 42,
+  "split_policy": {
+    "source": "validation",
+    "final_test_used": false,
+    "champion_share": 0.8,
+    "challenger_share": 0.2,
+    "stratified": true
+  },
+  "primary_metric": "f1_canceled",
+  "bootstrap_iterations": 1000,
+  "arms": {
+    "A": {
+      "model_version": "random_forest_champion_v0.1.0",
+      "rows": 4353,
+      "positive_rate": 0.3275901677004365,
+      "metrics": {
+        "accuracy": 0.8757178957041121,
+        "precision_canceled": 0.8070784177654406,
+        "recall_canceled": 0.8155680224403927,
+        "f1_canceled": 0.8113010115102895,
+        "roc_auc": 0.939469949222574,
+        "true_negative": 2649,
+        "false_positive": 278,
+        "false_negative": 263,
+        "true_positive": 1163
+      }
+    },
+    "B": {
+      "model_version": "mlp_neural_network_challenger_v0.1.0",
+      "rows": 1089,
+      "positive_rate": 0.3278236914600551,
+      "metrics": {
+        "accuracy": 0.8558310376492194,
+        "precision_canceled": 0.7659574468085106,
+        "recall_canceled": 0.8067226890756303,
+        "f1_canceled": 0.7858117326057299,
+        "roc_auc": 0.9242836478853836,
+        "true_negative": 644,
+        "false_positive": 88,
+        "false_negative": 69,
+        "true_positive": 288
+      }
+    }
+  },
+  "cohort_balance": {
+    "champion_positive_rate": 0.3275901677004365,
+    "challenger_positive_rate": 0.3278236914600551,
+    "absolute_positive_rate_difference": 0.0002335237596186035
+  },
+  "comparison": {
+    "challenger_minus_champion_f1": -0.025489278904559654,
+    "bootstrap_95_percent_ci": {
+      "lower": -0.06197402213651042,
+      "upper": 0.01352936214312597
+    },
+    "statistically_supported_challenger_win": false
+  },
+  "decision": "retain_champion",
+  "artifacts": {
+    "assignments": "reports/offline_ab_test_assignments.csv",
+    "challenger_experiment": "reports/neural_network_experiment.json"
+  },
+  "notes": [
+    "Each validation row is assigned to exactly one model.",
+    "The simulation does not write predictions to the operational database.",
+    "The final test split remains closed.",
+    "Neural-network prior decision: retain_champion."
+  ]
+}

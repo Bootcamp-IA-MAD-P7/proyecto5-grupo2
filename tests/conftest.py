@@ -1,8 +1,7 @@
 import pytest
 from sqlalchemy.orm import sessionmaker
 
-from app.backend.services import feedback_service
-from app.backend.services import prediction_log_service
+from app.backend.services import feedback_service, health_service, prediction_log_service
 from src.data.database import Base, create_database_engine
 
 
@@ -17,6 +16,7 @@ def operational_database(tmp_path, monkeypatch):
         expire_on_commit=False,
     )
     monkeypatch.setattr(feedback_service, "SessionLocal", session_factory)
+    monkeypatch.setattr(health_service, "SessionLocal", session_factory)
     monkeypatch.setattr(prediction_log_service, "SessionLocal", session_factory)
 
     yield database_url, session_factory

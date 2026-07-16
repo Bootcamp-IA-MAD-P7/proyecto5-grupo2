@@ -6,6 +6,10 @@ Detectar cambios en la distribucion de las variables recibidas por el modelo ant
 
 El monitor genera una senal para revision. No reentrena, reemplaza ni promociona modelos automaticamente.
 
+## Estado de implementacion
+
+La implementacion tecnica esta completa: perfil de referencia versionado, ingesta desde `prediction_logs`, filtrado por origen, calculo PSI, contrato API y tests automatizados. En un entorno con menos de 100 predicciones operativas reales, `insufficient_data` es el resultado correcto y no indica una funcionalidad incompleta.
+
 ## Fuente de referencia
 
 El perfil de referencia se genera con el split de entrenamiento estratificado usado por el proyecto:
@@ -54,6 +58,19 @@ Estados posibles:
 - `drift_detected`: una o mas variables muestran drift alto.
 
 La respuesta contiene `data_source`, limite de muestra, fuentes excluidas, PSI maximo, variables alertadas y detalle por variable cuando la muestra es suficiente.
+
+## Dashboard
+
+El estado operativo tambien puede consultarse en una entrada web separada de la aplicacion de negocio:
+
+```text
+Local:      http://localhost:5173/monitoring
+Desplegado: https://d3lxpalnzir74p.cloudfront.net/monitoring
+```
+
+El dashboard consulta `GET /health/ready`, `GET /model/info`, `GET /feedback/summary` y `GET /monitoring/drift`. No fabrica metricas: mientras no existan 100 predicciones operativas validas muestra `Muestra insuficiente` y el progreso real de la muestra.
+
+La vista incluye modulos reservados para red neuronal, A/B Testing y promocion condicionada. Permanecen como `Pendiente de evaluacion` hasta que exista evidencia reproducible; el dashboard no enlaza desde la navegacion comercial ni modifica su flujo.
 
 ## Operacion
 

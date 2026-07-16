@@ -122,7 +122,7 @@ Estado actual:
 - Frontend React + Vite integrado en `app/frontend`.
 - Backend FastAPI inicial integrado en `app/backend`.
 - Contrato API inicial documentado en `docs/api_contract.md`.
-- Endpoint `GET /health`, `GET /model/info`, `GET /reservations/demo`, `POST /predict`, `POST /feedback` y `GET /feedback/summary` disponibles.
+- Endpoints de liveness `GET /health` y readiness `GET /health/ready`, inferencia, reservas, feedback y monitorizacion disponibles.
 - `POST /predict` usa el Champion Random Forest guardado en `models/champion/random_forest_champion.pkl`.
 - `GET /reservations/demo` sirve reservas candidatas desde el CSV real para alimentar el frontend principal.
 - El frontend principal consume reservas reales, predicciones reales y feedback real.
@@ -165,7 +165,7 @@ Estado actual:
 - Random Forest optimizado, comparado contra baseline y seleccionado como Champion.
 - Validacion cruzada estratificada de 3 folds documentada con F1 medio `0.8160`.
 - Tuning de hiperparametros consolidado en script reproducible.
-- Feedback implementado con `POST /feedback` y `GET /feedback/summary`.
+- Feedback implementado con escritura, resumen, historico y correccion mediante `POST /feedback`, `GET /feedback/summary`, `GET /feedback` y `PATCH /feedback/{record_id}`.
 - Recogida de datos nuevos para futuros reentrenamientos cubierta con SQLAlchemy, SQLite local, PostgreSQL RDS e ingesta en `src/data/feedback_ingestion.py`.
 - Estado: Nivel Medio cubierto.
 
@@ -210,6 +210,7 @@ Estado actual:
 - Docker Compose validado en local y en EC2.
 - PostgreSQL desplegado en Amazon RDS privado.
 - Esquema SQLite/PostgreSQL versionado con Alembic y migrado antes del arranque de la API.
+- Observabilidad operativa con readiness, logs JSON y correlacion mediante `X-Request-ID`.
 - CloudFront publica la app mediante HTTPS.
 - GitHub Actions despliega automáticamente en EC2 mediante OIDC y SSM.
 - Guía operativa disponible en `docs/aws_deployment.md`.
@@ -229,11 +230,19 @@ Incluye:
 - Data Drift mediante perfil de entrenamiento versionado, PSI y endpoint de monitorizacion. Completado.
 - Auto-reemplazo condicionado.
 
+Estado actual:
+
+- Data Drift completado con perfil versionado, PSI, auditoria de predicciones, filtrado por origen, endpoint operativo y dashboard independiente en `/monitoring`.
+- El dashboard deja preparados modulos de estado para red neuronal, A/B Testing y promocion condicionada, sin publicar resultados simulados.
+- Red neuronal experimental, A/B Testing y auto-reemplazo condicionado quedan pendientes de evaluacion en la proxima sesion.
+- Ninguno de esos tres puntos se ha descartado; cualquier implementacion se realizara en una rama independiente y sin alterar el Champion estable.
+
 Entregables:
 
 - Modelo Challenger.
 - Comparación Champion vs Challenger.
 - Script y endpoint de reporte de drift.
+- Dashboard interno de monitorizacion separado de la aplicacion de negocio.
 - Reglas de promoción de modelos.
 - Diagrama de ciclo MLOps.
 - Documentación de limitaciones.

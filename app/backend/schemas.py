@@ -10,6 +10,17 @@ class HealthResponse(BaseModel):
     version: str = "0.1.0"
 
 
+class ReadinessResponse(BaseModel):
+    status: Literal["ready", "not_ready"]
+    service: str
+    version: str
+    checked_at: datetime
+    model_loaded: bool
+    model_version: str
+    database_connected: bool
+    storage: Literal["sqlite", "postgresql"]
+
+
 class ModelInfoResponse(BaseModel):
     model_loaded: bool
     model_version: str

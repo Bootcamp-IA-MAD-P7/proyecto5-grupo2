@@ -1,0 +1,52 @@
+{
+  "policy_version": "conditional_promotion_v1",
+  "evaluation_date": "2026-07-16",
+  "champion_model_version": "random_forest_champion_v0.1.0",
+  "challenger_model_version": "mlp_neural_network_challenger_v0.1.0",
+  "primary_metric": "f1_canceled",
+  "thresholds": {
+    "minimum_absolute_f1_improvement": 0.02,
+    "maximum_train_validation_f1_gap": 0.05,
+    "maximum_critical_metric_degradation": 0.02,
+    "ab_confidence_interval_lower_bound_must_exceed": 0.0
+  },
+  "observed": {
+    "champion_validation_f1": 0.8104939994418086,
+    "challenger_validation_f1": 0.7741591030432461,
+    "absolute_f1_improvement": -0.036334896398562466,
+    "challenger_train_validation_f1_gap": 0.041581271242952855,
+    "precision_degradation": 0.0680013584649346,
+    "recall_degradation": 0.001121704991587258,
+    "ab_f1_difference": -0.025489278904559654,
+    "ab_95_percent_ci_lower": -0.06197402213651042,
+    "ab_95_percent_ci_upper": 0.01352936214312597
+  },
+  "gates": {
+    "artifact_loadable": true,
+    "same_input_contract": true,
+    "version_and_artifact_registered": true,
+    "comparable_validation_evidence": true,
+    "minimum_f1_improvement": false,
+    "overfitting_below_limit": true,
+    "critical_metrics_within_limit": false,
+    "ab_win_statistically_supported": false
+  },
+  "eligible_for_promotion": false,
+  "decision": "retain_champion",
+  "failed_gates": [
+    "minimum_f1_improvement",
+    "critical_metrics_within_limit",
+    "ab_win_statistically_supported"
+  ],
+  "safety": {
+    "data_drift_can_trigger_promotion": false,
+    "automatic_apply": false,
+    "explicit_apply_flag_required": true
+  },
+  "artifact_evidence": {
+    "artifact_exists": true,
+    "loadable": true,
+    "same_input_contract": true,
+    "challenger_sha256": "951341ab2436df684de3e7604824c99cd295acde5e124742712c78c9caf999af"
+  }
+}
