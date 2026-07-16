@@ -372,7 +372,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 ### [x] T-4.6 Desplegar app y automatizar entrega
 
 - Archivos afectados: `docker-compose.ec2.yml`, `.github/workflows/deploy-aws-ec2.yml`, `scripts/deploy_ec2.sh`, `docs/aws_deployment.md`.
-- Accion: desplegar la aplicacion web y automatizar la actualizacion desde `develop`.
+- Accion: desplegar la aplicacion web y automatizar la publicacion de releases desde `main`.
 - Responsable sugerido: I3 con revision de I2 e I4.
 - Dificultad: alta.
 - Apto junior: no como responsable unico.
@@ -380,6 +380,7 @@ Este backlog debe mantenerse alineado con Jira. Cada ticket debe moverse de esta
 - Criterio de verificacion: URL HTTPS publica disponible, Champion cargado, PostgreSQL operativo y despliegue automatico verificado.
 - Evidencia: CloudFront publica la app; EC2 ejecuta Docker Compose; RDS PostgreSQL persiste feedback; GitHub Actions despliega mediante OIDC y SSM tras cada merge en `develop`.
 - Evidencia de quality gate: el job de despliegue depende de la suite Python completa y del build frontend mediante `needs`.
+- Política de release: `develop` integra el trabajo del equipo y `main` es la única rama que activa el despliegue de producción.
 - Evidencia de seguridad: RDS es privado y el puerto HTTP de EC2 solo admite trafico desde la lista administrada de CloudFront.
 - URL verificada: `https://d3lxpalnzir74p.cloudfront.net`.
 

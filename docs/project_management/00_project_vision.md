@@ -37,7 +37,7 @@ Aunque nace como proyecto académico, se trabajará como si fuese un producto we
 - Automatización con GitHub Actions cuando sea viable.
 - Docker y despliegue AWS como objetivos avanzados alcanzados.
 - Persistencia operativa con SQLite local y PostgreSQL en Amazon RDS.
-- Entrega automática desde `develop` mediante GitHub Actions, OIDC y AWS Systems Manager.
+- Entrega automática de producción desde `main` mediante GitHub Actions, OIDC y AWS Systems Manager.
 - Roadmap por niveles: esencial, medio, avanzado y experto.
 
 ## 5. Metodología SDD / SPEC

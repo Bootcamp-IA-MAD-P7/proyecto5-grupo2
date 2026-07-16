@@ -27,6 +27,8 @@ This project follows an incremental delivery approach. Versions and tags will be
 - Python dependencies and nginx runtime hardened after dependency and frontend security audits.
 - Business home, model showcase and MLOps dashboard visually consolidated for the final presentation.
 - Model showcase now links to the canonical `/monitoring` route.
+- Production deployment moved from `develop` to the protected `main` release branch; EC2 now switches branches explicitly before a fast-forward pull.
+- Pull request quality gates now support both integration PRs to `develop` and release PRs to `main`.
 
 ### Verified
 

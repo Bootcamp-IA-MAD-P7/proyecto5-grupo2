@@ -255,22 +255,22 @@ Durante el desarrollo del proyecto, `develop` puede configurarse como rama por d
 
 Las ramas feature permiten revisar cambios sin interferir con el resto del equipo.
 
-## 12. CI/CD y despliegue desde develop
+## 12. CI/CD y despliegue desde main
 
-Los Pull Requests ejecutan comprobaciones automáticas de backend y frontend. Después del merge, cada `push` a `develop` activa también el workflow de despliegue AWS.
+Los Pull Requests hacia `develop` o `main` ejecutan comprobaciones automáticas de backend y frontend. `develop` integra el trabajo del equipo y solo cada release mergeado en `main` activa el workflow de despliegue AWS.
 
 ```text
-rama -> PR -> checks CI -> merge en develop -> despliegue AWS -> health check
+rama -> PR -> checks CI -> develop -> PR de release -> main -> despliegue AWS -> readiness check
 ```
 
 Reglas:
 
 - No mergear si fallan los checks obligatorios.
-- No hacer `push` directo a `develop` para evitar despliegues sin revisión.
-- El despliegue de `develop` depende de la suite Python completa y del build frontend mediante quality gates reutilizables.
+- No hacer `push` directo a `develop` ni a `main`; todos los cambios pasan por revisión.
+- El despliegue de `main` depende de la suite Python completa y del build frontend mediante quality gates reutilizables.
 - GitHub usa OIDC para obtener credenciales temporales de AWS; no se guardan claves permanentes.
 - AWS Systems Manager ejecuta el despliegue en EC2.
 - El workflow falla si el script no levanta los contenedores o la API no supera el health check.
-- Un cambio documental también activa el despliegue porque el trigger actual es cualquier `push` a `develop`; esta optimización puede abordarse después de la entrega.
+- Cualquier merge en `main` representa un release y activa el despliegue; los cambios ordinarios permanecen en `develop` hasta el siguiente release aprobado.
 
 Guía operativa: `docs/aws_deployment.md`.

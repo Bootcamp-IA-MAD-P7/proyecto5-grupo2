@@ -3,7 +3,7 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - develop
+      - main
   workflow_dispatch:
 
 permissions:
@@ -46,8 +46,8 @@ jobs:
           command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.EC2_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --comment "Deploy Hotel Insights from develop" \
-            --parameters '{"commands":["sudo -u ubuntu git -C /home/ubuntu/hotel-insights pull --ff-only origin develop","cd /home/ubuntu/hotel-insights && bash scripts/deploy_ec2.sh"]}' \
+            --comment "Deploy Hotel Insights from main" \
+            --parameters '{"commands":["sudo -u ubuntu git -C /home/ubuntu/hotel-insights fetch origin main","sudo -u ubuntu git -C /home/ubuntu/hotel-insights switch main","sudo -u ubuntu git -C /home/ubuntu/hotel-insights pull --ff-only origin main","cd /home/ubuntu/hotel-insights && bash scripts/deploy_ec2.sh"]}' \
             --query 'Command.CommandId' \
             --output text)
 

@@ -36,7 +36,7 @@ Componentes:
 - **FastAPI** carga `random_forest_champion_v0.1.0`, expone inferencia y registra feedback.
 - **Alembic** aplica las migraciones pendientes antes de que el contenedor backend inicie FastAPI.
 - **RDS PostgreSQL** persiste feedback y resultados operativos fuera del ciclo de vida de los contenedores.
-- **GitHub Actions** despliega automáticamente cada merge en `develop` mediante OIDC y AWS Systems Manager.
+- **GitHub Actions** despliega automáticamente cada release mergeado en `main` mediante OIDC y AWS Systems Manager.
 
 La configuración antigua de AWS App Runner se retiró del repositorio para evitar rutas de despliegue ambiguas. La arquitectura vigente es CloudFront + EC2 + RDS.
 
@@ -60,8 +60,8 @@ Reglas:
 Desde `/home/ubuntu/hotel-insights`:
 
 ```bash
-git switch develop
-git pull --ff-only origin develop
+git switch main
+git pull --ff-only origin main
 bash scripts/deploy_ec2.sh
 ```
 
@@ -77,7 +77,7 @@ El script:
 
 ## 5. Despliegue automático
 
-El workflow `.github/workflows/deploy-aws-ec2.yml` se ejecuta tras cada `push` a `develop` y también permite ejecución manual.
+El workflow `.github/workflows/deploy-aws-ec2.yml` se ejecuta tras cada `push` a `main` y también permite ejecución manual.
 
 Flujo:
 
@@ -86,7 +86,7 @@ Flujo:
 3. GitHub solicita credenciales temporales de AWS mediante OIDC.
 4. GitHub Actions asume un rol IAM sin almacenar claves de acceso permanentes.
 5. AWS Systems Manager envía el comando de despliegue a EC2.
-6. EC2 actualiza `develop` con `--ff-only` y ejecuta `scripts/deploy_ec2.sh`.
+6. EC2 cambia a `main`, la actualiza con `--ff-only` y ejecuta `scripts/deploy_ec2.sh`.
 7. El workflow espera el resultado y falla si el despliegue o el readiness check no terminan correctamente.
 
 Variables de repositorio requeridas:
@@ -107,7 +107,7 @@ No se necesitan claves `AWS_ACCESS_KEY_ID` ni `AWS_SECRET_ACCESS_KEY` en GitHub.
 - HTTP `80` en EC2 solo admite tráfico desde la lista administrada de orígenes de CloudFront.
 - Los usuarios acceden mediante HTTPS en CloudFront.
 - Las credenciales de base de datos permanecen únicamente en `.env.ec2` con permisos restringidos.
-- El rol de despliegue de GitHub se limita al repositorio, a `develop` y a la instancia etiquetada para la aplicación.
+- El rol de despliegue de GitHub se limita al repositorio, a `main` y a la instancia etiquetada para la aplicación.
 
 ## 7. Verificación operativa
 
@@ -169,7 +169,7 @@ En GitHub:
 Para publicar cambios, se mantiene el flujo habitual:
 
 ```text
-rama de trabajo -> Pull Request -> revisión -> merge en develop -> despliegue automático
+rama de trabajo -> Pull Request -> develop -> PR de release -> main -> despliegue automático
 ```
 
 Cuando termine la demostración temporal, los recursos deben retirarse en orden controlado para evitar costes residuales:

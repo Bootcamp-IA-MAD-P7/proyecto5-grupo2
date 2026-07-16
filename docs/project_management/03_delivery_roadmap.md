@@ -213,7 +213,7 @@ Estado actual:
 - Esquema SQLite/PostgreSQL versionado con Alembic y migrado antes del arranque de la API.
 - Observabilidad operativa con readiness, logs JSON y correlacion mediante `X-Request-ID`.
 - CloudFront publica la app mediante HTTPS.
-- GitHub Actions despliega automáticamente en EC2 mediante OIDC y SSM.
+- GitHub Actions despliega automáticamente los releases de `main` en EC2 mediante OIDC y SSM.
 - Guía operativa disponible en `docs/aws_deployment.md`.
 - Estado: Nivel Avanzado cubierto.
 

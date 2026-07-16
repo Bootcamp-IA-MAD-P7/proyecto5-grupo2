@@ -134,7 +134,7 @@ Estado actual:
 - Persistencia local mediante SQLite y persistencia desplegada mediante PostgreSQL en Amazon RDS.
 - Aplicación desplegada en AWS con CloudFront, EC2 y RDS.
 - URL pública HTTPS disponible en `https://d3lxpalnzir74p.cloudfront.net`.
-- Despliegue automático desde `develop` mediante GitHub Actions, OIDC y AWS Systems Manager.
+- Despliegue automático de producción desde `main` mediante GitHub Actions, OIDC y AWS Systems Manager.
 - Metodología SPEC creada en `.specify/`.
 - Documentos de organización creados en `docs/project_management/`.
 - Jira definido como herramienta oficial de gestión.
@@ -169,7 +169,7 @@ Pendiente principal:
 | Aplicación web | React, Vite, FastAPI | Interfaz de predicción y API de inferencia. |
 | Calidad | Pytest, GitHub Actions | Tests backend, preprocessing, baseline y checks de PR. |
 | Operación | Docker, Docker Compose, Alembic, AWS | Migraciones controladas, contenedores en EC2, HTTPS con CloudFront y PostgreSQL en RDS. |
-| Entrega | GitHub Actions, OIDC, AWS SSM | CI para backend/frontend y CD automático desde `develop`. |
+| Entrega | GitHub Actions, OIDC, AWS SSM | CI para backend/frontend y CD automático de producción desde `main`. |
 | Gestión | Git, GitHub, Jira | Ramas, PRs, changelog, tags, issues/historias y seguimiento. |
 
 ---
@@ -447,7 +447,7 @@ Arquitectura operativa:
 - CloudFront publica la aplicación mediante HTTPS.
 - EC2 ejecuta nginx, frontend React y backend FastAPI con `docker-compose.ec2.yml`.
 - RDS PostgreSQL conserva feedback y datos operativos.
-- GitHub Actions despliega automáticamente cada merge en `develop` mediante OIDC y SSM.
+- GitHub Actions despliega automáticamente cada release mergeado en `main` mediante OIDC y SSM.
 - El acceso directo al puerto HTTP de EC2 está limitado a los servidores de origen de CloudFront.
 
 La instalación, operación, seguridad, verificación y retirada están documentadas en [`docs/aws_deployment.md`](docs/aws_deployment.md).
@@ -734,7 +734,7 @@ Leyenda:
 | --- | --- | --- | --- |
 | [x] | Versión dockerizada del programa | Configuración local y `docker-compose.ec2.yml` validados con frontend, API, Champion y PostgreSQL. | Mantener imágenes y dependencias actualizadas. |
 | [x] | Guardado en base de datos de datos recogidos | SQLAlchemy usa SQLite local y PostgreSQL administrado en Amazon RDS; Alembic aplica la revisión versionada antes de arrancar la API. `prediction_logs` audita todas las inferencias correctas y `prediction_feedback` conserva el aprendizaje aportado por usuarios. | Crear una nueva revisión por cada cambio futuro del esquema. |
-| [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático desde `develop`. | Retirar recursos de forma controlada cuando termine la demostración. |
+| [x] | Despliegue web | CloudFront HTTPS, EC2 con Docker, RDS PostgreSQL y despliegue automático de producción desde `main`. | Retirar recursos de forma controlada cuando termine la demostración. |
 | [x] | Tests unitarios | 76 tests activos: API, preprocessing, modelos, explicaciones de riesgo, holdout, persistencia, migraciones, ingesta, smoke flow, Data Drift, experimentos MLOps, observabilidad y contratos frontend. | Mantenerlos en CI y ampliarlos si cambia frontend/API. |
 
 ### Nivel Experto
