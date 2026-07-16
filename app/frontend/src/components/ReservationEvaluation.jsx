@@ -257,8 +257,8 @@ function ReservationEvaluation({
         <form className="evaluation-form" onSubmit={calculateRisk}>
           <div className="form-panel-header">
             <div>
-              <h2>Variables del Champion</h2>
-              <p>Datos requeridos para que el modelo Champion evalúe la reserva.</p>
+              <h2>Datos para el análisis</h2>
+              <p>Información que utiliza el modelo para evaluar la reserva.</p>
             </div>
             {isDirty && <span className="dirty-badge">Cambios pendientes</span>}
           </div>

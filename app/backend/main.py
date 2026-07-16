@@ -3,7 +3,7 @@ import os
 from time import perf_counter
 from typing import Annotated, Literal
 
-from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Path, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -17,6 +17,7 @@ from .schemas import (
     FeedbackResponse,
     FeedbackSummaryResponse,
     FeedbackUpdateRequest,
+    DemoReservationResponse,
     DemoReservationsResponse,
     HealthResponse,
     ModelInfoResponse,
@@ -34,7 +35,7 @@ from .services.feedback_service import (
 from .services.health_service import get_readiness
 from .services.model_service import get_model_info, predict_cancellation
 from .services.prediction_log_service import save_prediction_log
-from .services.reservation_service import get_demo_reservations
+from .services.reservation_service import get_demo_reservation_by_id, get_demo_reservations
 
 
 LOCAL_CORS_ORIGINS = [
@@ -151,8 +152,21 @@ def predict(
 
 
 @app.get("/reservations/demo", response_model=DemoReservationsResponse)
-def demo_reservations(limit: int = 8) -> DemoReservationsResponse:
-    return get_demo_reservations(limit=limit)
+def demo_reservations(
+    limit: Annotated[int, Query(ge=1, le=50)] = 8,
+    offset: Annotated[int, Query(ge=0)] = 0,
+) -> DemoReservationsResponse:
+    return get_demo_reservations(limit=limit, offset=offset)
+
+
+@app.get("/reservations/demo/{booking_id}", response_model=DemoReservationResponse)
+def demo_reservation_by_id(
+    booking_id: Annotated[str, Path(pattern=r"^INN\d{5}$")],
+) -> DemoReservationResponse:
+    reservation = get_demo_reservation_by_id(booking_id)
+    if reservation is None:
+        raise HTTPException(status_code=404, detail="Reservation not found.")
+    return reservation
 
 
 @app.post("/feedback", response_model=FeedbackResponse)

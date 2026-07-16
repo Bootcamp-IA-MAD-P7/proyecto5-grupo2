@@ -123,7 +123,13 @@ Query params:
 
 | Parametro | Tipo | Obligatorio | Descripcion |
 | --- | --- | --- | --- |
-| `limit` | integer | no | Numero maximo de reservas a devolver. Valor usado por defecto: `8`. |
+| `limit` | integer | no | Numero maximo de reservas a devolver, entre `1` y `50`. Valor por defecto: `8`. |
+| `offset` | integer | no | Posicion inicial dentro del ranking priorizado. Debe ser mayor o igual que `0`. Valor por defecto: `0`. |
+
+Las reservas se ordenan por `priority_score` descendente y por `Booking_ID`
+ascendente como desempate determinista. El corte de pagina se aplica despues de
+ordenar. Una pagina posterior al final del dataset devuelve `200 OK`, una lista
+vacia y `has_more: false`.
 
 #### Response `200 OK`
 
@@ -131,6 +137,9 @@ Query params:
 {
   "total_available": 36275,
   "returned": 2,
+  "limit": 2,
+  "offset": 0,
+  "has_more": true,
   "source": "data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv",
   "reservations": [
     {
@@ -169,6 +178,9 @@ Query params:
 | --- | --- | --- |
 | `total_available` | integer | Numero total de filas disponibles en el CSV real. |
 | `returned` | integer | Numero de reservas devueltas en la respuesta. |
+| `limit` | integer | Tamano maximo solicitado para la pagina. |
+| `offset` | integer | Posicion inicial de la pagina dentro del ranking. |
+| `has_more` | boolean | Indica si existen reservas posteriores: `offset + returned < total_available`. |
 | `source` | string | Ruta relativa del dataset usado por el backend. |
 | `reservations` | array | Lista de reservas candidatas. |
 | `id` | string | Identificador historico de reserva. |
@@ -177,6 +189,17 @@ Query params:
 | `status_label` | string | Etiqueta operativa calculada para priorizacion visual. |
 | `image_key` | string | Clave visual usada por el frontend si necesita imagen asociada. |
 | `input_data` | object | Payload compatible con `POST /predict`. |
+
+### `GET /reservations/demo/{booking_id}`
+
+Recupera una reserva concreta directamente por su `Booking_ID`, sin recorrer
+las paginas del ranking. El identificador debe respetar el formato `INN` seguido
+de cinco digitos, por ejemplo `INN02475`.
+
+- Devuelve `200 OK` y un objeto `DemoReservationResponse` cuando existe.
+- Devuelve `404 Not Found` cuando el formato es valido pero la reserva no existe.
+- Devuelve `422 Unprocessable Entity` cuando el formato no es valido.
+- La reserva devuelta mantiene `input_data` compatible con `POST /predict`.
 
 ## 6. Prediction Endpoint
 

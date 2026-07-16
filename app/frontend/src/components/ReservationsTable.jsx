@@ -60,12 +60,12 @@ function ReservationsTable({ reservations, isLoading, onSelect, onEvaluate }) {
 
         <label className="search-field">
           <Search size={17} />
-          <span className="sr-only">Buscar reserva</span>
+          <span className="sr-only">Filtrar la página actual</span>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Buscar ID, canal o estado"
+            placeholder="Filtrar esta página"
           />
         </label>
 
@@ -101,14 +101,14 @@ function ReservationsTable({ reservations, isLoading, onSelect, onEvaluate }) {
               <th>Llegada</th>
               <th>Estancia</th>
               <th>Valor estimado</th>
-              <th>Riesgo Champion</th>
+              <th>Riesgo estimado</th>
               <th><span className="sr-only">Acciones</span></th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
-                <td className="table-state" colSpan="7">Evaluando reservas con el Champion...</td>
+                <td className="table-state" colSpan="7">Analizando datos de las reservas...</td>
               </tr>
             ) : visibleReservations.length === 0 ? (
               <tr>

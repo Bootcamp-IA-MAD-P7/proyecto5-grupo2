@@ -86,6 +86,9 @@ class DemoReservationResponse(BaseModel):
 class DemoReservationsResponse(BaseModel):
     total_available: int
     returned: int
+    limit: int = Field(..., ge=1, le=50)
+    offset: int = Field(..., ge=0)
+    has_more: bool
     source: str
     reservations: list[DemoReservationResponse]
 
