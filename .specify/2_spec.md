@@ -799,7 +799,7 @@ El nivel esta cerrado si:
 - App desplegada o preparada para despliegue.
 - Smoke test documentado.
 
-Estado actual: cubierto. Docker, PostgreSQL en RDS, tests, smoke test, despliegue HTTPS en AWS y entrega automática desde `develop` están verificados.
+Estado actual: cubierto. Docker, PostgreSQL en RDS, tests, smoke test, despliegue HTTPS en AWS y entrega automática de producción desde `main` están configurados y verificados mediante quality gates.
 
 ### Nivel Experto
 
