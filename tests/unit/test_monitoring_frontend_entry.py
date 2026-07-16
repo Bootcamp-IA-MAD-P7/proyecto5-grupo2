@@ -16,3 +16,18 @@ def test_monitoring_dashboard_has_a_separate_production_entrypoint() -> None:
     assert "location = /monitoring" in nginx_config
     assert "try_files /monitoring.html =404" in nginx_config
     assert "COPY index.html monitoring.html vite.config.js ./" in dockerfile
+
+
+def test_monitoring_dashboard_uses_real_experiment_evidence() -> None:
+    service = (FRONTEND / "src" / "monitoring" / "monitoringService.js").read_text(
+        encoding="utf-8"
+    )
+    dashboard = (
+        FRONTEND / "src" / "monitoring" / "MonitoringDashboard.jsx"
+    ).read_text(encoding="utf-8")
+
+    assert 'settle("experiments", "/monitoring/experiments")' in service
+    assert "experiments.neural_network" in dashboard
+    assert "experiments.ab_testing" in dashboard
+    assert "experiments.conditional_promotion" in dashboard
+    assert "Sin experimento registrado" not in dashboard
