@@ -2,15 +2,19 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
   AlertTriangle,
+  ChevronLeft,
+  ChevronRight,
   ClipboardCheck,
   Database,
   House,
   LayoutList,
   RefreshCw,
+  Search,
   ShieldCheck,
   Sparkles
 } from "lucide-react";
 import AlertsPanel from "./components/AlertsPanel";
+import EducationalFooter from "./components/EducationalFooter";
 import FeedbackHistory from "./components/FeedbackHistory";
 import GuidedReservationFlow from "./components/GuidedReservationFlow";
 import HomePage from "./components/HomePage";
@@ -22,8 +26,11 @@ import {
   applyPredictionToReservation,
   fetchFeedbackSummary,
   fetchModelInfo,
+  fetchPredictedReservationById,
   fetchPredictedReservations
 } from "./services/predictionService";
+
+const RESERVATIONS_PAGE_SIZE = 16;
 
 function App() {
   const [activeSection, setActiveSection] = useState("home");
@@ -31,37 +38,50 @@ function App() {
   const [reservations, setReservations] = useState([]);
   const [datasetMeta, setDatasetMeta] = useState(null);
   const [modelInfo, setModelInfo] = useState(null);
+  const [apiReady, setApiReady] = useState(false);
   const [feedbackSummary, setFeedbackSummary] = useState(null);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [evaluationReservation, setEvaluationReservation] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [bookingSearch, setBookingSearch] = useState("");
+  const [bookingSearchError, setBookingSearchError] = useState("");
+  const [isBookingSearchLoading, setIsBookingSearchLoading] = useState(false);
   const [workspaceError, setWorkspaceError] = useState("");
+
+  const applyReservationPage = useCallback((data) => {
+    const orderedByRisk = [...data.reservations].sort((a, b) => b.riskPercent - a.riskPercent);
+    const firstPriority = orderedByRisk[0] || null;
+    setReservations(data.reservations);
+    setDatasetMeta(data);
+    setSelectedReservation((current) =>
+      data.reservations.find((item) => item.id === current?.id) || firstPriority
+    );
+    setEvaluationReservation((current) =>
+      data.reservations.find((item) => item.id === current?.id) || firstPriority
+    );
+    setIsDetailOpen(false);
+  }, []);
 
   const loadWorkspace = useCallback(async () => {
     setIsLoading(true);
+    setApiReady(false);
     setWorkspaceError("");
 
     const [reservationsResult, modelResult, feedbackResult] = await Promise.allSettled([
-      fetchPredictedReservations(16),
+      fetchPredictedReservations(RESERVATIONS_PAGE_SIZE, 0),
       fetchModelInfo(),
       fetchFeedbackSummary()
     ]);
 
     const errors = [];
+    setApiReady([reservationsResult, modelResult, feedbackResult].some(
+      (result) => result.status === "fulfilled"
+    ));
 
     if (reservationsResult.status === "fulfilled") {
-      const data = reservationsResult.value;
-      const orderedByRisk = [...data.reservations].sort((a, b) => b.riskPercent - a.riskPercent);
-      const firstPriority = orderedByRisk[0] || null;
-      setReservations(data.reservations);
-      setDatasetMeta(data);
-      setSelectedReservation((current) =>
-        data.reservations.find((item) => item.id === current?.id) || firstPriority
-      );
-      setEvaluationReservation((current) =>
-        data.reservations.find((item) => item.id === current?.id) || firstPriority
-      );
+      applyReservationPage(reservationsResult.value);
     } else {
       errors.push("No se pudieron cargar y evaluar las reservas del backend.");
     }
@@ -69,7 +89,8 @@ function App() {
     if (modelResult.status === "fulfilled") {
       setModelInfo(modelResult.value);
     } else {
-      errors.push("No se pudo consultar el estado del Champion.");
+      setModelInfo(null);
+      errors.push("No se pudo consultar el estado del modelo.");
     }
 
     if (feedbackResult.status === "fulfilled") {
@@ -80,7 +101,23 @@ function App() {
 
     setWorkspaceError(errors.join(" "));
     setIsLoading(false);
-  }, []);
+  }, [applyReservationPage]);
+
+  const loadReservationPage = useCallback(async (offset) => {
+    setIsPageLoading(true);
+    setWorkspaceError("");
+
+    try {
+      const data = await fetchPredictedReservations(RESERVATIONS_PAGE_SIZE, offset);
+      applyReservationPage(data);
+      setApiReady(true);
+    } catch {
+      setApiReady(false);
+      setWorkspaceError("No se pudo cargar y evaluar esta página de reservas.");
+    } finally {
+      setIsPageLoading(false);
+    }
+  }, [applyReservationPage]);
 
   useEffect(() => {
     loadWorkspace();
@@ -152,7 +189,61 @@ function App() {
     }
   }
 
+  async function searchReservation(event) {
+    event.preventDefault();
+    const bookingId = bookingSearch.trim().toUpperCase();
+    setBookingSearch(bookingId);
+    setBookingSearchError("");
+
+    if (!/^INN\d{5}$/.test(bookingId)) {
+      setBookingSearchError("Introduce un código con formato INN00000.");
+      return;
+    }
+
+    setIsBookingSearchLoading(true);
+    try {
+      const reservation = await fetchPredictedReservationById(bookingId);
+      setSelectedReservation(reservation);
+      setEvaluationReservation(reservation);
+      setIsDetailOpen(true);
+      setApiReady(true);
+    } catch (error) {
+      setBookingSearchError(
+        error.message === "Reservation not found."
+          ? `No se encontró la reserva ${bookingId}.`
+          : "No se pudo consultar la reserva en este momento."
+      );
+    } finally {
+      setIsBookingSearchLoading(false);
+    }
+  }
+
   const modelReady = Boolean(modelInfo?.model_loaded);
+  const systemReady = apiReady && modelReady;
+  const systemStatusLabel = isLoading
+    ? "Comprobando API y modelo"
+    : !apiReady
+      ? "API no disponible"
+      : modelReady
+        ? "API OK · Modelo cargado"
+        : "API OK · Modelo no cargado";
+  const reservationsLoading = isLoading || isPageLoading;
+  const pageLimit = datasetMeta?.limit || RESERVATIONS_PAGE_SIZE;
+  const pageOffset = datasetMeta?.offset || 0;
+  const totalAvailable = datasetMeta?.totalAvailable || 0;
+  const returnedOnPage = datasetMeta?.returned ?? reservations.length;
+  const currentPage = Math.floor(pageOffset / pageLimit) + 1;
+  const totalPages = Math.max(1, Math.ceil(totalAvailable / pageLimit));
+  const visibleStart = returnedOnPage > 0 ? pageOffset + 1 : 0;
+  const visibleEnd = pageOffset + returnedOnPage;
+
+  function showPreviousPage() {
+    loadReservationPage(Math.max(0, pageOffset - pageLimit));
+  }
+
+  function showNextPage() {
+    loadReservationPage(pageOffset + pageLimit);
+  }
 
   return (
     <div className="app-shell">
@@ -208,14 +299,17 @@ function App() {
           </nav>
 
           <div className="system-status" aria-label="Estado del sistema">
-            <span className={`status-badge ${modelReady ? "ready" : "unavailable"}`}>
-              <ShieldCheck size={16} />
-              {modelReady ? "Champion activo" : "Champion no disponible"}
-            </span>
-            <span className="status-badge" title={modelInfo?.model_version || "Versión no disponible"}>
-              <Activity size={16} />
-              {modelInfo?.model_version || "Sin versión"}
-            </span>
+            <button
+              className={`status-badge system-health ${systemReady ? "ready" : "unavailable"}`}
+              type="button"
+              onClick={loadWorkspace}
+              disabled={isLoading}
+              title="Actualizar estado de la API y del modelo"
+              aria-label={`${systemStatusLabel}. Actualizar estado`}
+            >
+              <RefreshCw size={16} className={isLoading ? "spin" : ""} />
+              {systemStatusLabel}
+            </button>
           </div>
         </div>
       </header>
@@ -231,11 +325,6 @@ function App() {
         {activeSection === "home" ? (
           <HomePage
             canEvaluate={Boolean(evaluationReservation)}
-            datasetMeta={datasetMeta}
-            feedbackSummary={feedbackSummary}
-            isLoading={isLoading}
-            modelInfo={modelInfo}
-            reservationsCount={reservations.length}
             onOpenOperations={() => showSection("operations")}
             onOpenEvaluation={() => showSection("evaluation")}
           />
@@ -247,7 +336,7 @@ function App() {
                 <span className="section-kicker">Operación diaria</span>
                 <h1 id="operations-title">Reservas evaluadas por prioridad</h1>
                 <p>
-                  Muestra histórica evaluada con el modelo Champion activo.
+                  Muestra histórica priorizada con el modelo predictivo.
                 </p>
               </div>
               <div className="toolbar-actions">
@@ -264,7 +353,7 @@ function App() {
                     className={operationsView === "all" ? "active" : ""}
                     onClick={() => setOperationsView("all")}
                   >
-                    Todas
+                    Muestra cargada
                   </button>
                   <button
                     type="button"
@@ -277,39 +366,69 @@ function App() {
                 <button
                   className="icon-button"
                   type="button"
-                  onClick={loadWorkspace}
-                  disabled={isLoading}
-                  aria-label="Actualizar datos"
-                  title="Actualizar datos"
+                  onClick={() => loadReservationPage(pageOffset)}
+                  disabled={reservationsLoading}
+                  aria-label="Actualizar página de reservas"
+                  title="Actualizar página de reservas"
                 >
-                  <RefreshCw size={19} className={isLoading ? "spin" : ""} />
+                  <RefreshCw size={19} className={reservationsLoading ? "spin" : ""} />
                 </button>
               </div>
             </div>
 
+            <form className="booking-search" onSubmit={searchReservation}>
+              <div>
+                <Search size={18} />
+                <label htmlFor="booking-search-input">Buscar por código de reserva</label>
+              </div>
+              <div className="booking-search-controls">
+                <input
+                  id="booking-search-input"
+                  type="search"
+                  value={bookingSearch}
+                  onChange={(event) => setBookingSearch(event.target.value)}
+                  placeholder="Ejemplo: INN02475"
+                  autoComplete="off"
+                  aria-describedby={bookingSearchError ? "booking-search-error" : undefined}
+                />
+                <button
+                  className="primary-button"
+                  type="submit"
+                  disabled={isBookingSearchLoading}
+                >
+                  {isBookingSearchLoading ? "Buscando..." : "Buscar"}
+                </button>
+              </div>
+              {bookingSearchError && (
+                <p id="booking-search-error" role="alert">{bookingSearchError}</p>
+              )}
+            </form>
+
             <div className="metric-grid" aria-label="Resumen de reservas cargadas">
               <article>
                 <Database size={20} />
-                <span>Analizadas</span>
-                <strong>{isLoading ? "--" : reservations.length}</strong>
-                <small>de {datasetMeta?.totalAvailable?.toLocaleString("es-ES") || "--"} disponibles</small>
+                <span>Analizadas en esta página</span>
+                <strong>{reservationsLoading ? "--" : reservations.length}</strong>
+                <small>
+                  {visibleStart.toLocaleString("es-ES")}–{visibleEnd.toLocaleString("es-ES")} de {totalAvailable.toLocaleString("es-ES")}
+                </small>
               </article>
               <article className="metric-high">
                 <AlertTriangle size={20} />
                 <span>Riesgo alto</span>
-                <strong>{isLoading ? "--" : riskCounts.high}</strong>
+                <strong>{reservationsLoading ? "--" : riskCounts.high}</strong>
                 <small>revisión prioritaria</small>
               </article>
               <article className="metric-medium">
                 <Activity size={20} />
                 <span>Riesgo medio</span>
-                <strong>{isLoading ? "--" : riskCounts.medium}</strong>
+                <strong>{reservationsLoading ? "--" : riskCounts.medium}</strong>
                 <small>seguimiento recomendado</small>
               </article>
               <article className="metric-low">
                 <ShieldCheck size={20} />
                 <span>Riesgo bajo</span>
-                <strong>{isLoading ? "--" : riskCounts.low}</strong>
+                <strong>{reservationsLoading ? "--" : riskCounts.low}</strong>
                 <small>observación normal</small>
               </article>
             </div>
@@ -318,26 +437,56 @@ function App() {
               <GuidedReservationFlow
                 reservations={reservations}
                 selectedReservation={selectedReservation}
-                isLoading={isLoading}
+                isLoading={reservationsLoading}
                 onSelect={setSelectedReservation}
                 onOpenDetail={openReservation}
                 onEvaluate={evaluateReservation}
+                pageOffset={pageOffset}
               />
             ) : operationsView === "all" ? (
               <ReservationsTable
                 reservations={reservations}
-                isLoading={isLoading}
+                isLoading={reservationsLoading}
                 onSelect={openReservation}
                 onEvaluate={evaluateReservation}
               />
             ) : (
               <AlertsPanel
                 reservations={reservations}
-                isLoading={isLoading}
+                isLoading={reservationsLoading}
                 onSelect={openReservation}
                 onEvaluate={evaluateReservation}
               />
             )}
+
+            <nav className="pagination-bar" aria-label="Páginas de reservas">
+              <div className="pagination-summary" aria-live="polite">
+                <strong>Página {currentPage.toLocaleString("es-ES")} de {totalPages.toLocaleString("es-ES")}</strong>
+                <span>
+                  Reservas {visibleStart.toLocaleString("es-ES")}–{visibleEnd.toLocaleString("es-ES")} de {totalAvailable.toLocaleString("es-ES")}
+                </span>
+              </div>
+              <div className="pagination-actions">
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={showPreviousPage}
+                  disabled={reservationsLoading || pageOffset === 0}
+                >
+                  <ChevronLeft size={17} />
+                  Anterior
+                </button>
+                <button
+                  className="primary-button"
+                  type="button"
+                  onClick={showNextPage}
+                  disabled={reservationsLoading || !datasetMeta?.hasMore}
+                >
+                  Siguiente
+                  <ChevronRight size={17} />
+                </button>
+              </div>
+            </nav>
 
             {datasetMeta?.source && (
               <p className="data-source">Fuente de datos: {datasetMeta.source}</p>
@@ -358,6 +507,8 @@ function App() {
           />
         )}
       </main>
+
+      <EducationalFooter />
 
       {isDetailOpen && selectedReservation && (
         <ReservationDetailModal

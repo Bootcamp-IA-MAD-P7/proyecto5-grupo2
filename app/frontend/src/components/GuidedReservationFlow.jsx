@@ -45,6 +45,7 @@ function GuidedReservationFlow({
   onEvaluate,
   onOpenDetail,
   onSelect,
+  pageOffset,
   reservations,
   selectedReservation
 }) {
@@ -57,7 +58,7 @@ function GuidedReservationFlow({
     return (
       <section className="guided-flow guided-flow-loading" aria-live="polite">
         <Sparkles className="spin" size={21} />
-        Evaluando reservas con el Champion...
+        Analizando datos de las reservas...
       </section>
     );
   }
@@ -83,7 +84,7 @@ function GuidedReservationFlow({
           <header>
             <ListChecks size={19} />
             <div>
-              <strong>Prioridad Champion</strong>
+              <strong>Prioridad por riesgo</strong>
               <small>Mayor riesgo primero</small>
             </div>
           </header>
@@ -97,7 +98,7 @@ function GuidedReservationFlow({
                 onClick={() => onSelect(reservation)}
                 aria-pressed={selectedReservation.id === reservation.id}
               >
-                <span className="queue-rank">{index + 1}</span>
+                <span className="queue-rank">{pageOffset + index + 1}</span>
                 <span className="queue-copy">
                   <strong>{reservation.guest}</strong>
                   <small>{formatArrival(reservation.arrival)} · histórico</small>

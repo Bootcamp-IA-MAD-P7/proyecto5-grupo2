@@ -59,8 +59,16 @@ export function fetchModelInfo() {
   return requestJson("/model/info");
 }
 
-export function fetchDemoReservations(limit = 16) {
-  return requestJson(`/reservations/demo?limit=${limit}`);
+export function fetchDemoReservations(limit = 16, offset = 0) {
+  const query = new URLSearchParams({
+    limit: String(limit),
+    offset: String(offset)
+  });
+  return requestJson(`/reservations/demo?${query.toString()}`);
+}
+
+export function fetchDemoReservationById(bookingId) {
+  return requestJson(`/reservations/demo/${encodeURIComponent(bookingId)}`);
 }
 
 function toDateString(inputData) {
@@ -99,8 +107,8 @@ function toFrontendReservation(reservation, prediction) {
   return applyPredictionToReservation(baseReservation, inputData, prediction);
 }
 
-export async function fetchPredictedReservations(limit = 16) {
-  const response = await fetchDemoReservations(limit);
+export async function fetchPredictedReservations(limit = 16, offset = 0) {
+  const response = await fetchDemoReservations(limit, offset);
   const reservations = await Promise.all(
     response.reservations.map(async (reservation) => {
       const prediction = await predictReservation(reservation.input_data, "frontend_demo_queue");
@@ -112,6 +120,18 @@ export async function fetchPredictedReservations(limit = 16) {
     reservations,
     returned: response.returned,
     totalAvailable: response.total_available,
+    limit: response.limit ?? limit,
+    offset: response.offset ?? offset,
+    hasMore: response.has_more ?? offset + response.returned < response.total_available,
     source: response.source
   };
+}
+
+export async function fetchPredictedReservationById(bookingId) {
+  const reservation = await fetchDemoReservationById(bookingId);
+  const prediction = await predictReservation(
+    reservation.input_data,
+    "frontend_demo_queue"
+  );
+  return toFrontendReservation(reservation, prediction);
 }

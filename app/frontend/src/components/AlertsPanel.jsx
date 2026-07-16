@@ -40,7 +40,7 @@ function AlertsPanel({ reservations, isLoading, onSelect, onEvaluate }) {
       </div>
 
       {isLoading ? (
-        <div className="priority-empty">Calculando prioridades con el Champion...</div>
+        <div className="priority-empty">Calculando prioridades a partir de los datos...</div>
       ) : priorityReservations.length === 0 ? (
         <div className="priority-empty">No hay reservas de riesgo alto en la muestra cargada.</div>
       ) : (
