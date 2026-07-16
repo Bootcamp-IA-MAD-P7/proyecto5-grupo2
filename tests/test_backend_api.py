@@ -147,6 +147,9 @@ def test_demo_reservations_return_real_dataset_payloads() -> None:
 
     assert body["total_available"] > 0
     assert body["returned"] == 3
+    assert body["limit"] == 3
+    assert body["offset"] == 0
+    assert body["has_more"] is True
     assert body["source"].endswith("Hotel Reservations.csv")
     assert len(body["reservations"]) == 3
 
@@ -154,6 +157,63 @@ def test_demo_reservations_return_real_dataset_payloads() -> None:
     assert reservation["id"].startswith("INN")
     assert reservation["display_name"].startswith("Reserva INN")
     assert reservation["input_data"]["lead_time"] >= 0
+
+
+def test_demo_reservations_keep_default_limit_for_compatibility() -> None:
+    response = client.get("/reservations/demo")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["limit"] == 8
+    assert body["offset"] == 0
+    assert body["returned"] == 8
+
+
+def test_demo_reservation_pages_do_not_overlap() -> None:
+    first_page = client.get("/reservations/demo?limit=4&offset=0").json()
+    second_page = client.get("/reservations/demo?limit=4&offset=4").json()
+
+    first_ids = {reservation["id"] for reservation in first_page["reservations"]}
+    second_ids = {reservation["id"] for reservation in second_page["reservations"]}
+
+    assert first_ids.isdisjoint(second_ids)
+    assert second_page["offset"] == 4
+    assert second_page["returned"] == 4
+    assert second_page["total_available"] == first_page["total_available"]
+
+
+def test_demo_reservations_return_empty_page_after_dataset_end() -> None:
+    total_available = client.get("/reservations/demo?limit=1").json()["total_available"]
+    response = client.get(f"/reservations/demo?limit=8&offset={total_available}")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total_available"] == total_available
+    assert body["returned"] == 0
+    assert body["offset"] == total_available
+    assert body["has_more"] is False
+    assert body["reservations"] == []
+
+
+def test_demo_reservations_validate_pagination_parameters() -> None:
+    for query in ("limit=0", "limit=51", "offset=-1"):
+        response = client.get(f"/reservations/demo?{query}")
+        assert response.status_code == 422
+
+
+def test_demo_reservation_can_be_found_directly_by_booking_id() -> None:
+    response = client.get("/reservations/demo/INN02475")
+
+    assert response.status_code == 200
+    reservation = response.json()
+    assert reservation["id"] == "INN02475"
+    assert reservation["display_name"] == "Reserva INN02475"
+    assert reservation["input_data"]["lead_time"] >= 0
+
+
+def test_demo_reservation_search_returns_not_found_and_validates_format() -> None:
+    assert client.get("/reservations/demo/INN99999").status_code == 404
+    assert client.get("/reservations/demo/02475").status_code == 422
 
 
 def test_predict_rejects_invalid_payload() -> None:

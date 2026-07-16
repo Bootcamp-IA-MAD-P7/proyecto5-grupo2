@@ -52,32 +52,41 @@ def load_reservations_dataset() -> pd.DataFrame:
     return pd.read_csv(DATASET_PATH)
 
 
-def get_demo_reservations(limit: int = 8) -> DemoReservationsResponse:
-    dataset = load_reservations_dataset()
-    sample = _candidate_sample(dataset, limit)
+def get_demo_reservations(limit: int = 8, offset: int = 0) -> DemoReservationsResponse:
+    prioritized_dataset = load_prioritized_reservations_dataset()
+    sample = prioritized_dataset.iloc[offset : offset + limit]
 
     reservations = [
-        DemoReservationResponse(
-            id=str(row["Booking_ID"]),
-            display_name=f"Reserva {row['Booking_ID']}",
-            stay_label=_stay_label(row),
-            status_label=_status_label(row),
-            image_key=IMAGE_KEYS[index % len(IMAGE_KEYS)],
-            input_data=PredictionRequest(**{column: row[column] for column in FEATURE_COLUMNS}),
-        )
+        _to_demo_reservation(row, image_index=offset + index)
         for index, (_, row) in enumerate(sample.iterrows())
     ]
+    total_available = int(len(prioritized_dataset))
+    returned = len(reservations)
 
     return DemoReservationsResponse(
-        total_available=int(len(dataset)),
-        returned=len(reservations),
+        total_available=total_available,
+        returned=returned,
+        limit=limit,
+        offset=offset,
+        has_more=offset + returned < total_available,
         source="data/raw/hotel-reservations-classification-dataset/Hotel Reservations.csv",
         reservations=reservations,
     )
 
 
-def _candidate_sample(dataset: pd.DataFrame, limit: int) -> pd.DataFrame:
-    candidates = dataset.copy()
+def get_demo_reservation_by_id(booking_id: str) -> DemoReservationResponse | None:
+    reservations_by_id = load_reservations_by_id()
+    if booking_id not in reservations_by_id.index:
+        return None
+
+    row = reservations_by_id.loc[booking_id]
+    image_index = sum(ord(character) for character in booking_id)
+    return _to_demo_reservation(row, image_index=image_index)
+
+
+@lru_cache(maxsize=1)
+def load_prioritized_reservations_dataset() -> pd.DataFrame:
+    candidates = load_reservations_dataset().copy()
     candidates["estimated_value"] = (
         candidates["avg_price_per_room"]
         * (candidates["no_of_weekend_nights"] + candidates["no_of_week_nights"]).clip(lower=1)
@@ -90,7 +99,32 @@ def _candidate_sample(dataset: pd.DataFrame, limit: int) -> pd.DataFrame:
         + candidates["no_of_previous_cancellations"].clip(upper=3) * 35
     )
 
-    return candidates.sort_values("priority_score", ascending=False).head(limit)
+    return candidates.sort_values(
+        ["priority_score", "Booking_ID"],
+        ascending=[False, True],
+        kind="mergesort",
+    )
+
+
+@lru_cache(maxsize=1)
+def load_reservations_by_id() -> pd.DataFrame:
+    return (
+        load_reservations_dataset()
+        .drop_duplicates(subset="Booking_ID", keep="first")
+        .set_index("Booking_ID", drop=False)
+    )
+
+
+def _to_demo_reservation(row: pd.Series, image_index: int) -> DemoReservationResponse:
+    booking_id = str(row["Booking_ID"])
+    return DemoReservationResponse(
+        id=booking_id,
+        display_name=f"Reserva {booking_id}",
+        stay_label=_stay_label(row),
+        status_label=_status_label(row),
+        image_key=IMAGE_KEYS[image_index % len(IMAGE_KEYS)],
+        input_data=PredictionRequest(**{column: row[column] for column in FEATURE_COLUMNS}),
+    )
 
 
 def _stay_label(row: pd.Series) -> str:
